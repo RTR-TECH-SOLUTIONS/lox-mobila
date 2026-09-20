@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0C0C0C;
+  --color-ink-2: #141414;
+  --color-ink-3: #1E1E1E;
+  --color-line: #2A2A2A;
+  --color-bone: #F2EFEA;
+  --color-bone-2: #A8A39B;
+  --color-brass: #B7966B;
+  --color-brass-hi: #C9AA80;
+
+  --font-serif: "Fraunces Variable", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --radius-ui: 10px;
+  --radius-img: 4px;
+}
+
+:root {
+  --header-h: 64px;
+  --gutter: 20px;
+  --container: 1280px;
+  --section-y: clamp(72px, 10vw, 144px);
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur: 200ms;
+
+  --fs-display: clamp(2.75rem, 1.2rem + 6.4vw, 7rem);
+  --fs-h2: clamp(1.9rem, 1.3rem + 2.6vw, 3.25rem);
+  --fs-h3: clamp(1.25rem, 1.1rem + 0.7vw, 1.6rem);
+  --fs-body: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --fs-label: 0.78rem;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --header-h: 72px;
+    --gutter: 48px;
+  }
+}

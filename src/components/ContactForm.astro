@@ -1,0 +1,158 @@
+---
+import SectionHeading from './ui/SectionHeading.astro';
+import Button from './ui/Button.astro';
+import { site } from '../data/site';
+
+const projectTypes = [
+  'Bucătărie',
+  'Dressing',
+  'Living',
+  'Dormitor',
+  'Baie',
+  'Spațiu comercial',
+  'Altceva',
+];
+---
+
+<section id="contact" class="section container">
+  <SectionHeading n="07" title="Hai să vorbim despre proiectul tău" />
+
+  <div class="grid gap-16 lg:grid-cols-12 lg:gap-20">
+    <form
+      class="lg:col-span-7 form"
+      data-quote-form
+      data-wa={site.whatsappNumber}
+      action={`https://wa.me/${site.whatsappNumber}`}
+      method="get"
+      target="_blank"
+    >
+      <div class="field">
+        <label for="name">Nume</label>
+        <input id="name" name="name" type="text" required autocomplete="name" />
+      </div>
+
+      <div class="field">
+        <label for="phone">Telefon</label>
+        <input
+          id="phone"
+          name="phone"
+          type="tel"
+          required
+          autocomplete="tel"
+          pattern="[0-9+ ]{10,15}"
+          placeholder="07xx xxx xxx"
+        />
+      </div>
+
+      <div class="field">
+        <label for="projectType">Ce vrei să facem</label>
+        <select id="projectType" name="projectType" required>
+          {projectTypes.map((t) => <option value={t}>{t}</option>)}
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="message">Câteva detalii (opțional)</label>
+        <textarea
+          id="message"
+          name="message"
+          rows="4"
+          placeholder="Ex: bucătărie în L, 3,2 m x 2,4 m, apartament nou"></textarea>
+      </div>
+
+      <div class="mt-2">
+        <Button type="submit">Trimite pe WhatsApp</Button>
+        <p class="mt-4 text-[0.9rem] text-bone-2">
+          Se deschide WhatsApp cu mesajul gata scris. Răspundem în aceeași zi lucrătoare.
+        </p>
+      </div>
+    </form>
+
+    <div class="lg:col-span-4 lg:col-start-9 space-y-10">
+      <div>
+        <p class="label mb-3">Sună direct</p>
+        <a href={site.phoneHref} class="font-serif text-[var(--fs-h3)] hover:text-brass transition-colors duration-200">
+          {site.phoneDisplay}
+        </a>
+      </div>
+
+      <Button href={`https://wa.me/${site.whatsappNumber}`} variant="outline">
+        Scrie pe WhatsApp
+      </Button>
+
+      <div>
+        <p class="label mb-3">Atelier</p>
+        <a href={site.mapsUrl} class="hover:text-brass transition-colors duration-200">
+          {site.address}
+        </a>
+      </div>
+
+      <div>
+        <p class="label mb-3">Program</p>
+        <dl class="space-y-1.5">
+          {
+            site.hours.map((h) => (
+              <div class="flex justify-between gap-6">
+                <dt class="text-bone-2">{h.days}</dt>
+                <dd>{h.time}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <div>
+        <p class="label mb-3">Email</p>
+        <a href={`mailto:${site.email}`} class="hover:text-brass transition-colors duration-200">
+          {site.email}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .form {
+    display: grid;
+    gap: 24px;
+    max-width: 640px;
+  }
+
+  .field { display: grid; gap: 8px; }
+
+  .field label {
+    font-size: var(--fs-label);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-bone-2);
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    background: var(--color-ink-3);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-ui);
+    color: var(--color-bone);
+    padding: 0 16px;
+    font: inherit;
+    transition: border-color var(--dur) var(--ease);
+  }
+
+  .field input,
+  .field select { height: 52px; }
+
+  .field textarea {
+    padding-block: 14px;
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder { color: rgb(168 163 155 / 0.6); }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus { border-color: var(--color-brass); }
+</style>

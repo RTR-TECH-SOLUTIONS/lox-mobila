@@ -1,0 +1,84 @@
+---
+import ProjectCard from './ProjectCard.astro';
+import { CATEGORY_LABELS } from '../data/types';
+import type { Project } from '../data/types';
+import { ALL } from '../lib/filter';
+
+interface Props {
+  projects: Project[];
+}
+
+const { projects } = Astro.props;
+
+const filters = [
+  { key: ALL, label: 'Toate' },
+  ...Object.entries(CATEGORY_LABELS).map(([key, label]) => ({ key, label })),
+];
+---
+
+<div data-project-grid>
+  <div class="filters" role="group" aria-label="Filtrează proiectele">
+    {
+      filters.map((f, i) => (
+        <button type="button" class="label filters__btn" data-filter={f.key} aria-pressed={i === 0}>
+          {f.label}
+        </button>
+      ))
+    }
+  </div>
+
+  <p data-filter-status class="sr-only" aria-live="polite"></p>
+
+  <div class="grid-projects">
+    {projects.map((p) => <ProjectCard project={p} />)}
+  </div>
+</div>
+
+<style>
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    margin-bottom: 48px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .filters__btn {
+    padding-block: 6px;
+    border-bottom: 1px solid transparent;
+    transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+
+  .filters__btn:hover { color: var(--color-bone); }
+
+  .filters__btn[aria-pressed='true'] {
+    color: var(--color-bone);
+    border-bottom-color: var(--color-brass);
+  }
+
+  .grid-projects {
+    display: grid;
+    gap: 56px 32px;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 700px) {
+    .grid-projects { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (min-width: 1100px) {
+    .grid-projects { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+</style>

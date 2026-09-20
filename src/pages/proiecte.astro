@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectGrid from '../components/ProjectGrid.astro';
+import Lightbox from '../components/Lightbox.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { projects } from '../data/projects';
+import { site } from '../data/site';
+---
+
+<Base
+  title="Proiecte | LOX Mobila Iași"
+  description="Proiecte de mobilă la comandă executate în Iași: bucătării, dressinguri, living și dormitor, cu materialele și feroneria folosite la fiecare."
+>
+  <header class="container pt-[clamp(48px,8vw,112px)] pb-[clamp(40px,6vw,80px)]">
+    <h1>Proiecte</h1>
+    <p class="mt-8 max-w-[62ch] text-bone-2">
+      Douăsprezece lucrări din ultimii doi ani, toate montate în {site.city} și împrejurimi.
+      Fiecare are fișa ei: ce material, ce feronerie, cât a durat.
+    </p>
+  </header>
+
+  <div class="container pb-[var(--section-y)]">
+    <ProjectGrid projects={projects} />
+  </div>
+
+  <CtaBand />
+  <Lightbox />
+</Base>

@@ -1,0 +1,86 @@
+---
+import SectionHeading from './ui/SectionHeading.astro';
+import { processSteps } from '../data/process';
+---
+
+<section id="cum-lucram" class="section container">
+  <SectionHeading
+    n="03"
+    title="Cum lucrăm"
+    lead="Șase pași, aceiași de fiecare dată. Știi din prima zi ce urmează și cât durează."
+  />
+
+  <ol class="steps">
+    {
+      processSteps.map((s) => (
+        <li class="step" data-reveal>
+          <span class="step__n" aria-hidden="true">{s.n}</span>
+          <h3 class="step__title">{s.title}</h3>
+          <p class="step__text">{s.text}</p>
+          <span class="label step__dur">{s.duration}</span>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 4px 24px;
+    padding-block: 28px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  /* Segmentul scurt de alama pe linia de sus: linia de cota de pe o fisa de atelier. */
+  .step::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -1px;
+    width: 56px;
+    height: 1px;
+    background: var(--color-brass);
+  }
+
+  :global(.has-reveal) .step::before {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 900ms var(--ease) 250ms;
+  }
+
+  :global(.has-reveal) .step.is-in::before { transform: scaleX(1); }
+
+  .step__n {
+    grid-row: span 3;
+    font-family: var(--font-serif);
+    font-size: var(--fs-h3);
+    color: var(--color-brass);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .step__text {
+    color: var(--color-bone-2);
+    max-width: 56ch;
+    margin-top: 6px;
+  }
+
+  .step__dur { margin-top: 10px; }
+
+  @media (min-width: 900px) {
+    .step {
+      grid-template-columns: 96px minmax(0, 300px) minmax(0, 1fr) auto;
+      align-items: baseline;
+      gap: 0 40px;
+      padding-block: 36px;
+    }
+
+    .step::before { width: 96px; }
+    .step__n { grid-row: auto; }
+    .step__text { margin-top: 0; }
+    .step__dur { margin-top: 0; text-align: right; }
+  }
+</style>

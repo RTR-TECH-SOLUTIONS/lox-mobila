@@ -1,0 +1,96 @@
+---
+import Logo from './ui/Logo.astro';
+import Button from './ui/Button.astro';
+import MobileNav from './MobileNav.astro';
+import { site } from '../data/site';
+import { url } from '../lib/url';
+
+interface Props {
+  /** true = transparent peste hero; false = fundal solid de la inceput */
+  overlay?: boolean;
+}
+
+const { overlay = false } = Astro.props;
+---
+
+<header data-header data-overlay={String(overlay)}>
+  <div class="container h-full flex items-center justify-between gap-6">
+    <a href={url('/')} aria-label="LOX Mobila, acasă" class="shrink-0">
+      <Logo height={34} />
+    </a>
+
+    <nav aria-label="Principal" class="hidden lg:flex items-center gap-8">
+      {
+        site.nav.map((item) => (
+          <a href={url(item.href)} class="label hover:text-bone transition-colors duration-200">
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-3 sm:gap-5 shrink-0">
+      <a
+        href={site.phoneHref}
+        class="hidden sm:block text-[0.95rem] hover:text-brass transition-colors duration-200"
+      >
+        {site.phoneDisplay}
+      </a>
+
+      <Button href={url('/#contact')} class="!h-11 !px-5 text-[0.95rem] lg:!h-13 lg:!px-7">
+        Cere ofertă
+      </Button>
+
+      <button
+        type="button"
+        class="lg:hidden grid place-items-center w-11 h-11 -mr-2"
+        aria-controls="mobile-nav"
+        aria-expanded="false"
+        aria-label="Deschide meniul"
+      >
+        <span class="burger" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<MobileNav />
+
+<style>
+  [data-header] {
+    position: fixed;
+    inset: 0 0 auto;
+    height: var(--header-h);
+    z-index: 40;
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease);
+  }
+
+  [data-header][data-overlay='false'],
+  [data-header].is-scrolled {
+    background: color-mix(in srgb, var(--color-ink) 92%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom-color: var(--color-line);
+  }
+
+  .burger,
+  .burger::before,
+  .burger::after {
+    display: block;
+    width: 20px;
+    height: 1.5px;
+    background: var(--color-bone);
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .burger::before,
+  .burger::after {
+    content: '';
+    position: absolute;
+  }
+
+  .burger::before { transform: translateY(-6px); }
+  .burger::after { transform: translateY(6px); }
+</style>

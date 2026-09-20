@@ -1,0 +1,74 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { url } from '../lib/url';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** true doar pe pagini al caror prim element e un hero cu imagine full-bleed */
+  headerOverlay?: boolean;
+}
+
+const {
+  title,
+  description = 'Mobilă la comandă în Iași: bucătării, dressinguri, living și dormitor, proiectate 3D și executate în atelier propriu.',
+  headerOverlay = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0C0C0C" />
+    <link rel="icon" href={url('/favicon.png')} type="image/png" />
+    <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+  </head>
+  <body>
+    <a href="#continut" class="skip-link">Sari la conținut</a>
+
+    <Header overlay={headerOverlay} />
+
+    <main id="continut" class:list={[!headerOverlay && 'pt-[var(--header-h)]']}>
+      <slot />
+    </main>
+
+    <Footer />
+
+    <script>
+      import '../scripts/hero.ts';
+      import '../scripts/header.ts';
+      import '../scripts/nav.ts';
+      import '../scripts/filter.ts';
+      import '../scripts/lightbox.ts';
+      import '../scripts/contact.ts';
+      import '../scripts/reveal.ts';
+      import '../scripts/motion.ts';
+      import '../scripts/showcase.ts';
+      import '../scripts/cursor.ts';
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100;
+    background: var(--color-brass);
+    color: var(--color-ink);
+    padding: 12px 20px;
+    font-weight: 500;
+  }
+
+  .skip-link:focus {
+    left: 8px;
+    top: 8px;
+  }
+</style>
