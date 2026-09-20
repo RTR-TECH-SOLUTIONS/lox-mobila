@@ -1,0 +1,22 @@
+---
+interface Props {
+  /** Numarul sectiunii, ex. "02". Sta pe aceeasi linie de baza cu titlul, nu deasupra lui. */
+  n: string;
+  title: string;
+  lead?: string;
+  id?: string;
+}
+
+const { n, title, lead, id } = Astro.props;
+---
+
+<header
+  class="grid gap-6 md:grid-cols-[auto_1fr] md:gap-x-10 items-baseline mb-12 md:mb-20"
+  data-reveal
+>
+  <span class="label text-brass tabular-nums" aria-hidden="true">{n}</span>
+  <div>
+    <h2 id={id} class="reveal-title">{title}</h2>
+    {lead && <p class="mt-5 max-w-[58ch] text-bone-2">{lead}</p>}
+  </div>
+</header>

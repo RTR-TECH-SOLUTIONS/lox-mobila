@@ -1,0 +1,24 @@
+---
+import { site } from '../data/site';
+---
+
+<section class="section container">
+  <div class="grid gap-14 lg:grid-cols-12 lg:gap-8">
+    <p class="lg:col-span-7 font-serif text-[var(--fs-h3)] leading-[1.45]" data-reveal>
+      Un perete nu e niciodată drept și o nișă nu are niciodată cât scrie în plan. De aceea măsurăm
+      cu laserul, desenăm fiecare corp la cotă și montăm de probă în atelier înainte să ajungem la
+      tine.
+    </p>
+
+    <dl class="lg:col-span-4 lg:col-start-9" data-reveal>
+      {
+        site.stats.map((s) => (
+          <div class="flex items-baseline justify-between gap-6 py-5 border-t border-line">
+            <dt class="label">{s.label}</dt>
+            <dd class="font-serif text-[var(--fs-h2)] leading-none tabular-nums" data-countup>{s.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>

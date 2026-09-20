@@ -1,0 +1,161 @@
+@import "@fontsource-variable/fraunces";
+@import "@fontsource-variable/fraunces/standard-italic.css";
+@import "@fontsource-variable/inter";
+@import "./tokens.css";
+
+@layer base {
+  html {
+    background: var(--color-ink);
+    color: var(--color-bone);
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--header-h);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  h1 { font-size: var(--fs-display); }
+  h2 { font-size: var(--fs-h2); }
+  h3 { font-size: var(--fs-h3); line-height: 1.2; }
+
+  p { text-wrap: pretty; }
+
+  img { display: block; max-width: 100%; height: auto; }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brass);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--color-brass);
+    color: var(--color-ink);
+  }
+}
+
+@layer components {
+  .container {
+    width: 100%;
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .section { padding-block: var(--section-y); }
+
+  .label {
+    font-size: var(--fs-label);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-bone-2);
+  }
+
+  .hairline {
+    height: 1px;
+    background: var(--color-brass);
+    border: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- Reveal la scroll ----------
+   Clasa .has-reveal o pune JS-ul; fara JS sau cu miscare redusa nimic nu e ascuns.
+   --i = indexul elementului intr-un grup, pentru decalaj. */
+.has-reveal [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 700ms var(--ease),
+    transform 700ms var(--ease);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+
+.has-reveal [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Varianta "clip": imaginea se descopera de jos in sus si se aseaza din zoom. */
+.has-reveal [data-reveal='clip'] {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 1100ms var(--ease);
+  transition-delay: calc(var(--i, 0) * 110ms);
+}
+
+.has-reveal [data-reveal='clip'].is-in { clip-path: inset(0 0 0 0); }
+
+.has-reveal [data-reveal='clip']:not(.is-in) img { transform: scale(1.16); }
+.has-reveal [data-reveal='clip'] img { transition: transform 1500ms var(--ease); }
+
+/* Titlurile urca dintr-o masca. */
+.has-reveal [data-reveal] .reveal-title {
+  clip-path: inset(0 0 100% 0);
+  transform: translateY(0.45em);
+  transition:
+    clip-path 900ms var(--ease),
+    transform 900ms var(--ease);
+  transition-delay: inherit;
+}
+
+.has-reveal [data-reveal].is-in .reveal-title {
+  clip-path: inset(-0.2em 0 -0.2em 0);
+  transform: none;
+}
+
+/* ---------- Eticheta de cursor ---------- */
+.cursor-label {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 90;
+  pointer-events: none;
+  transform: translate3d(-200px, -200px, 0);
+  will-change: transform;
+}
+
+.cursor-label span {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  margin: -42px 0 0 -42px;
+  border-radius: 50%;
+  background: var(--color-brass);
+  color: var(--color-ink);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-indent: 0.16em;
+  text-transform: uppercase;
+  transform: scale(0);
+  transition: transform 320ms var(--ease);
+}
+
+.cursor-label.is-active span { transform: scale(1); }
+
+/* ---------- Tranzitia de filtrare (View Transitions) ---------- */
+::view-transition-group(*) {
+  animation-duration: 450ms;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}

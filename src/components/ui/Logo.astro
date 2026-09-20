@@ -1,0 +1,29 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../../assets/brand/lox-logo.png';
+import logoFull from '../../assets/brand/lox-logo-full.png';
+
+interface Props {
+  /** `full` include si tagline-ul "Idei. Design. Precizie." */
+  variant?: 'header' | 'full';
+  /** Inaltimea randata, in px. Latimea se calculeaza din raport. */
+  height?: number;
+  class?: string;
+}
+
+const { variant = 'header', height = 38, class: cls = '' } = Astro.props;
+
+const src = variant === 'full' ? logoFull : logo;
+const width = Math.round((src.width / src.height) * height);
+---
+
+<Image
+  src={src}
+  alt="LOX Mobila"
+  width={width}
+  height={height}
+  densities={[1, 2]}
+  loading="eager"
+  class:list={['block w-auto', cls]}
+  style={`height: ${height}px`}
+/>

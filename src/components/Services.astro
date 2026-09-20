@@ -1,0 +1,99 @@
+---
+import { Image } from 'astro:assets';
+import SectionHeading from './ui/SectionHeading.astro';
+import { resolveImage } from '../lib/images';
+import { services } from '../data/services';
+---
+
+<section id="ce-facem" class="section container">
+  <SectionHeading
+    n="01"
+    title="Ce facem"
+    lead="Orice piesă care trebuie să intre fix într-un loc anume. Dacă se găsește gata făcută la dimensiunea ta, îți spunem de unde s-o cumperi."
+  />
+
+  <div class="svc">
+    {
+      services.map((s, i) => (
+        <article class="svc__item" data-size={s.size} data-reveal="clip" style={`--i: ${i % 4}`}>
+          <Image
+            src={resolveImage('services', s.image)}
+            alt={`${s.title} la comandă`}
+            widths={[480, 800, 1200]}
+            sizes="(min-width: 900px) 50vw, 100vw"
+            loading="lazy"
+          />
+          <div class="svc__body">
+            <h3>{s.title}</h3>
+            <p class="svc__line">{s.line}</p>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .svc {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 900px) {
+    .svc {
+      grid-template-columns: repeat(12, 1fr);
+      /* 6 randuri de 130px = exact inaltimea a trei carduri `md` stivuite, deci
+         coloana mare si cea mica se termina la aceeasi cota. */
+      grid-auto-rows: 130px;
+    }
+
+    /* Bucatarii ocupa toata coloana din stanga; restul se stivuiesc in dreapta. */
+    .svc__item[data-size='lg'] { grid-column: span 6; grid-row: span 6; }
+    .svc__item[data-size='md'] { grid-column: span 6; grid-row: span 2; }
+    .svc__item[data-size='sm'] { grid-column: span 6; grid-row: span 2; }
+  }
+
+  .svc__item {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-img);
+    min-height: 260px;
+    isolation: isolate;
+    display: grid;
+    align-items: end;
+  }
+
+  .svc__item :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+    transition: transform 600ms var(--ease);
+  }
+
+  .svc__item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, transparent 30%, rgb(12 12 12 / 0.9) 100%);
+  }
+
+  .svc__item:hover :global(img) { transform: scale(1.03); }
+
+  .svc__body { padding: 24px; }
+
+  .svc__line {
+    margin-top: 8px;
+    max-width: 38ch;
+    color: var(--color-bone-2);
+    font-size: 0.95rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .svc__item:hover :global(img) { transform: none; }
+  }
+</style>

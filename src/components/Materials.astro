@@ -1,0 +1,150 @@
+---
+import SectionHeading from './ui/SectionHeading.astro';
+import { materials, hardwareNote } from '../data/materials';
+---
+
+<section id="materiale" class="section bg-ink-2">
+  <div class="container">
+    <SectionHeading
+      n="04"
+      title="Materiale și feronerie"
+      lead="Îți arătăm mostrele și îți spunem ce merită și ce nu pentru încăperea ta. O bucătărie și un dressing nu cer același material."
+    />
+
+    <table class="mat" data-reveal>
+      <caption class="sr-only">
+        Comparație între materialele folosite pentru fronturi și carcase
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col" class="label">Material</th>
+          <th scope="col" class="label">Cum arată</th>
+          <th scope="col" class="label">Umezeală</th>
+          <th scope="col" class="label">Unde îl folosim</th>
+          <th scope="col" class="label">Preț</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          materials.map((m) => (
+            <tr>
+              <th scope="row" class="mat__name">{m.name}</th>
+              <td data-label="Cum arată">{m.look}</td>
+              <td data-label="Umezeală">{m.moisture}</td>
+              <td data-label="Unde îl folosim">{m.bestFor}</td>
+              <td data-label="Preț">
+                <span class="price" aria-hidden="true">
+                  {[1, 2, 3, 4].map((i) => <i class:list={['price__tick', i <= m.price && 'is-on']} />)}
+                </span>
+                <span class="sr-only">Nivel de preț {m.price} din 4</span>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+
+    <p class="hardware" data-reveal>{hardwareNote}</p>
+  </div>
+</section>
+
+<style>
+  .mat {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .mat thead th {
+    padding-bottom: 16px;
+    font-weight: 400;
+    vertical-align: bottom;
+  }
+
+  .mat tbody tr { border-top: 1px solid var(--color-line); }
+
+  .mat td,
+  .mat th[scope='row'] {
+    padding-block: 22px;
+    padding-right: 24px;
+    vertical-align: top;
+  }
+
+  .mat td { color: var(--color-bone-2); }
+
+  .mat__name {
+    font-family: var(--font-serif);
+    font-size: var(--fs-h3);
+    font-weight: 400;
+    color: var(--color-bone);
+    padding-right: 32px;
+  }
+
+  @media (min-width: 800px) {
+    /* Numele materialului sta pe un rand; altfel "PAL melaminat" se rupe urat. */
+    .mat__name { width: 1%; white-space: nowrap; }
+  }
+
+  .price { display: inline-flex; gap: 4px; padding-top: 8px; }
+
+  .price__tick {
+    display: block;
+    width: 14px;
+    height: 2px;
+    background: var(--color-line);
+  }
+
+  .price__tick.is-on { background: var(--color-brass); }
+
+  .hardware {
+    margin-top: 48px;
+    max-width: 70ch;
+    padding-left: 24px;
+    border-left: 1px solid var(--color-brass);
+    color: var(--color-bone-2);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* Sub 800px tabelul devine lista de definitii, ca sa nu scrolleze orizontal. */
+  @media (max-width: 799px) {
+    .mat thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    .mat tbody tr { display: block; padding-block: 24px; }
+
+    .mat th[scope='row'] {
+      display: block;
+      padding: 0 0 14px;
+    }
+
+    .mat td {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 16px;
+      padding: 4px 0;
+    }
+
+    .mat td::before {
+      content: attr(data-label);
+      font-size: var(--fs-label);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-bone-2);
+    }
+  }
+</style>

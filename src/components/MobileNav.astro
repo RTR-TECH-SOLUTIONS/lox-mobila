@@ -1,0 +1,84 @@
+---
+import { site } from '../data/site';
+import { url } from '../lib/url';
+---
+
+<dialog id="mobile-nav" aria-label="Meniu">
+  <div class="mobile-nav__inner container">
+    <div class="flex justify-end h-[var(--header-h)] items-center">
+      <button type="button" data-close class="label h-11 px-1 hover:text-brass">Închide</button>
+    </div>
+
+    <nav aria-label="Meniu mobil">
+      <ul>
+        {
+          site.nav.map((item, i) => (
+            <li>
+              <a href={url(item.href)}>
+                <span class="label text-brass tabular-nums" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span class="font-serif">{item.label}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="mobile-nav__foot">
+      <a href={site.phoneHref} class="font-serif text-[var(--fs-h3)]">{site.phoneDisplay}</a>
+      <a href={`https://wa.me/${site.whatsappNumber}`} class="label mobile-nav__wa hover:text-brass">
+        Scrie pe WhatsApp
+      </a>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  #mobile-nav {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--color-ink);
+    color: var(--color-bone);
+  }
+
+  #mobile-nav::backdrop { background: var(--color-ink); }
+
+  .mobile-nav__inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  #mobile-nav nav { flex: 1; display: flex; align-items: center; }
+  #mobile-nav ul { width: 100%; }
+
+  #mobile-nav li + li { border-top: 1px solid var(--color-line); }
+
+  /* Doar linkurile de navigatie sunt mari; cele din subsol isi pastreaza marimea. */
+  #mobile-nav nav a {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    padding-block: 18px;
+    font-size: clamp(1.75rem, 8vw, 2.5rem);
+    line-height: 1.1;
+  }
+
+  .mobile-nav__foot {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-block: 32px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  /* Tracking-ul normal de .label rupe eticheta pe doua randuri la 360px. */
+  .mobile-nav__wa { letter-spacing: 0.12em; }
+</style>

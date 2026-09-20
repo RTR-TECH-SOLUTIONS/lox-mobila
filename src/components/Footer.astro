@@ -1,0 +1,75 @@
+---
+import Logo from './ui/Logo.astro';
+import { site } from '../data/site';
+import { url } from '../lib/url';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-line">
+  <div class="container py-16 md:py-20">
+    <div class="grid gap-12 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+      <div>
+        <Logo variant="full" height={76} />
+      </div>
+
+      <nav aria-label="Secundar">
+        <ul class="space-y-3">
+          {
+            site.nav.map((item) => (
+              <li>
+                <a href={url(item.href)} class="hover:text-brass transition-colors duration-200">
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="space-y-3">
+        <a href={site.phoneHref} class="block hover:text-brass transition-colors duration-200">
+          {site.phoneDisplay}
+        </a>
+        <a href={`mailto:${site.email}`} class="block hover:text-brass transition-colors duration-200">
+          {site.email}
+        </a>
+        <a
+          href={site.mapsUrl}
+          class="block text-bone-2 hover:text-brass transition-colors duration-200"
+        >
+          {site.address}
+        </a>
+      </div>
+
+      <div class="space-y-5">
+        <dl class="space-y-1.5">
+          {
+            site.hours.map((h) => (
+              <div class="flex justify-between gap-4 max-w-[260px]">
+                <dt class="text-bone-2">{h.days}</dt>
+                <dd>{h.time}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <ul class="flex gap-5">
+          {
+            site.social.map((s) => (
+              <li>
+                <a href={s.href} class="label hover:text-brass transition-colors duration-200">
+                  {s.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <p class="label mt-16 pt-8 border-t border-line">
+      &copy; {year} {site.name} &middot; {site.tagline}
+    </p>
+  </div>
+</footer>

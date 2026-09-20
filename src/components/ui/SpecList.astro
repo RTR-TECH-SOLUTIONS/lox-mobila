@@ -1,0 +1,20 @@
+---
+import type { ProjectSpec } from '../../data/types';
+
+interface Props {
+  specs: ProjectSpec[];
+}
+
+const { specs } = Astro.props;
+---
+
+<dl class="grid grid-cols-[auto_1fr] gap-x-5 gap-y-1.5 text-[0.9rem]">
+  {
+    specs.map((s) => (
+      <>
+        <dt class="label !text-[0.68rem] pt-[0.2em]">{s.label}</dt>
+        <dd class="text-bone">{s.value}</dd>
+      </>
+    ))
+  }
+</dl>

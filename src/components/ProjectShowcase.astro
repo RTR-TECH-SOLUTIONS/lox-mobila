@@ -1,0 +1,278 @@
+---
+import { Image } from 'astro:assets';
+import SpecList from './ui/SpecList.astro';
+import Button from './ui/Button.astro';
+import { resolveImage } from '../lib/images';
+import { buildLightboxImages, projectAlt } from '../lib/lightbox-images';
+import type { Project } from '../data/types';
+import { url } from '../lib/url';
+
+interface Props {
+  projects: Project[];
+  /** cate proiecte exista in total, pentru panoul de final */
+  total: number;
+}
+
+const { projects, total } = Astro.props;
+
+const pad = (n: number) => String(n).padStart(2, '0');
+
+const panels = await Promise.all(
+  projects.map(async (project) => ({
+    project,
+    alt: projectAlt(project),
+    cover: resolveImage('projects', project.cover),
+    lightbox: await buildLightboxImages(project),
+  })),
+);
+---
+
+<!--
+  Galerie orizontala fixata: pe desktop, scroll-ul vertical impinge panourile pe orizontala
+  (scripts/showcase.ts adauga .is-pinned). Fara JS, pe mobil sau cu miscare redusa ramane
+  un carusel nativ cu scroll-snap.
+-->
+<section id="proiecte" class="showcase bg-ink-2" data-showcase aria-labelledby="proiecte-title">
+  <div class="showcase__sticky">
+    <div class="container showcase__head">
+      <div class="showcase__title">
+        <span class="label text-brass tabular-nums" aria-hidden="true">02</span>
+        <h2 id="proiecte-title">Proiecte montate în Iași</h2>
+      </div>
+
+      <div class="showcase__meta" aria-hidden="true">
+        <span class="showcase__count tabular-nums">
+          <span data-sc-current>01</span> / {pad(panels.length)}
+        </span>
+        <span class="showcase__bar"><i data-sc-bar></i></span>
+      </div>
+    </div>
+
+    <div class="showcase__viewport" data-sc-viewport>
+      <ol class="showcase__track" data-sc-track>
+        {
+          panels.map(({ project, alt, cover, lightbox }, i) => (
+            <li class="panel" data-sc-panel>
+              <button
+                type="button"
+                class="panel__media"
+                data-lightbox-open
+                data-cursor="Vezi"
+                data-images={JSON.stringify(lightbox)}
+                aria-label={`Deschide galeria: ${alt}`}
+              >
+                <Image
+                  src={cover}
+                  alt={alt}
+                  widths={[800, 1200, 1600]}
+                  sizes="(min-width: 900px) 50vw, 84vw"
+                  loading="lazy"
+                  class="panel__img"
+                  data-sc-img
+                />
+              </button>
+
+              <div class="panel__info">
+                <span class="panel__n tabular-nums" aria-hidden="true">{pad(i + 1)}</span>
+                <h3>{project.title}</h3>
+                <p class="label mt-2">{project.district} &middot; {project.weeks} săpt.</p>
+                <hr class="panel__rule" />
+                <SpecList specs={project.specs} />
+              </div>
+            </li>
+          ))
+        }
+
+        <li class="panel panel--end">
+          <p class="font-serif text-[var(--fs-h3)] leading-[1.35]">
+            Încă {total - panels.length} lucrări, fiecare cu fișa ei.
+          </p>
+          <Button href={url('/proiecte')} variant="outline" class="mt-8">Toate cele {total} proiecte</Button>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .showcase {
+    --edge: max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)));
+    position: relative;
+  }
+
+  .showcase__sticky { padding-block: var(--section-y); }
+
+  .showcase__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px 40px;
+    margin-bottom: clamp(24px, 4vh, 56px);
+  }
+
+  .showcase__title {
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+  }
+
+  .showcase__meta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .showcase__count {
+    font-family: var(--font-serif);
+    font-size: var(--fs-h3);
+    color: var(--color-bone-2);
+  }
+
+  .showcase__count [data-sc-current] { color: var(--color-bone); }
+
+  .showcase__bar {
+    display: block;
+    width: clamp(96px, 14vw, 200px);
+    height: 1px;
+    background: var(--color-line);
+  }
+
+  .showcase__bar i {
+    display: block;
+    height: 100%;
+    background: var(--color-brass);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  /* Modul de baza: carusel nativ */
+  .showcase__viewport {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .showcase__viewport::-webkit-scrollbar { display: none; }
+
+  .showcase__track {
+    display: flex;
+    gap: clamp(20px, 3vw, 56px);
+    width: max-content;
+    padding-inline: var(--edge);
+  }
+
+  .panel {
+    scroll-snap-align: center;
+    width: 84vw;
+    display: grid;
+    gap: 24px;
+    align-content: start;
+  }
+
+  .panel__media {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: var(--radius-img);
+    background: var(--color-ink-3);
+    cursor: zoom-in;
+  }
+
+  /* Imaginea e mai lata decat rama, ca parallax-ul orizontal sa aiba cursa. */
+  .panel__img {
+    position: absolute;
+    top: 0;
+    left: -8%;
+    width: 116%;
+    max-width: none;
+    height: 100%;
+    object-fit: cover;
+    will-change: transform;
+  }
+
+  .panel__n {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: clamp(2.75rem, 8vh, 5.5rem);
+    line-height: 1;
+    margin-bottom: clamp(12px, 2.5vh, 28px);
+    color: transparent;
+    -webkit-text-stroke: 1px var(--color-brass);
+  }
+
+  .panel__rule {
+    height: 1px;
+    background: var(--color-line);
+    border: 0;
+    margin-block: 18px;
+  }
+
+  .panel--end {
+    width: min(84vw, 400px);
+    align-content: center;
+    justify-items: start;
+    gap: 0;
+  }
+
+  @media (min-width: 900px) {
+    .panel {
+      width: clamp(760px, 72vw, 1120px);
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+      gap: clamp(28px, 3vw, 48px);
+      align-items: end;
+    }
+
+    .panel--end { grid-template-columns: 1fr; width: 400px; }
+  }
+
+  /* Modul fixat, activat din JS */
+  .showcase.is-pinned .showcase__sticky {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    padding-top: calc(var(--header-h) + clamp(16px, 3vh, 44px));
+    padding-bottom: clamp(20px, 4vh, 52px);
+    overflow: hidden;
+  }
+
+  .showcase.is-pinned h2 { font-size: min(var(--fs-h2), 6.2vh); }
+
+  .showcase.is-pinned .showcase__viewport {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    scroll-snap-type: none;
+  }
+
+  .showcase.is-pinned .showcase__track {
+    height: 100%;
+    will-change: transform;
+  }
+
+  /* Randul trebuie sa fie 1fr: cu `auto`, height: 100% pe imagine nu are la ce se raporta. */
+  .showcase.is-pinned .panel {
+    height: 100%;
+    grid-template-rows: minmax(0, 1fr);
+    align-content: stretch;
+    align-items: stretch;
+  }
+
+  .showcase.is-pinned .panel__media {
+    aspect-ratio: auto;
+    height: 100%;
+  }
+
+  .showcase.is-pinned .panel__info { align-self: end; }
+  /* Panoul de final nu are imagine: textul si butonul stau grupate jos, la cota fiselor. */
+  .showcase.is-pinned .panel--end {
+    grid-template-rows: auto auto;
+    align-content: end;
+    gap: 0;
+  }
+</style>
