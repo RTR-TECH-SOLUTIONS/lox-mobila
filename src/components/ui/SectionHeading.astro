@@ -1,22 +1,49 @@
 ---
+import { url } from '../../lib/url';
+
 interface Props {
-  /** Numarul sectiunii, ex. "02". Sta pe aceeasi linie de baza cu titlul, nu deasupra lui. */
+  /** Numarul sectiunii cu cifra romana, ex. "IV". Pasii dinauntrul unei sectiuni raman
+   *  pe cifre arabe, ca sa se vada cele doua niveluri. */
   n: string;
   title: string;
   lead?: string;
   id?: string;
+  /** `h1` pe pagina sectiunii, `h2` pe prima pagina. */
+  as?: 'h1' | 'h2';
+  /** Linkul spre pagina sectiunii, afisat in dreapta titlului pe prima pagina. */
+  more?: { href: string; label: string };
 }
 
-const { n, title, lead, id } = Astro.props;
+const { n, title, lead, id, as: Tag = 'h2', more } = Astro.props;
 ---
 
-<header
-  class="grid gap-6 md:grid-cols-[auto_1fr] md:gap-x-10 items-baseline mb-12 md:mb-20"
-  data-reveal
->
-  <span class="label text-brass tabular-nums" aria-hidden="true">{n}</span>
+<header class="sh" data-reveal>
+  <span class="numeral" aria-hidden="true">{n}</span>
   <div>
-    <h2 id={id} class="reveal-title">{title}</h2>
-    {lead && <p class="mt-5 max-w-[58ch] text-bone-2">{lead}</p>}
+    <Tag id={id} class:list={['reveal-title', Tag === 'h1' && 'sh__h1']}>{title}</Tag>
+    {lead && <p class="lead">{lead}</p>}
   </div>
+  {more && <a href={url(more.href)} class="more sh__more">{more.label}</a>}
+  <span class="led sh__led" aria-hidden="true"></span>
 </header>
+
+<style>
+  .sh {
+    display: grid;
+    gap: 12px 24px;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    margin-bottom: clamp(40px, 5vw, 64px);
+  }
+
+  .sh__h1 { font-size: var(--fs-h2); }
+
+  .sh__more { grid-column: 2; justify-self: start; }
+
+  .sh__led { grid-column: 1 / -1; margin-top: 20px; }
+
+  @media (min-width: 900px) {
+    .sh { grid-template-columns: auto 1fr auto; column-gap: 40px; }
+    .sh__more { grid-column: 3; }
+  }
+</style>

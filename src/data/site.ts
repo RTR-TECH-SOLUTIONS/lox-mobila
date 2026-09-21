@@ -32,12 +32,12 @@ export const site: SiteData = {
   ],
 
   nav: [
-    { label: 'Ce facem', href: '/#ce-facem' },
-    { label: 'Proiecte', href: '/proiecte' },
-    { label: 'Cum lucrăm', href: '/#cum-lucram' },
-    { label: 'Materiale', href: '/#materiale' },
-    { label: 'Atelierul', href: '/#atelier' },
-    { label: 'Contact', href: '/#contact' },
+    { label: 'Cine suntem', href: '/cine-suntem', n: 'I' },
+    { label: 'Ce construim', href: '/ce-construim', n: 'II' },
+    { label: 'Proiecte', href: '/proiecte', n: 'III' },
+    { label: 'Etapele lucrării', href: '/etape', n: 'IV' },
+    { label: 'Materiale', href: '/materiale', n: 'V' },
+    { label: 'Contact', href: '/contact', n: 'VII' },
   ],
 
   googleReviewsUrl: '#', // PLACEHOLDER

@@ -15,7 +15,8 @@ export interface SiteData {
   hours: { days: string; time: string }[];
   social: { label: string; href: string }[];
   stats: { value: string; label: string }[];
-  nav: { label: string; href: string }[];
+  /** `n` = cifra romana a sectiunii, aceeasi pe prima pagina si pe pagina ei. */
+  nav: { label: string; href: string; n: string }[];
   googleReviewsUrl: string;
 }
 

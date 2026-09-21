@@ -1,35 +1,29 @@
 ---
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
-import Positioning from '../components/Positioning.astro';
+import HomeAbout from '../components/home/HomeAbout.astro';
 import Services from '../components/Services.astro';
 import ProjectShowcase from '../components/ProjectShowcase.astro';
-import Process from '../components/Process.astro';
-import Materials from '../components/Materials.astro';
-import Workshop from '../components/Workshop.astro';
-import Reviews from '../components/Reviews.astro';
-import CtaBand from '../components/CtaBand.astro';
-import ContactForm from '../components/ContactForm.astro';
+import HomeProcess from '../components/home/HomeProcess.astro';
+import HomeMaterials from '../components/home/HomeMaterials.astro';
+import HomeReview from '../components/home/HomeReview.astro';
+import HomeContact from '../components/home/HomeContact.astro';
 import Lightbox from '../components/Lightbox.astro';
 import { projects } from '../data/projects';
-import { url } from '../lib/url';
 
 const featured = projects.filter((p) => p.featured);
 ---
 
+<!-- Aspectul versiunii intai (bento, galerie cu fise, lista de etape), cu mai putin text:
+     descrierile lungi, tabelul de materiale si formularul stau pe paginile lor. -->
 <Base title="LOX Mobila | Mobilă la comandă în Iași" headerOverlay>
   <Hero />
-  <Positioning />
-  <Services />
-
+  <HomeAbout />
+  <Services teaser />
   <ProjectShowcase projects={featured} total={projects.length} />
-
-  <Process />
-  <Materials />
-  <Workshop />
-  <Reviews />
-  <CtaBand />
-  <ContactForm />
-
+  <HomeProcess />
+  <HomeMaterials />
+  <HomeReview />
+  <HomeContact />
   <Lightbox />
 </Base>

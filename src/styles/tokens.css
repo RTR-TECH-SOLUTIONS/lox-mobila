@@ -10,10 +10,10 @@
   --color-brass: #B7966B;
   --color-brass-hi: #C9AA80;
 
-  --font-serif: "Fraunces Variable", "Iowan Old Style", Georgia, serif;
+  --font-serif: "Newsreader Variable", "Iowan Old Style", Georgia, serif;
   --font-sans: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  --radius-ui: 10px;
+  --radius-ui: 6px;
   --radius-img: 4px;
 }
 
@@ -25,11 +25,20 @@
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --dur: 200ms;
 
-  --fs-display: clamp(2.75rem, 1.2rem + 6.4vw, 7rem);
-  --fs-h2: clamp(1.9rem, 1.3rem + 2.6vw, 3.25rem);
+  --fs-display: clamp(2.5rem, 1.4rem + 4.6vw, 5.25rem);
+  --fs-h2: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
   --fs-h3: clamp(1.25rem, 1.1rem + 0.7vw, 1.6rem);
   --fs-body: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
-  --fs-label: 0.78rem;
+  --fs-label: 0.8125rem;
+
+  /* ---------- Stratul semantic ---------- */
+  --surface: var(--color-ink);
+  --text: var(--color-bone);
+  --text-body: rgb(242 239 234 / 0.88);
+  --text-2: var(--color-bone-2);
+  --rule: var(--color-line);
+  --accent: var(--color-brass);
+  --focus: var(--color-brass);
 }
 
 @media (min-width: 768px) {

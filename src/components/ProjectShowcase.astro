@@ -32,12 +32,12 @@ const panels = await Promise.all(
   (scripts/showcase.ts adauga .is-pinned). Fara JS, pe mobil sau cu miscare redusa ramane
   un carusel nativ cu scroll-snap.
 -->
-<section id="proiecte" class="showcase bg-ink-2" data-showcase aria-labelledby="proiecte-title">
+<section class="showcase bg-ink-2" data-showcase aria-labelledby="proiecte-title">
   <div class="showcase__sticky">
     <div class="container showcase__head">
       <div class="showcase__title">
-        <span class="label text-brass tabular-nums" aria-hidden="true">02</span>
-        <h2 id="proiecte-title">Proiecte montate în Iași</h2>
+        <span class="numeral" aria-hidden="true">III</span>
+        <h2 id="proiecte-title">Proiecte</h2>
       </div>
 
       <div class="showcase__meta" aria-hidden="true">
@@ -46,6 +46,10 @@ const panels = await Promise.all(
         </span>
         <span class="showcase__bar"><i data-sc-bar></i></span>
       </div>
+    </div>
+
+    <div class="container" data-reveal>
+      <span class="led showcase__led" aria-hidden="true"></span>
     </div>
 
     <div class="showcase__viewport" data-sc-viewport>
@@ -108,7 +112,7 @@ const panels = await Promise.all(
     align-items: flex-end;
     justify-content: space-between;
     gap: 20px 40px;
-    margin-bottom: clamp(24px, 4vh, 56px);
+    margin-bottom: 20px;
   }
 
   .showcase__title {
@@ -116,6 +120,8 @@ const panels = await Promise.all(
     align-items: baseline;
     gap: 24px;
   }
+
+  .showcase__led { margin-bottom: clamp(24px, 4vh, 48px); }
 
   .showcase__meta {
     display: flex;

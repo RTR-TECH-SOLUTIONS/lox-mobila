@@ -3,11 +3,12 @@ import SectionHeading from './ui/SectionHeading.astro';
 import { materials, hardwareNote } from '../data/materials';
 ---
 
-<section id="materiale" class="section bg-ink-2">
+<section class="section">
   <div class="container">
     <SectionHeading
-      n="04"
-      title="Materiale și feronerie"
+      n="V"
+      title="Materiale"
+      as="h1"
       lead="Îți arătăm mostrele și îți spunem ce merită și ce nu pentru încăperea ta. O bucătărie și un dressing nu cer același material."
     />
 
@@ -61,7 +62,7 @@ import { materials, hardwareNote } from '../data/materials';
     vertical-align: bottom;
   }
 
-  .mat tbody tr { border-top: 1px solid var(--color-line); }
+  .mat tbody tr { border-top: 1px solid var(--rule); }
 
   .mat td,
   .mat th[scope='row'] {
@@ -70,13 +71,13 @@ import { materials, hardwareNote } from '../data/materials';
     vertical-align: top;
   }
 
-  .mat td { color: var(--color-bone-2); }
+  .mat td { color: var(--text-body); }
 
   .mat__name {
     font-family: var(--font-serif);
     font-size: var(--fs-h3);
     font-weight: 400;
-    color: var(--color-bone);
+    color: var(--text);
     padding-right: 32px;
   }
 
@@ -91,17 +92,17 @@ import { materials, hardwareNote } from '../data/materials';
     display: block;
     width: 14px;
     height: 2px;
-    background: var(--color-line);
+    background: var(--rule);
   }
 
-  .price__tick.is-on { background: var(--color-brass); }
+  .price__tick.is-on { background: var(--accent); }
 
   .hardware {
     margin-top: 48px;
     max-width: 70ch;
     padding-left: 24px;
-    border-left: 1px solid var(--color-brass);
-    color: var(--color-bone-2);
+    border-left: 1px solid var(--accent);
+    color: var(--text-body);
   }
 
   .sr-only {
@@ -144,7 +145,7 @@ import { materials, hardwareNote } from '../data/materials';
       font-size: var(--fs-label);
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--color-bone-2);
+      color: var(--text-2);
     }
   }
 </style>

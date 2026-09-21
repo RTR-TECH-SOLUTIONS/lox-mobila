@@ -12,11 +12,11 @@ import { url } from '../lib/url';
     <nav aria-label="Meniu mobil">
       <ul>
         {
-          site.nav.map((item, i) => (
+          site.nav.map((item) => (
             <li>
               <a href={url(item.href)}>
-                <span class="label text-brass tabular-nums" aria-hidden="true">
-                  {String(i + 1).padStart(2, '0')}
+                <span class="numeral mobile-nav__n" aria-hidden="true">
+                  {item.n}
                 </span>
                 <span class="font-serif">{item.label}</span>
               </a>
@@ -70,6 +70,8 @@ import { url } from '../lib/url';
     font-size: clamp(1.75rem, 8vw, 2.5rem);
     line-height: 1.1;
   }
+
+  .mobile-nav__n { min-width: 2.2em; }
 
   .mobile-nav__foot {
     display: flex;

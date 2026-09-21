@@ -1,0 +1,39 @@
+---
+import SectionHeading from '../ui/SectionHeading.astro';
+import LitText from '../ui/LitText.astro';
+import { reviews } from '../../data/reviews';
+import { site } from '../../data/site';
+
+const r = reviews[0];
+---
+
+<section class="section container" aria-labelledby="recenzii-title">
+  <SectionHeading
+    n="VI"
+    title="Recenzii"
+    id="recenzii-title"
+    more={{ href: site.googleReviewsUrl, label: 'Toate pe Google' }}
+  />
+
+  <figure class="hr">
+    <LitText as="blockquote" text={`„${r.text}”`} />
+    <figcaption class="label" data-reveal>
+      {r.author} &middot; {r.project}, {r.district}
+    </figcaption>
+  </figure>
+</section>
+
+<style>
+  .hr { text-align: center; }
+
+  .hr :global(blockquote) {
+    max-width: 26ch;
+    margin-inline: auto;
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 1.1rem + 2vw, 3rem);
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  .hr figcaption { margin-top: 28px; }
+</style>

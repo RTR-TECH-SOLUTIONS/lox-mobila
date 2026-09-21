@@ -1,54 +1,37 @@
-import { HERO_SCALE, toMillimetres, formatMm } from '../lib/hero-measure';
+// Aprinde LED-urile din hero pe rand, apoi arata textul.
+// Porneste doar dupa ce toate straturile sunt decodate, altfel un strat intarziat
+// ar sari peste aprindere.
 
 const hero = document.querySelector<HTMLElement>('[data-hero]');
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const TEXT_AT = 3900;
+const FAILSAFE = 6000;
 
-if (hero) {
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+if (hero && !reduce) {
+  const root = document.documentElement;
+  const lights = [...hero.querySelectorAll<HTMLImageElement>('[data-at]')];
+  const imgs = [...hero.querySelectorAll<HTMLImageElement>('img')];
+  const timers: number[] = [];
 
-  // Secventa de intrare: clasa se pune doar daca JS ruleaza si miscarea e permisa.
-  // Fara ea, hero-ul e direct in starea finala, cu fotografia si cotele vizibile.
-  if (!reduce.matches) {
-    document.documentElement.classList.add('has-intro');
-    // dupa ce se termina, scoatem clasa ca animatiile sa nu se reia la re-render
-    window.setTimeout(() => document.documentElement.classList.remove('has-intro'), 3200);
-  }
+  const finish = () => {
+    timers.forEach(clearTimeout);
+    lights.forEach((l) => l.classList.add('is-on'));
+    root.classList.add('is-lit');
+  };
 
-  // Firele de par: doar mouse, doar ecran mare, doar cu miscare permisa.
-  const fine = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 900px)');
-  const cross = hero.querySelector<HTMLElement>('[data-crosshair]');
-  const read = hero.querySelector<HTMLElement>('[data-crosshair-read]');
+  root.classList.add('is-lighting');
 
-  if (cross && read && fine.matches && !reduce.matches) {
-    cross.hidden = false;
-    let raf = 0;
-    let pending: { x: number; y: number } | null = null;
+  Promise.all(imgs.map((i) => i.decode().catch(() => undefined))).then(() => {
+    for (const l of lights) {
+      timers.push(window.setTimeout(() => l.classList.add('is-on'), Number(l.dataset.at)));
+    }
+    timers.push(window.setTimeout(() => root.classList.add('is-lit'), TEXT_AT));
+  });
 
-    const paint = () => {
-      raf = 0;
-      if (!pending) return;
-      const { x, y } = pending;
-      const r = hero.getBoundingClientRect();
-      const mm = toMillimetres((x - r.left) / r.width, (y - r.top) / r.height, HERO_SCALE);
-      cross.style.setProperty('--cx', `${(x - r.left).toFixed(0)}px`);
-      cross.style.setProperty('--cy', `${(y - r.top).toFixed(0)}px`);
-      read.textContent = `X ${formatMm(mm.x)} · Y ${formatMm(mm.y)}`;
-    };
-
-    hero.addEventListener(
-      'pointermove',
-      (e) => {
-        if (e.pointerType !== 'mouse') return;
-        // peste text si controale firele dispar: altfel citirea se suprapune peste copy
-        const overContent = (e.target as HTMLElement).closest('a, button, h1, p, li, label');
-        cross.toggleAttribute('data-on', !overContent);
-        pending = { x: e.clientX, y: e.clientY };
-        if (!raf) raf = requestAnimationFrame(paint);
-      },
-      { passive: true },
-    );
-
-    hero.addEventListener('pointerleave', () => cross.removeAttribute('data-on'));
-  }
+  // Daca decodarea se blocheaza, pagina nu ramane in intuneric.
+  window.setTimeout(() => {
+    if (!root.classList.contains('is-lit')) finish();
+  }, FAILSAFE);
 }
 
 export {};

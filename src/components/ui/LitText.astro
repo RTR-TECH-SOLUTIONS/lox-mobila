@@ -1,0 +1,36 @@
+---
+/**
+ * Paragraf care se aprinde cuvant cu cuvant la scroll (scripts/words.ts).
+ * Cuvintele intre *asteriscuri* ies in evidenta (italic, alama), ca „milimetrul" din hero.
+ * Fara JS sau cu miscare redusa textul e integral vizibil.
+ */
+interface Props {
+  text: string;
+  as?: 'p' | 'blockquote';
+  class?: string;
+}
+
+const { text, as: Tag = 'p', class: cls } = Astro.props;
+
+// "a *b c* d" -> [{w:'a'},{w:'b',em:true},{w:'c',em:true},{w:'d'}]
+const words: { w: string; em: boolean }[] = [];
+text.split(/(\*[^*]+\*)/).forEach((part) => {
+  const em = part.startsWith('*');
+  part
+    .replace(/\*/g, '')
+    .split(/\s+/)
+    .filter(Boolean)
+    .forEach((w) => words.push({ w, em }));
+});
+---
+
+<Tag class={cls} data-words>
+  {
+    words.map(({ w, em }, i) => (
+      <>
+        {em ? <em class="w w--em">{w}</em> : <span class="w">{w}</span>}
+        {i < words.length - 1 ? ' ' : ''}
+      </>
+    ))
+  }
+</Tag>
