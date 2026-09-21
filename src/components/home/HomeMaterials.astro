@@ -27,10 +27,10 @@ const brands = ['Egger', 'Blum', 'Hettich'];
     </div>
 
     <!-- Tabelul de pe /materiale, strans la trei coloane: material, cum arata, pret. -->
-    <ul class="hm__cards">
+    <ul class="hm__rows">
       {
         materials.map((m, i) => (
-          <li class="hm__card" data-reveal style={`--i: ${i}`}>
+          <li class="hm__row" data-reveal style={`--i: ${i}`}>
             <h3 class="hm__name">{m.name}</h3>
             <p class="hm__look">{m.look}</p>
             <PriceScale level={m.price} />
@@ -63,42 +63,53 @@ const brands = ['Egger', 'Blum', 'Hettich'];
     font-family: var(--font-serif);
     font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
     line-height: 1.2;
-    color: rgb(242 239 234 / 0.5);
   }
+
+  /* Toti trei furnizorii, si punctele dintre ei, in aceeasi nuanta. */
+  .hm__brands li { color: rgb(242 239 234 / 0.6); }
 
   .hm__brands li + li::before {
     content: '·';
     margin-inline: 0.5em;
   }
 
-  .hm__cards {
+  /* Randuri ca la Etape: linie de 1px intre ele, fara fundal si fara rama. */
+  .hm__row {
     display: grid;
-    gap: 12px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'name price'
+      'look look';
+    align-items: baseline;
+    gap: 8px 24px;
+    padding-block: 24px;
+    border-top: 1px solid var(--rule);
   }
 
-  .hm__card {
-    display: grid;
-    align-content: start;
-    gap: 10px;
-    padding: 24px;
-    border: 1px solid var(--rule);
-    border-radius: var(--radius-img);
-    background: var(--color-ink-2);
-  }
+  .hm__row:first-child { border-top: 0; padding-top: 0; }
 
-  .hm__name { font-size: var(--fs-h3); }
+  .hm__name { grid-area: name; font-size: var(--fs-h3); }
 
   .hm__look {
+    grid-area: look;
     color: var(--text-2);
     font-size: 0.95rem;
     line-height: 1.5;
-    margin-bottom: 8px;
   }
 
-  .hm__card :global(.price) { margin-top: auto; }
+  .hm__row :global(.price) { grid-area: price; }
 
   @media (min-width: 640px) {
-    .hm__cards { grid-template-columns: repeat(2, 1fr); }
+    .hm__row {
+      grid-template-columns: minmax(0, 200px) minmax(0, 1fr) auto;
+      grid-template-areas: 'name look price';
+      gap: 0 32px;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .hm__row { padding-block: 32px; }
+    .hm__row:first-child { padding-top: 0; }
   }
 
   @media (min-width: 1024px) {
