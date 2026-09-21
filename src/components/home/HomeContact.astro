@@ -6,8 +6,9 @@ import { site } from '../../data/site';
 import { url } from '../../lib/url';
 ---
 
-<!-- Pagina se inchide cum s-a deschis: pe benzile de LED de sub insula din hero. -->
-<section class="hc" aria-labelledby="contact-title" data-reveal="light">
+<!-- Pagina se inchide cum s-a deschis: pe benzile de LED de sub insula din hero.
+     Lumina sta sus in banda, textul imediat sub ea, pe negru; banda nu trece de ~520px. -->
+<section class="hc" aria-labelledby="contact-title">
   <Image
     src={resolveImage('hero-led', 'glow.jpg')}
     alt=""
@@ -18,9 +19,9 @@ import { url } from '../../lib/url';
   />
 
   <div class="container hc__inner" data-reveal>
-    <div>
+    <div class="hc__text">
       <span class="numeral" aria-hidden="true">VII</span>
-      <h2 id="contact-title" class="hc__title reveal-title">Contact</h2>
+      <h2 id="contact-title" class="hc__title">Contact</h2>
       <p class="hc__lead">
         Spune-ne ce ai în cap. Măsurătorile sunt gratuite în {site.city} și nu te obligă la nimic.
       </p>
@@ -28,79 +29,79 @@ import { url } from '../../lib/url';
 
     <div class="hc__actions">
       <a href={site.phoneHref} class="hc__phone">{site.phoneDisplay}</a>
-      <div class="hc__buttons">
-        <Button href={url('/contact')}>Cere ofertă</Button>
-        <Button href={`https://wa.me/${site.whatsappNumber}`} variant="outline">Scrie pe WhatsApp</Button>
-      </div>
+      <Button href={url('/contact')}>Cere ofertă</Button>
+      <Button href={`https://wa.me/${site.whatsappNumber}`} variant="outline">Scrie pe WhatsApp</Button>
     </div>
   </div>
 </section>
 
 <style>
   .hc {
+    --glow-h: clamp(200px, 26vw, 380px);
     position: relative;
     isolation: isolate;
     overflow: clip;
-    min-height: clamp(520px, 62vw, 760px);
-    display: grid;
-    align-items: start;
-    padding-block: clamp(72px, 9vw, 128px);
+    padding-block: calc(var(--glow-h) * 0.7) 64px;
     border-top: 1px solid var(--rule);
   }
 
-  /* Banda luminata sta jos; textul are deasupra ei fundalul negru al corpurilor. */
+  /* Fotografia nu e intunecata; doar marginea de jos se topeste in fundal. */
   .hc__bg {
     position: absolute;
-    inset: auto 0 0;
+    inset: 0 0 auto;
     z-index: -1;
     width: 100%;
-    height: 78%;
+    height: var(--glow-h);
     object-fit: cover;
     object-position: 50% 40%;
-    mask: linear-gradient(180deg, transparent, #000 35%);
+    mask: linear-gradient(180deg, #000 55%, transparent);
   }
 
   .hc__inner {
     display: grid;
-    gap: 40px;
-    align-items: end;
+    gap: 32px;
   }
 
   .hc__title {
-    margin-top: 16px;
-    font-size: clamp(2.5rem, 1.6rem + 4vw, 5rem);
+    margin-top: 12px;
+    font-size: clamp(2.5rem, 1.6rem + 4vw, 4.5rem);
   }
 
   .hc__lead {
-    margin-top: 16px;
+    margin-top: 12px;
     max-width: 44ch;
     color: var(--text-body);
   }
 
-  .hc__actions { display: grid; gap: 24px; }
+  .hc__actions {
+    display: grid;
+    gap: 12px;
+  }
 
   .hc__phone {
     font-family: var(--font-serif);
     font-size: var(--fs-h2);
     line-height: 1;
+    margin-bottom: 12px;
     transition: color var(--dur) var(--ease);
   }
 
-  .hc__phone:hover { color: var(--accent); }
+  .hc__phone:hover,
+  .hc__phone:focus-visible { color: var(--accent); }
 
-  .hc__buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
+  /* Telefonul mare si cele doua butoane pe acelasi rand, centrate pe verticala. */
+  @media (min-width: 768px) {
+    .hc__actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px 12px;
+    }
+
+    .hc__phone { margin: 0 20px 0 0; }
   }
 
   @media (min-width: 1024px) {
-    .hc__inner { grid-template-columns: 1fr auto; gap: 80px; }
-  }
-
-  /* Pe ecran ingust textul e inalt; banda de lumina coboara sub butoane, nu in spatele lor. */
-  @media (max-width: 1023px) {
-    .hc { padding-bottom: clamp(220px, 50vw, 360px); }
-    .hc__bg { height: clamp(260px, 60vw, 420px); }
+    .hc__inner { grid-template-columns: 1fr auto; align-items: end; gap: 64px; }
   }
 </style>

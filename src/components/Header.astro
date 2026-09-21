@@ -36,15 +36,25 @@ const here = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, 
       }
     </nav>
 
-    <div class="flex items-center gap-3 sm:gap-5 shrink-0">
-      <a
-        href={site.phoneHref}
-        class="hidden sm:block text-[0.95rem] hover:text-brass transition-colors duration-200"
-      >
+    <div class="flex items-center gap-2 sm:gap-5 shrink-0">
+      <a href={site.phoneHref} class="nav-link hidden md:block">
         {site.phoneDisplay}
       </a>
 
-      <Button href={url('/contact')} class="!h-11 !px-5 text-[0.95rem] xl:!h-13 xl:!px-7">
+      <!-- Sub 768px numarul ramane in bara, ca iconita de 44px. -->
+      <a href={site.phoneHref} class="header__call" aria-label={`Sună: ${site.phoneDisplay}`}>
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M6.6 3.5h3l1.5 4.2-2 1.3a11 11 0 0 0 5.9 5.9l1.3-2 4.2 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2Z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </a>
+
+      <Button href={url('/contact')} class="text-[0.95rem] max-[389px]:!px-4">
         Cere ofertă
       </Button>
 
@@ -75,11 +85,13 @@ const here = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, 
       border-color var(--dur) var(--ease);
   }
 
+  /* Transparent peste hero; cu fundal, blur si o linie fina cand pagina a pornit la vale. */
   [data-header][data-overlay='false'],
   [data-header].is-scrolled {
-    background: color-mix(in srgb, var(--color-ink) 92%, transparent);
-    backdrop-filter: blur(10px);
-    border-bottom-color: var(--color-line);
+    background: rgb(12 12 12 / 0.78);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    border-bottom-color: rgb(255 255 255 / 0.06);
   }
 
   .nav-link {
@@ -91,9 +103,11 @@ const here = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, 
   }
 
   .nav-link:hover,
+  .nav-link:focus-visible,
   .nav-link[aria-current='page'] { color: var(--color-bone); }
 
-  .nav-link[aria-current='page']::after {
+  /* Aceeasi subliniere pentru hover, focus si pagina curenta; la hover creste din stanga. */
+  .nav-link::after {
     content: '';
     position: absolute;
     left: 0;
@@ -101,6 +115,30 @@ const here = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, 
     bottom: -8px;
     height: 1px;
     background: var(--color-brass);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after,
+  .nav-link[aria-current='page']::after { transform: scaleX(1); }
+
+  .header__call {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    color: var(--color-bone);
+    transition: color var(--dur) var(--ease);
+  }
+
+  .header__call:hover,
+  .header__call:focus-visible { color: var(--color-brass); }
+
+  @media (min-width: 768px) {
+    .header__call { display: none; }
   }
 
   .burger,

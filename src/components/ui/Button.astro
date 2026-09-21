@@ -9,14 +9,15 @@ interface Props {
 
 const { href, variant = 'primary', type = 'button', class: cls = '', ...rest } = Astro.props;
 
+// Un singur set peste tot: 48px inaltime, 24px lateral, radius 8px.
 const base =
-  'inline-flex items-center justify-center gap-2 font-medium transition-colors duration-200 ease-out';
+  'inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap transition-colors duration-200 ease-out';
 
 const variants: Record<string, string> = {
-  primary: 'h-13 px-7 rounded-[10px] bg-brass text-ink hover:bg-brass-hi',
+  primary: 'h-12 px-6 rounded-[8px] bg-brass text-ink hover:bg-brass-hi focus-visible:bg-brass-hi',
   outline:
-    'h-13 px-7 rounded-[10px] border border-bone/25 text-bone hover:border-brass hover:text-brass',
-  link: 'text-bone underline decoration-brass decoration-1 underline-offset-[6px] hover:text-brass',
+    'h-12 px-6 rounded-[8px] border border-bone/70 text-bone hover:border-brass hover:text-brass focus-visible:border-brass focus-visible:text-brass',
+  link: 'min-h-12 text-bone underline decoration-brass decoration-1 underline-offset-[7px] hover:text-brass focus-visible:text-brass',
 };
 
 const Tag = href ? 'a' : 'button';

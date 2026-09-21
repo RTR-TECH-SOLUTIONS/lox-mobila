@@ -13,7 +13,7 @@
   --font-serif: "Newsreader Variable", "Iowan Old Style", Georgia, serif;
   --font-sans: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  --radius-ui: 6px;
+  --radius-ui: 8px;
   --radius-img: 4px;
 }
 
@@ -21,7 +21,7 @@
   --header-h: 64px;
   --gutter: 20px;
   --container: 1280px;
-  --section-y: clamp(72px, 10vw, 144px);
+  --section-y: 48px;
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --dur: 200ms;
 
@@ -45,5 +45,10 @@
   :root {
     --header-h: 72px;
     --gutter: 48px;
+    --section-y: 64px;
   }
+}
+
+@media (min-width: 1024px) {
+  :root { --section-y: 96px; }
 }

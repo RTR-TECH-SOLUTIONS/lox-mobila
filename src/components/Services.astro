@@ -28,7 +28,7 @@ const lead =
     teaser ? (
       <div class="bento">
         {services.map((s, i) => (
-          <article class="bento__item" data-size={s.size} data-reveal="clip" style={`--i: ${i % 4}`}>
+          <article class="bento__item" data-size={s.size} data-reveal style={`--i: ${i % 4}`}>
             <Image
               src={resolveImage('services', s.image)}
               alt={`${s.title} la comandă`}
@@ -36,6 +36,7 @@ const lead =
               sizes="(min-width: 900px) 50vw, 100vw"
               loading="lazy"
             />
+            <span class="photo-shade" aria-hidden="true" />
             <div class="bento__body">
               <h3>{s.title}</h3>
               <p class="bento__line">{s.line}</p>
@@ -47,7 +48,7 @@ const lead =
   <div class="svc svc--full">
     {
       services.map((s, i) => (
-        <figure class="svc__item" data-reveal="clip" style={`--i: ${i % 3}`}>
+        <figure class="svc__item" data-reveal style={`--i: ${i % 3}`}>
           <div class="svc__media">
             <Image
               src={resolveImage('services', s.image)}
@@ -76,64 +77,58 @@ const lead =
     gap: 12px;
   }
 
-  @media (min-width: 900px) {
-    .bento {
-      grid-template-columns: repeat(12, 1fr);
-      /* 6 randuri de 130px = exact inaltimea a trei carduri `md` stivuite, deci
-         coloana mare si cea mica se termina la aceeasi cota. */
-      grid-auto-rows: 130px;
-    }
-
-    /* Bucatariile ocupa toata coloana din stanga; restul se stivuiesc in dreapta. */
-    .bento__item[data-size='lg'] { grid-column: span 6; grid-row: span 6; }
-    .bento__item[data-size='md'],
-    .bento__item[data-size='sm'] { grid-column: span 6; grid-row: span 2; }
-  }
-
   .bento__item {
     position: relative;
     overflow: hidden;
     border-radius: var(--radius-img);
-    min-height: 260px;
+    aspect-ratio: 4 / 3;
     isolation: isolate;
-    display: grid;
-    align-items: end;
   }
 
   .bento__item :global(img) {
     position: absolute;
     inset: 0;
-    z-index: -2;
+    z-index: -1;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 600ms var(--ease);
+    transition: transform 400ms var(--ease);
   }
 
-  /* Platou de opacitate fixa sub text, ca in orice poza contrastul sa fie acelasi. */
-  .bento__item::after {
-    content: '';
+  .bento__item:hover :global(img) { transform: scale(1.02); }
+
+  /* Textul sta lipit de muchia de jos, indiferent de inaltimea cardului. */
+  .bento__body {
     position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: linear-gradient(
-      180deg,
-      transparent 30%,
-      rgb(12 12 12 / 0.5) 58%,
-      rgb(12 12 12 / 0.86) 76%,
-      rgb(12 12 12 / 0.86) 100%
-    );
+    inset: auto 0 0;
+    padding: 24px;
   }
 
-  .bento__item:hover :global(img) { transform: scale(1.03); }
-
-  .bento__body { padding: 24px; }
+  .bento h3 { font-size: 1.5rem; }
 
   .bento__line {
-    margin-top: 8px;
-    max-width: 38ch;
-    color: var(--color-bone-2);
+    margin-top: 6px;
+    max-width: 40ch;
+    color: rgb(242 239 234 / 0.82);
     font-size: 0.95rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (min-width: 900px) {
+    /* Toate randurile au aceeasi inaltime: bucataria ocupa trei, restul cate unul. */
+    .bento {
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: clamp(220px, 19vw, 280px);
+    }
+
+    .bento__item { aspect-ratio: auto; }
+    .bento__item[data-size='lg'] { grid-row: span 3; }
+    .bento__item[data-size='lg'] .bento__body { padding: 32px; }
+    .bento__item[data-size='lg'] h3 { font-size: var(--fs-h2); }
   }
 
   /* ---------- Pagina completa: legenda sub poza ---------- */
@@ -153,15 +148,15 @@ const lead =
     height: 100%;
     object-fit: cover;
     aspect-ratio: 4 / 5;
-    transition: transform 600ms var(--ease);
+    transition: transform 400ms var(--ease);
   }
 
-  .svc__item:hover .svc__media :global(img) { transform: scale(1.03); }
+  .svc__item:hover .svc__media :global(img) { transform: scale(1.02); }
 
-  figcaption { margin-top: 20px; }
+  .svc figcaption { margin-top: 20px; }
 
   /* Sub titlu, o linie de alama care se intinde la hover. */
-  h3 {
+  .svc h3 {
     display: inline-block;
     background: linear-gradient(var(--accent), var(--accent)) 0 100% / 0 1px no-repeat;
     padding-bottom: 4px;

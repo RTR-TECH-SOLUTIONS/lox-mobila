@@ -1,8 +1,7 @@
 ---
 /**
- * Paragraf care se aprinde cuvant cu cuvant la scroll (scripts/words.ts).
- * Cuvintele intre *asteriscuri* ies in evidenta (italic, alama), ca „milimetrul" din hero.
- * Fara JS sau cu miscare redusa textul e integral vizibil.
+ * Paragraf cu cuvinte scoase in evidenta: textul intre *asteriscuri* iese italic, pe alama,
+ * ca „milimetrul" din hero. Apare dintr-o bucata, cu reveal-ul obisnuit.
  */
 interface Props {
   text: string;
@@ -12,25 +11,10 @@ interface Props {
 
 const { text, as: Tag = 'p', class: cls } = Astro.props;
 
-// "a *b c* d" -> [{w:'a'},{w:'b',em:true},{w:'c',em:true},{w:'d'}]
-const words: { w: string; em: boolean }[] = [];
-text.split(/(\*[^*]+\*)/).forEach((part) => {
-  const em = part.startsWith('*');
-  part
-    .replace(/\*/g, '')
-    .split(/\s+/)
-    .filter(Boolean)
-    .forEach((w) => words.push({ w, em }));
-});
+const parts = text.split(/(\*[^*]+\*)/).filter(Boolean).map((part) => ({
+  text: part.replace(/\*/g, ''),
+  em: part.startsWith('*'),
+}));
 ---
 
-<Tag class={cls} data-words>
-  {
-    words.map(({ w, em }, i) => (
-      <>
-        {em ? <em class="w w--em">{w}</em> : <span class="w">{w}</span>}
-        {i < words.length - 1 ? ' ' : ''}
-      </>
-    ))
-  }
-</Tag>
+<Tag class={cls}>{parts.map((p) => (p.em ? <em class="lit-em">{p.text}</em> : p.text))}</Tag>

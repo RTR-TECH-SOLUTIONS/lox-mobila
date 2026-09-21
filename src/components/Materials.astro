@@ -1,5 +1,6 @@
 ---
 import SectionHeading from './ui/SectionHeading.astro';
+import PriceScale from './ui/PriceScale.astro';
 import { materials, hardwareNote } from '../data/materials';
 ---
 
@@ -34,10 +35,7 @@ import { materials, hardwareNote } from '../data/materials';
               <td data-label="Umezeală">{m.moisture}</td>
               <td data-label="Unde îl folosim">{m.bestFor}</td>
               <td data-label="Preț">
-                <span class="price" aria-hidden="true">
-                  {[1, 2, 3, 4].map((i) => <i class:list={['price__tick', i <= m.price && 'is-on']} />)}
-                </span>
-                <span class="sr-only">Nivel de preț {m.price} din 4</span>
+                <PriceScale level={m.price} />
               </td>
             </tr>
           ))
@@ -81,43 +79,23 @@ import { materials, hardwareNote } from '../data/materials';
     padding-right: 32px;
   }
 
-  @media (min-width: 800px) {
+  @media (min-width: 900px) {
     /* Numele materialului sta pe un rand; altfel "PAL melaminat" se rupe urat. */
     .mat__name { width: 1%; white-space: nowrap; }
   }
 
-  .price { display: inline-flex; gap: 4px; padding-top: 8px; }
-
-  .price__tick {
-    display: block;
-    width: 14px;
-    height: 2px;
-    background: var(--rule);
-  }
-
-  .price__tick.is-on { background: var(--accent); }
+  .mat td :global(.price) { margin-top: 10px; }
 
   .hardware {
     margin-top: 48px;
-    max-width: 70ch;
+    max-width: 60ch;
     padding-left: 24px;
     border-left: 1px solid var(--accent);
     color: var(--text-body);
   }
 
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  /* Sub 800px tabelul devine lista de definitii, ca sa nu scrolleze orizontal. */
-  @media (max-width: 799px) {
+  /* Sub 900px fiecare rand devine un card cu eticheta si valoare. */
+  @media (max-width: 899px) {
     .mat thead {
       position: absolute;
       width: 1px;
@@ -126,7 +104,15 @@ import { materials, hardwareNote } from '../data/materials';
       clip-path: inset(50%);
     }
 
-    .mat tbody tr { display: block; padding-block: 24px; }
+    .mat tbody { display: grid; gap: 12px; }
+
+    .mat tbody tr {
+      display: block;
+      padding: 24px;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-img);
+      background: var(--color-ink-2);
+    }
 
     .mat th[scope='row'] {
       display: block;
@@ -136,9 +122,12 @@ import { materials, hardwareNote } from '../data/materials';
     .mat td {
       display: grid;
       grid-template-columns: 120px 1fr;
+      align-items: baseline;
       gap: 16px;
-      padding: 4px 0;
+      padding: 6px 0;
     }
+
+    .mat td :global(.price) { margin-top: 0; }
 
     .mat td::before {
       content: attr(data-label);

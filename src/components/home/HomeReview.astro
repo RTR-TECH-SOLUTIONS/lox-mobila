@@ -1,10 +1,7 @@
 ---
 import SectionHeading from '../ui/SectionHeading.astro';
-import LitText from '../ui/LitText.astro';
 import { reviews } from '../../data/reviews';
 import { site } from '../../data/site';
-
-const r = reviews[0];
 ---
 
 <section class="section container" aria-labelledby="recenzii-title">
@@ -12,28 +9,151 @@ const r = reviews[0];
     n="VI"
     title="Recenzii"
     id="recenzii-title"
-    more={{ href: site.googleReviewsUrl, label: 'Toate pe Google' }}
+    more={{ href: site.googleReviewsUrl, label: 'Toate pe Google', external: true }}
   />
 
-  <figure class="hr">
-    <LitText as="blockquote" text={`„${r.text}”`} />
-    <figcaption class="label" data-reveal>
-      {r.author} &middot; {r.project}, {r.district}
-    </figcaption>
-  </figure>
+  <!-- Carusel: fara JS cele trei citate stau unul sub altul; cu JS se suprapun si se schimba. -->
+  <div class="hr" data-reviews data-reveal aria-roledescription="carusel" aria-label="Recenzii">
+    <div class="hr__stage">
+      {
+        reviews.map((r, i) => (
+          <figure
+            class:list={['hr__slide', i === 0 && 'is-active']}
+            data-review
+            aria-roledescription="recenzie"
+            aria-label={`${i + 1} din ${reviews.length}`}
+          >
+            <blockquote>„{r.text}”</blockquote>
+            <figcaption class="label">
+              {r.author} &middot; {r.project}, {r.district}
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+
+    <div class="hr__dots" data-review-dots hidden>
+      {
+        reviews.map((r, i) => (
+          <button
+            type="button"
+            class="hr__dot"
+            aria-label={`Recenzia ${i + 1}: ${r.author}`}
+            aria-current={i === 0 ? 'true' : undefined}
+          />
+        ))
+      }
+    </div>
+  </div>
 </section>
 
 <style>
   .hr { text-align: center; }
 
-  .hr :global(blockquote) {
+  .hr__stage { display: grid; gap: 64px; }
+
+  .hr blockquote {
     max-width: 26ch;
     margin-inline: auto;
     font-family: var(--font-serif);
-    font-size: clamp(1.5rem, 1.1rem + 2vw, 3rem);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
     line-height: 1.2;
     text-wrap: balance;
   }
 
-  .hr figcaption { margin-top: 28px; }
+  .hr figcaption { margin-top: 24px; }
+
+  /* Cu JS: toate in aceeasi celula, inaltimea e a celui mai lung, deci nimic nu sare. */
+  :global(.js-reviews) .hr__stage { gap: 0; }
+  :global(.js-reviews) .hr__slide {
+    grid-area: 1 / 1;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 400ms var(--ease), visibility 0s 400ms;
+  }
+
+  :global(.js-reviews) .hr__slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 400ms var(--ease) 100ms, visibility 0s;
+  }
+
+  .hr__dots {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 32px;
+  }
+
+  .hr__dots[hidden] { display: none; }
+
+  /* Punctul are 8px, zona de apasare 44px. */
+  .hr__dot {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+  }
+
+  .hr__dot::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1px solid rgb(242 239 234 / 0.5);
+    transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+
+  .hr__dot:hover::before { border-color: var(--color-brass); }
+
+  .hr__dot[aria-current='true']::before {
+    background: var(--color-brass);
+    border-color: var(--color-brass);
+  }
 </style>
+
+<script>
+  // Autoplay la 7s, oprit cat timp mouse-ul sau focusul e pe carusel si cu miscare redusa.
+  const DELAY = 7000;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-reviews]').forEach((root) => {
+    const slides = [...root.querySelectorAll<HTMLElement>('[data-review]')];
+    const dotsWrap = root.querySelector<HTMLElement>('[data-review-dots]')!;
+    const dots = [...dotsWrap.querySelectorAll<HTMLButtonElement>('button')];
+    if (slides.length < 2) return;
+
+    document.documentElement.classList.add('js-reviews');
+    dotsWrap.hidden = false;
+
+    let i = 0;
+    let timer = 0;
+    let paused = false;
+
+    const show = (n: number) => {
+      i = (n + slides.length) % slides.length;
+      slides.forEach((s, k) => {
+        s.classList.toggle('is-active', k === i);
+        s.setAttribute('aria-hidden', String(k !== i));
+      });
+      dots.forEach((d, k) => d.setAttribute('aria-current', String(k === i)));
+    };
+
+    const schedule = () => {
+      clearTimeout(timer);
+      if (!reduce && !paused) timer = window.setTimeout(() => (show(i + 1), schedule()), DELAY);
+    };
+
+    const pause = () => ((paused = true), clearTimeout(timer));
+    const resume = () => ((paused = false), schedule());
+
+    dots.forEach((d, k) => d.addEventListener('click', () => (show(k), schedule())));
+    root.addEventListener('mouseenter', pause);
+    root.addEventListener('mouseleave', resume);
+    root.addEventListener('focusin', pause);
+    root.addEventListener('focusout', resume);
+
+    show(0);
+    schedule();
+  });
+</script>

@@ -21,14 +21,12 @@ const lightboxImages = await buildLightboxImages(project);
   data-project
   data-category={project.category}
   data-reveal
-  style={`view-transition-name: p-${project.slug}`}
 >
   <button
     type="button"
     class="card__media"
     data-lightbox-open
     data-cursor="Vezi"
-   
     data-images={JSON.stringify(lightboxImages)}
     aria-label={`Deschide galeria: ${alt}`}
   >
@@ -66,10 +64,11 @@ const lightboxImages = await buildLightboxImages(project);
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 600ms var(--ease);
+    transition: transform 400ms var(--ease);
   }
 
-  .card__media:hover :global(img) { transform: scale(1.03); }
+  .card__media:hover :global(img),
+  .card__media:focus-visible :global(img) { transform: scale(1.02); }
 
   .card__head {
     display: flex;

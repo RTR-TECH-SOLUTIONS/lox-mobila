@@ -29,7 +29,7 @@ const filters = [
 
   <p data-filter-status class="sr-only" aria-live="polite"></p>
 
-  <div class="grid-projects">
+  <div class="grid-projects" data-filter-grid>
     {projects.map((p) => <ProjectCard project={p} />)}
   </div>
 </div>
@@ -50,18 +50,23 @@ const filters = [
     transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
   }
 
-  .filters__btn:hover { color: var(--color-bone); }
+  .filters__btn:hover,
+  .filters__btn:focus-visible { color: var(--color-bone); border-bottom-color: rgb(183 150 107 / 0.5); }
 
   .filters__btn[aria-pressed='true'] {
     color: var(--color-bone);
     border-bottom-color: var(--color-brass);
   }
 
+  /* La filtrare grila se stinge 200ms, se reaseaza nevazuta si revine. */
   .grid-projects {
+    transition: opacity 200ms var(--ease);
     display: grid;
     gap: 56px 32px;
     grid-template-columns: 1fr;
   }
+
+  .grid-projects.is-fading { opacity: 0; }
 
   @media (min-width: 700px) {
     .grid-projects { grid-template-columns: repeat(2, 1fr); }
