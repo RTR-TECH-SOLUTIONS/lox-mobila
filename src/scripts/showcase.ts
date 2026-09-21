@@ -73,12 +73,26 @@ if (root) {
 
   const scrollRange = () => root.offsetHeight - window.innerHeight;
 
+  // Cand scroll-ul se opreste intre doua panouri, il ducem pe cel mai apropiat,
+  // ca in fereastra sa nu ramana jumatate din doua proiecte.
+  let settle = 0;
+  const snap = () => {
+    const range = scrollRange();
+    const top = root.getBoundingClientRect().top;
+    if (!pinned || range <= 0 || top >= 0 || -top >= range) return;
+    const to = stops[nearest(target)]!;
+    if (Math.abs(to - target) < 2) return;
+    window.scrollTo({ top: window.scrollY + top + (max ? to / max : 0) * range, behavior: 'smooth' });
+  };
+
   const onScroll = () => {
     if (!pinned) return;
     const range = scrollRange();
     const progress = range > 0 ? clamp(-root.getBoundingClientRect().top / range, 0, 1) : 0;
     target = progress * max;
     if (!raf) raf = requestAnimationFrame(tick);
+    clearTimeout(settle);
+    settle = window.setTimeout(snap, 180);
   };
 
   const onNativeScroll = () => {
@@ -87,8 +101,15 @@ if (root) {
 
   const measure = () => {
     const edge = parseFloat(getComputedStyle(track).paddingLeft) || 0;
-    max = Math.max(0, track.scrollWidth - viewport.clientWidth);
-    stops = panels.map((p) => clamp(p.offsetLeft - edge, 0, max));
+    if (pinned) {
+      // Fixat: panourile au latimea containerului, deci pasul i = i × (latime + gap)
+      // si cursa se opreste exact cand ultimul panou ajunge la muchie.
+      stops = panels.map((p) => p.offsetLeft - edge);
+      max = stops[stops.length - 1]!;
+    } else {
+      max = Math.max(0, track.scrollWidth - viewport.clientWidth);
+      stops = panels.map((p) => clamp(p.offsetLeft - edge, 0, max));
+    }
     centers = panels.map((p) => p.offsetLeft + p.offsetWidth / 2);
     const length = Math.min(max * SCROLL_FACTOR, (panels.length - 1) * window.innerHeight * PER_SLIDE);
     root.style.height = pinned ? `${window.innerHeight + length}px` : '';

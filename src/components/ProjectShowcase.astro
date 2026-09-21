@@ -102,9 +102,11 @@ const panels = await Promise.all(
 </section>
 
 <style>
+  /* 100cqw = latimea paginii fara bara de scroll, ca --edge sa cada exact pe muchia .wrap. */
   .showcase {
-    --edge: max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)));
+    --edge: max(var(--gutter), calc((100cqw - var(--container)) / 2 + var(--gutter)));
     position: relative;
+    container-type: inline-size;
   }
 
   .showcase__sticky { padding-block: var(--section-y); }
@@ -207,10 +209,7 @@ const panels = await Promise.all(
     margin-block: 18px;
   }
 
-  .panel--end {
-    width: min(70vw, 360px);
-    align-content: center;
-  }
+  .panel--end { width: min(70vw, 360px); }
 
   @media (min-width: 700px) {
     .panel { width: min(85vw, 640px); }
@@ -244,13 +243,13 @@ const panels = await Promise.all(
   .showcase.is-pinned :global(.sh) { margin-bottom: clamp(20px, 3.5vh, 40px); }
   .showcase.is-pinned :global(.sh__title) { font-size: min(var(--fs-h2), 6.2vh); }
 
-  /* Fereastra se taie la muchia containerului: panoul care a trecut nu mai iese in stanga ecranului. */
+  /* Fereastra se taie pe ambele muchii ale containerului: se vede un singur proiect. */
   .showcase.is-pinned .showcase__viewport {
     flex: 1;
     min-height: 0;
     overflow: hidden;
     scroll-snap-type: none;
-    clip-path: inset(0 0 0 var(--edge));
+    clip-path: inset(0 var(--edge));
   }
 
   .showcase.is-pinned .showcase__track {
@@ -259,7 +258,9 @@ const panels = await Promise.all(
   }
 
   /* Randul trebuie sa fie 1fr: cu `auto`, height: 100% pe imagine nu are la ce se raporta. */
+  /* Un panou = latimea de continut a containerului, deci un pas = latime + gap. */
   .showcase.is-pinned .panel {
+    width: calc(min(100cqw, var(--container)) - 2 * var(--gutter));
     height: 100%;
     grid-template-rows: minmax(0, 1fr);
     align-content: stretch;
@@ -277,6 +278,6 @@ const panels = await Promise.all(
 
   .showcase.is-pinned .panel--end {
     grid-template-rows: auto;
-    align-content: center;
+    align-content: start;
   }
 </style>
