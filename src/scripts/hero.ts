@@ -1,10 +1,10 @@
-// Aprinde LED-urile din hero pe rand. Textul e vizibil de la inceput; .is-lit marcheaza finalul.
+// Aprinde LED-urile din hero pe rand; .is-lit la final aduce voalul si textul.
 // Porneste doar dupa ce toate straturile sunt decodate, altfel un strat intarziat
 // ar sari peste aprindere.
 
 const hero = document.querySelector<HTMLElement>('[data-hero]');
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const TEXT_AT = 3900;
+const TEXT_AT = 3500; // ultimul strat (amb) porneste la 2800 si se termina pe la 3700
 const FAILSAFE = 6000;
 
 if (hero && !reduce) {

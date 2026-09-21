@@ -60,17 +60,15 @@ const pictures = await Promise.all(
   <div class="hero__veil" aria-hidden="true"></div>
 
   <div class="wrap hero__inner">
-    <h1 id="hero-title">Mobilă făcută<br />pe <em>milimetrul</em> tău.</h1>
-    <p class="hero__lead">Bucătării, dressinguri și mobilier la comandă în {site.city}.</p>
+    <h1 id="hero-title">De la măsurători <br />la montaj, în <em>atelierul</em> nostru.</h1>
+    <p class="hero__lead">
+      Bucătării, dressinguri și mobilier la comandă în {site.city}, făcute pe cotele casei tale,
+      nu pe ale unui catalog.
+    </p>
     <div class="hero__cta">
       <Button href={url('/contact')}>Cere ofertă</Button>
       <Button href={url('/proiecte')} variant="outline">Vezi proiectele</Button>
     </div>
-    <ul class="hero__chips">
-      <li>Proiectare 3D</li>
-      <li>Atelier propriu în {site.city}</li>
-      <li>Montaj inclus</li>
-    </ul>
   </div>
 </section>
 
@@ -112,9 +110,18 @@ const pictures = await Promise.all(
       rgb(0 0 0 / 0.45);
   }
 
+  /* Acelasi spatiu sus si jos, ca textul sa stea exact la mijlocul ecranului. */
   .hero__inner {
-    padding-block: calc(var(--header-h) + 32px) 48px;
+    padding-block: calc(var(--header-h) + 32px);
     text-align: center;
+  }
+
+  .hero__veil,
+  .hero__inner { transition: opacity 800ms var(--ease); }
+
+  /* Pe ecran ingust ruptura fixa lasa „nostru." singur pe rand; acolo echilibreaza browserul. */
+  @media (max-width: 639px) {
+    .hero h1 br { display: none; }
   }
 
   .hero h1 em {
@@ -123,7 +130,8 @@ const pictures = await Promise.all(
   }
 
   .hero__lead {
-    margin-top: 18px;
+    max-width: 46ch;
+    margin: 18px auto 0;
     color: rgb(242 239 234 / 0.85);
   }
 
@@ -136,27 +144,15 @@ const pictures = await Promise.all(
     margin-top: 32px;
   }
 
-  .hero__chips {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 28px;
-  }
-
-  .hero__chips li {
-    padding: 6px 14px;
-    border: 1px solid rgb(242 239 234 / 0.22);
-    border-radius: 999px;
-    font-size: 0.8125rem;
-    color: rgb(242 239 234 / 0.8);
-    background: rgb(12 12 12 / 0.35);
-  }
 
   /* ---------- Aprinderea ----------
-     .is-lighting o pune JS-ul. Fara el (fara JS sau cu reduced motion) scena e deja aprinsa.
-     Textul si butoanele nu asteapta lumina: sunt pe loc de la primul paint. */
+     .is-lighting o pune JS-ul. Fara el (fara JS sau cu reduced motion) scena e deja aprinsa
+     si textul e pe loc. Cu el, bucataria se aprinde intai in plin, apoi (.is-lit) coboara
+     voalul si apare textul. */
   :global(.is-lighting) .hero__light { opacity: 0; }
+
+  :global(.is-lighting:not(.is-lit)) .hero__veil,
+  :global(.is-lighting:not(.is-lit)) .hero__inner { opacity: 0; }
 
   :global(.is-lighting) .hero__light.is-on[data-fx='flicker'] { animation: led-flicker 700ms linear both; }
   :global(.is-lighting) .hero__light.is-on[data-fx='fade'] { animation: led-fade 900ms var(--ease) both; }
@@ -200,10 +196,8 @@ const pictures = await Promise.all(
     to { mask-position: 0 0; }
   }
 
-  /* Pe telefon vertical vine cadrul vertical; textul sta sus, pe corpurile negre,
-     ca rafturile, blatul si plintele sa ramana vizibile dedesubt. */
+  /* Pe telefon vertical vine cadrul vertical; textul sta la mijloc, pe o banda mai intunecata. */
   @media (max-width: 800px) and (orientation: portrait) {
-    .hero { place-items: start center; }
 
     /* Cadrul ocupa toata latimea si coboara cat e el de inalt: taiat pe laturi, ar pierde
        rafturile din stanga si profilul vertical din dreapta. Sub el, podeaua trece in negru. */
@@ -223,10 +217,10 @@ const pictures = await Promise.all(
       background: linear-gradient(180deg, transparent, #000);
     }
 
-    .hero__inner { padding-top: calc(var(--header-h) + 28px); }
     .hero__veil {
       background:
-        linear-gradient(180deg, rgb(0 0 0 / 0.75) 0%, rgb(0 0 0 / 0.55) 45%, rgb(0 0 0 / 0.15) 70%, transparent);
+        linear-gradient(180deg, rgb(0 0 0 / 0.5), transparent 16%),
+        linear-gradient(180deg, transparent 20%, rgb(0 0 0 / 0.55) 40%, rgb(0 0 0 / 0.55) 62%, transparent 82%);
     }
   }
 </style>
