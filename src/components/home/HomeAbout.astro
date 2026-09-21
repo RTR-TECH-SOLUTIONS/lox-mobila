@@ -10,16 +10,16 @@ import { url } from '../../lib/url';
 <section class="section wrap" aria-labelledby="cine-suntem-title">
   <SectionHeading n="I" title="Cine suntem" id="cine-suntem-title" />
 
-  <!-- Fraza si atelierul unul langa altul; cifrele inchid sectiunea pe un rand, ca pe /cine-suntem. -->
-  <div class="ha">
-    <div data-reveal>
-      <LitText
-        class="ha__claim"
-        text="Un perete nu e niciodată drept și o nișă nu are niciodată cât scrie în plan. De aceea măsurăm cu laserul, desenăm fiecare corp *la cotă* și montăm *de probă* în atelier înainte să ajungem la tine."
-      />
-    </div>
+  <!-- Fraza e piesa sectiunii: mare, pe toata latimea, o singura declaratie. -->
+  <div data-reveal>
+    <LitText
+      class="ha__claim"
+      text="Un perete nu e niciodată drept și o nișă nu are niciodată cât scrie în plan. De aceea măsurăm cu laserul, desenăm fiecare corp *la cotă* și montăm *de probă* în atelier înainte să ajungem la tine."
+    />
+  </div>
 
-    <figure class="ha__frame" data-reveal style="--i: 1">
+  <div class="ha">
+    <figure class="ha__frame" data-reveal>
       <div class="ha__media">
         <Image
           src={resolveImage('workshop', 'atelier.jpg')}
@@ -34,40 +34,43 @@ import { url } from '../../lib/url';
       </div>
       <figcaption class="label ha__cap">Atelierul din {site.city}</figcaption>
     </figure>
+
+    <div class="ha__side">
+      <dl class="ha__stats">
+        {
+          site.stats.map((s, i) => (
+            <div class="ha__stat" data-reveal style={`--i: ${i}`}>
+              <dt class="label">{s.label}</dt>
+              <dd class="ha__value tabular-nums">{s.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <a href={url('/cine-suntem')} class="more" data-reveal style="--i: 3">Despre atelier</a>
+    </div>
   </div>
-
-  <dl class="ha__stats">
-    {
-      site.stats.map((s, i) => (
-        <div class="ha__stat" data-reveal style={`--i: ${i}`}>
-          <dt class="label">{s.label}</dt>
-          <dd class="ha__value tabular-nums">{s.value}</dd>
-        </div>
-      ))
-    }
-  </dl>
-
-  <a href={url('/cine-suntem')} class="more ha__more">Despre atelier</a>
 </section>
 
 <style>
-  .ha {
-    display: grid;
-    gap: 32px;
-  }
-
-  .ha :global(.ha__claim) {
-    max-width: 20ch;
+  .section :global(.ha__claim) {
+    max-width: 28ch;
     font-family: var(--font-serif);
-    font-size: clamp(1.75rem, 1rem + 2.4vw, 2rem);
+    font-size: clamp(1.75rem, 1rem + 3vw, 3.75rem);
     line-height: 1.15;
     letter-spacing: -0.015em;
-    text-wrap: pretty;
+    text-wrap: balance;
   }
 
-  .ha :global(.lit-em) {
+  .section :global(.ha__claim .lit-em) {
     font-style: italic;
     color: var(--color-brass-hi);
+  }
+
+  .ha {
+    display: grid;
+    gap: 48px;
+    margin-top: clamp(56px, 7vw, 104px);
   }
 
   .ha__media {
@@ -87,42 +90,39 @@ import { url } from '../../lib/url';
     color: var(--text-2);
   }
 
-  /* Eticheta la stanga, cifra la dreapta, pe aceeasi linie de baza. */
-  .ha__stats {
+  .ha__side {
     display: grid;
-    gap: 0 48px;
-    margin-top: 40px;
+    gap: 32px;
+    align-content: space-between;
   }
 
+  .ha__stats { display: grid; }
+
   .ha__stat {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 24px;
-    padding-block: 20px;
+    display: grid;
+    gap: 8px;
+    padding-block: 22px;
     border-top: 1px solid var(--rule);
   }
 
+  .ha__stat:first-child { border-top: 0; padding-top: 0; }
+
+  /* In HTML eticheta (dt) vine prima; vizual cifra sta deasupra. */
   .ha__value {
-    flex: none;
+    order: -1;
     font-family: var(--font-serif);
-    font-size: var(--fs-h2);
-    line-height: 1;
+    font-size: clamp(3rem, 2rem + 3vw, 5rem);
+    line-height: 0.95;
     white-space: nowrap;
   }
 
-  .ha__more { margin-top: 16px; }
+  @media (max-width: 1023px) {
+    .ha__stats { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .ha__stat { border-top: 0; padding: 0; }
+    .ha__value { font-size: clamp(2rem, 1.2rem + 4vw, 3rem); }
+  }
 
   @media (min-width: 1024px) {
-    .ha {
-      grid-template-columns: 5fr 7fr;
-      gap: 64px;
-      align-items: start;
-    }
-
-    .ha :global(.ha__claim) { font-size: clamp(2rem, 4vw, 3rem); }
-    .ha__img { aspect-ratio: 4 / 3; }
-
-    .ha__stats { grid-template-columns: repeat(3, 1fr); margin-top: 56px; }
+    .ha { grid-template-columns: 7fr 4fr; gap: clamp(48px, 7vw, 112px); align-items: stretch; }
   }
 </style>
