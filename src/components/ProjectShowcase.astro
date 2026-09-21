@@ -2,6 +2,8 @@
 import { Image } from 'astro:assets';
 import SpecList from './ui/SpecList.astro';
 import SectionHeading from './ui/SectionHeading.astro';
+import Button from './ui/Button.astro';
+import { url } from '../lib/url';
 import { resolveImage } from '../lib/images';
 import { buildLightboxImages, projectAlt } from '../lib/lightbox-images';
 import type { Project } from '../data/types';
@@ -92,9 +94,12 @@ const panels = await Promise.all(
         }
 
         <li class="panel panel--end" data-sc-panel>
-          <p class="font-serif text-[var(--fs-h3)] leading-[1.35]">
-            Încă {total - panels.length} lucrări, fiecare cu fișa ei.
-          </p>
+          <div class="end">
+            <span class="panel__n tabular-nums" aria-hidden="true">+{total - panels.length}</span>
+            <p class="end__text">Încă {total - panels.length} lucrări, fiecare cu fișa ei.</p>
+            <hr class="panel__rule" />
+            <Button href={url('/proiecte')}>Toate cele {total} proiecte</Button>
+          </div>
         </li>
       </ol>
     </div>
@@ -143,7 +148,7 @@ const panels = await Promise.all(
 
   .showcase__arrow:disabled { opacity: 0.35; pointer-events: none; }
 
-  /* Modul de baza (sub 1024px, fara JS, miscare redusa): carusel nativ cu scroll-snap. */
+  /* Modul de baza (fara JS, miscare redusa, ecran scund): carusel nativ cu scroll-snap. */
   .showcase__viewport {
     overflow-x: auto;
     scroll-snap-type: x mandatory;
@@ -211,6 +216,15 @@ const panels = await Promise.all(
 
   .panel--end { width: min(70vw, 360px); }
 
+  /* Finalul galeriei: aceeasi asezare ca fisa unui proiect, cu drumul spre toate lucrarile. */
+  .end__text {
+    max-width: 16ch;
+    font-family: var(--font-serif);
+    font-size: var(--fs-h2);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+
   @media (min-width: 700px) {
     .panel { width: min(85vw, 640px); }
   }
@@ -228,7 +242,7 @@ const panels = await Promise.all(
     .panel--end { grid-template-columns: 1fr; width: 400px; }
   }
 
-  /* Modul fixat, activat din JS doar de la 1024px */
+  /* Modul fixat, activat din JS pe orice latime */
   .showcase.is-pinned .showcase__sticky {
     position: sticky;
     top: 0;
@@ -262,7 +276,8 @@ const panels = await Promise.all(
   .showcase.is-pinned .panel {
     width: calc(min(100cqw, var(--container)) - 2 * var(--gutter));
     height: 100%;
-    grid-template-rows: minmax(0, 1fr);
+    /* Pe telefon fisa sta sub poza: poza ia ce ramane din inaltime. */
+    grid-template-rows: minmax(0, 1fr) auto;
     align-content: stretch;
     align-items: stretch;
     overflow: hidden;
@@ -276,8 +291,40 @@ const panels = await Promise.all(
   /* Fisa sta lipita de muchia de sus a imaginii, nu jos cu golul deasupra. */
   .showcase.is-pinned .panel__info { align-self: start; }
 
+  @media (min-width: 1024px) {
+    .showcase.is-pinned .panel { grid-template-rows: minmax(0, 1fr); }
+  }
+
+  /* Fara poza, finalul sta la mijlocul ferestrei, nu sus pe un ecran gol. */
   .showcase.is-pinned .panel--end {
     grid-template-rows: auto;
-    align-content: start;
+    align-content: center;
+    justify-items: center;
+    text-align: center;
   }
+
+  .showcase.is-pinned .end__text { margin-inline: auto; }
+
+  /* Fixat pe telefon: titlul sectiunii urca odata cu pagina si doar galeria ramane pe ecran,
+     cat toata inaltimea de sub header. Fisa e mai stransa, ca poza sa ramana cat mai mare. */
+  @media (max-width: 1023px) {
+    .showcase.is-pinned .showcase__sticky {
+      position: static;
+      display: block;
+      height: 100%;
+      overflow: visible;
+      padding-block: var(--section-y) 0;
+    }
+
+    .showcase.is-pinned .showcase__viewport {
+      position: sticky;
+      top: var(--header-h);
+      height: calc(100svh - var(--header-h) - 20px);
+    }
+
+    .showcase.is-pinned .panel { gap: 14px; }
+    .showcase.is-pinned .panel__n { font-size: 2rem; margin-bottom: 8px; }
+    .showcase.is-pinned .panel__rule { margin-block: 12px; }
+  }
+
 </style>
