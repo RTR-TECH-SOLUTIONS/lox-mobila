@@ -10,14 +10,16 @@ import { url } from '../../lib/url';
 <section class="section container" aria-labelledby="cine-suntem-title">
   <SectionHeading n="I" title="Cine suntem" id="cine-suntem-title" />
 
-  <!-- Fraza e piesa sectiunii: mare, pe toata latimea, se aprinde cuvant cu cuvant. -->
-  <LitText
-    class="ha__claim"
-    text="Un perete nu e niciodată drept și o nișă nu are niciodată cât scrie în plan. De aceea măsurăm cu laserul, desenăm fiecare corp *la cotă* și montăm *de probă* în atelier înainte să ajungem la tine."
-  />
-
+  <!-- Fraza si atelierul unul langa altul; cifrele inchid sectiunea pe un rand, ca pe /cine-suntem. -->
   <div class="ha">
-    <figure class="ha__frame" data-reveal="clip">
+    <div data-reveal>
+      <LitText
+        class="ha__claim"
+        text="Un perete nu e niciodată drept și o nișă nu are niciodată cât scrie în plan. De aceea măsurăm cu laserul, desenăm fiecare corp *la cotă* și montăm *de probă* în atelier înainte să ajungem la tine."
+      />
+    </div>
+
+    <figure class="ha__frame" data-reveal style="--i: 1">
       <Image
         src={resolveImage('workshop', 'atelier.jpg')}
         alt="Atelierul LOX Mobila: masă de debitare CNC cu o placă de MDF pregătită"
@@ -25,50 +27,46 @@ import { url } from '../../lib/url';
         sizes="(min-width: 1024px) 58vw, 100vw"
         loading="lazy"
         class="ha__img"
-        data-parallax="-48"
-        data-parallax-scale="1.14"
+        data-parallax="-32"
+        data-parallax-scale="1.1"
       />
+      <span class="photo-shade" aria-hidden="true"></span>
       <figcaption class="label ha__cap">Atelierul din {site.city}</figcaption>
     </figure>
-
-    <div class="ha__side">
-      <dl class="ha__stats">
-        {
-          site.stats.map((s, i) => (
-            <div class="ha__stat" data-reveal style={`--i: ${i}`}>
-              <dt class="label">{s.label}</dt>
-              <dd class="ha__value tabular-nums" data-countup>
-                {s.value}
-              </dd>
-            </div>
-          ))
-        }
-      </dl>
-
-      <a href={url('/cine-suntem')} class="more" data-reveal style="--i: 3">Despre atelier</a>
-    </div>
   </div>
+
+  <dl class="ha__stats">
+    {
+      site.stats.map((s, i) => (
+        <div class="ha__stat" data-reveal style={`--i: ${i}`}>
+          <dt class="label">{s.label}</dt>
+          <dd class="ha__value tabular-nums">{s.value}</dd>
+        </div>
+      ))
+    }
+  </dl>
+
+  <a href={url('/cine-suntem')} class="more ha__more">Despre atelier</a>
 </section>
 
 <style>
-  :global(.ha__claim) {
-    max-width: 28ch;
-    font-family: var(--font-serif);
-    font-size: clamp(1.75rem, 1rem + 3vw, 3.75rem);
-    line-height: 1.15;
-    letter-spacing: -0.015em;
-    text-wrap: balance;
-  }
-
-  :global(.ha__claim .w--em) {
-    font-style: italic;
-    color: var(--color-brass-hi);
-  }
-
   .ha {
     display: grid;
-    gap: 48px;
-    margin-top: clamp(56px, 7vw, 104px);
+    gap: 32px;
+  }
+
+  .ha :global(.ha__claim) {
+    max-width: 20ch;
+    font-family: var(--font-serif);
+    font-size: clamp(1.75rem, 1rem + 2.4vw, 2rem);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    text-wrap: pretty;
+  }
+
+  .ha :global(.lit-em) {
+    font-style: italic;
+    color: var(--color-brass-hi);
   }
 
   .ha__frame {
@@ -85,45 +83,47 @@ import { url } from '../../lib/url';
 
   .ha__cap {
     position: absolute;
-    left: 20px;
-    bottom: 16px;
+    left: 24px;
+    bottom: 20px;
     color: var(--color-bone);
-    text-shadow: 0 1px 8px rgb(12 12 12 / 0.8);
   }
 
-  .ha__side {
+  /* Eticheta la stanga, cifra la dreapta, pe aceeasi linie de baza. */
+  .ha__stats {
     display: grid;
-    gap: 32px;
-    align-content: space-between;
+    gap: 0 48px;
+    margin-top: 40px;
   }
-
-  .ha__stats { display: grid; }
 
   .ha__stat {
-    display: grid;
-    gap: 8px;
-    padding-block: 22px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    padding-block: 20px;
     border-top: 1px solid var(--rule);
   }
 
-  .ha__stat:first-child { border-top: 0; padding-top: 0; }
-
-  /* In HTML eticheta (dt) vine prima; vizual cifra sta deasupra. */
   .ha__value {
-    order: -1;
+    flex: none;
     font-family: var(--font-serif);
-    font-size: clamp(3rem, 2rem + 3vw, 5rem);
-    line-height: 0.95;
+    font-size: var(--fs-h2);
+    line-height: 1;
     white-space: nowrap;
   }
 
-  @media (max-width: 1023px) {
-    .ha__stats { grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .ha__stat { border-top: 0; padding: 0; }
-    .ha__value { font-size: clamp(2rem, 1.2rem + 4vw, 3rem); }
-  }
+  .ha__more { margin-top: 16px; }
 
   @media (min-width: 1024px) {
-    .ha { grid-template-columns: 7fr 4fr; gap: clamp(48px, 7vw, 112px); align-items: stretch; }
+    .ha {
+      grid-template-columns: 5fr 7fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .ha :global(.ha__claim) { font-size: clamp(2rem, 4vw, 3rem); }
+    .ha__img { aspect-ratio: 4 / 3; }
+
+    .ha__stats { grid-template-columns: repeat(3, 1fr); margin-top: 56px; }
   }
 </style>

@@ -64,14 +64,20 @@ const pictures = await Promise.all(
     <p class="hero__lead">Bucătării, dressinguri și mobilier la comandă în {site.city}.</p>
     <div class="hero__cta">
       <Button href={url('/contact')}>Cere ofertă</Button>
-      <Button href={url('/proiecte')} variant="link">Vezi proiectele</Button>
+      <Button href={url('/proiecte')} variant="outline">Vezi proiectele</Button>
     </div>
+    <ul class="hero__chips">
+      <li>Proiectare 3D</li>
+      <li>Atelier propriu în {site.city}</li>
+      <li>Montaj inclus</li>
+    </ul>
   </div>
 </section>
 
 <style>
   .hero {
     position: relative;
+    min-height: 100vh;
     min-height: max(100svh, 620px);
     display: grid;
     place-items: center;
@@ -94,14 +100,16 @@ const pictures = await Promise.all(
   /* Lumina se aduna peste baza stinsa: toate straturile aprinse = fotografia intreaga. */
   .hero__light { mix-blend-mode: plus-lighter; }
 
-  /* Voalul estompeaza scena cat sa se citeasca textul; header-ul are nevoie de umbra sus. */
+  /* Voalul estompeaza scena cat sa se citeasca textul; header-ul are nevoie de umbra sus,
+     iar butoanele de un gradient de jos, ca sa nu stea pe blatul luminat. */
   .hero__veil {
     position: absolute;
     inset: 0;
     z-index: -1;
     background:
       linear-gradient(180deg, rgb(0 0 0 / 0.5), transparent 18%),
-      rgb(0 0 0 / 0.55);
+      linear-gradient(0deg, rgb(12 12 12 / 0.85) 0%, rgb(12 12 12 / 0.4) 35%, transparent 60%),
+      rgb(0 0 0 / 0.45);
   }
 
   .hero__inner {
@@ -124,16 +132,31 @@ const pictures = await Promise.all(
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 16px 28px;
+    gap: 12px;
     margin-top: 32px;
   }
 
+  .hero__chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 28px;
+  }
+
+  .hero__chips li {
+    padding: 6px 14px;
+    border: 1px solid rgb(242 239 234 / 0.22);
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    color: rgb(242 239 234 / 0.8);
+    background: rgb(12 12 12 / 0.35);
+  }
+
   /* ---------- Aprinderea ----------
-     .is-lighting o pune JS-ul. Fara el (fara JS sau cu reduced motion) scena e deja aprinsa
-     si textul e pe loc. */
+     .is-lighting o pune JS-ul. Fara el (fara JS sau cu reduced motion) scena e deja aprinsa.
+     Textul si butoanele nu asteapta lumina: sunt pe loc de la primul paint. */
   :global(.is-lighting) .hero__light { opacity: 0; }
-  :global(.is-lighting) .hero__veil { opacity: 0; }
-  :global(.is-lighting) .hero__inner > * { opacity: 0; transform: translateY(12px); }
 
   :global(.is-lighting) .hero__light.is-on[data-fx='flicker'] { animation: led-flicker 700ms linear both; }
   :global(.is-lighting) .hero__light.is-on[data-fx='fade'] { animation: led-fade 900ms var(--ease) both; }
@@ -151,19 +174,6 @@ const pictures = await Promise.all(
       led-fade 150ms linear both,
       led-sweep-y 900ms cubic-bezier(0.5, 0, 0.3, 1) both;
   }
-
-  :global(.is-lit) .hero__veil { opacity: 1; transition: opacity 1200ms var(--ease); }
-
-  :global(.is-lit) .hero__inner > * {
-    opacity: 1;
-    transform: none;
-    transition:
-      opacity 900ms var(--ease),
-      transform 900ms var(--ease);
-  }
-
-  :global(.is-lit) .hero__inner > :nth-child(2) { transition-delay: 120ms; }
-  :global(.is-lit) .hero__inner > :nth-child(3) { transition-delay: 240ms; }
 
   /* Un LED real pornește cu o scurta palpaire, nu cu un fade. */
   @keyframes led-flicker {

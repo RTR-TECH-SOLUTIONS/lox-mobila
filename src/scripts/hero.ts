@@ -1,4 +1,4 @@
-// Aprinde LED-urile din hero pe rand, apoi arata textul.
+// Aprinde LED-urile din hero pe rand. Textul e vizibil de la inceput; .is-lit marcheaza finalul.
 // Porneste doar dupa ce toate straturile sunt decodate, altfel un strat intarziat
 // ar sari peste aprindere.
 

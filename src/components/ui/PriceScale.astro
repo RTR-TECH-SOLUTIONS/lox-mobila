@@ -1,0 +1,14 @@
+---
+/** Patru bare de 3px; cele active sunt aurii. Textul complet e in title si pentru cititoare. */
+interface Props {
+  level: number;
+}
+
+const { level } = Astro.props;
+const text = `Nivel de preț ${level} din 4`;
+---
+
+<span class="price" title={text}>
+  {[1, 2, 3, 4].map((i) => <i class:list={[i <= level && 'is-on']} aria-hidden="true" />)}
+  <span class="sr-only">{text}</span>
+</span>

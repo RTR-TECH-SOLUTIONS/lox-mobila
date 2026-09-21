@@ -4,7 +4,7 @@ import Hero from '../components/Hero.astro';
 import HomeAbout from '../components/home/HomeAbout.astro';
 import Services from '../components/Services.astro';
 import ProjectShowcase from '../components/ProjectShowcase.astro';
-import HomeProcess from '../components/home/HomeProcess.astro';
+import Process from '../components/Process.astro';
 import HomeMaterials from '../components/home/HomeMaterials.astro';
 import HomeReview from '../components/home/HomeReview.astro';
 import HomeContact from '../components/home/HomeContact.astro';
@@ -21,7 +21,7 @@ const featured = projects.filter((p) => p.featured);
   <HomeAbout />
   <Services teaser />
   <ProjectShowcase projects={featured} total={projects.length} />
-  <HomeProcess />
+  <Process teaser />
   <HomeMaterials />
   <HomeReview />
   <HomeContact />

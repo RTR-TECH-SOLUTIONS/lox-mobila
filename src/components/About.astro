@@ -12,7 +12,7 @@ const claim =
   <SectionHeading n="I" title="Cine suntem" id="cine-suntem-title" as="h1" />
 
   <div class="about">
-    <figure class="about__frame" data-reveal="clip">
+    <figure class="about__frame" data-reveal>
       <Image
         src={resolveImage('workshop', 'atelier.jpg')}
         alt="Atelierul LOX Mobila: masă de debitare CNC cu o placă de MDF pregătită"
@@ -20,8 +20,8 @@ const claim =
         sizes="(min-width: 1024px) 58vw, 100vw"
         loading="lazy"
         class="about__img"
-        data-parallax="-40"
-        data-parallax-scale="1.12"
+        data-parallax="-32"
+        data-parallax-scale="1.1"
       />
     </figure>
 
@@ -49,7 +49,7 @@ const claim =
       site.stats.map((s) => (
         <div class="about__stat">
           <dt class="label">{s.label}</dt>
-          <dd class="about__value tabular-nums" data-countup>{s.value}</dd>
+          <dd class="about__value tabular-nums">{s.value}</dd>
         </div>
       ))
     }
@@ -93,7 +93,7 @@ const claim =
   .about__stats {
     display: grid;
     gap: 0 48px;
-    margin-top: clamp(48px, 6vw, 80px);
+    margin-top: clamp(40px, 5vw, 56px);
   }
 
   .about__stat {
@@ -101,7 +101,7 @@ const claim =
     align-items: baseline;
     justify-content: space-between;
     gap: 24px;
-    padding-block: 20px;
+    padding-block: 20px 0;
     border-top: 1px solid var(--rule);
   }
 

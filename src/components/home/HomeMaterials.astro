@@ -1,28 +1,43 @@
 ---
 import SectionHeading from '../ui/SectionHeading.astro';
+import PriceScale from '../ui/PriceScale.astro';
+import { materials } from '../../data/materials';
 
 // Numele de furnizori apar deja in fisele proiectelor; aici sunt doar enumerate.
 const brands = ['Egger', 'Blum', 'Hettich'];
 ---
 
-<section class="section bg-ink-2" aria-labelledby="materiale-title">
-  <div class="container">
-    <SectionHeading
-      n="V"
-      title="Materiale"
-      id="materiale-title"
-      more={{ href: '/materiale', label: 'Comparația completă' }}
-    />
+<section class="section container" aria-labelledby="materiale-title">
+  <SectionHeading
+    n="V"
+    title="Materiale"
+    id="materiale-title"
+    more={{ href: '/materiale', label: 'Comparația completă' }}
+  />
 
-    <div class="hm">
-      <p class="hm__text" data-reveal>
+  <div class="hm">
+    <div class="hm__intro" data-reveal>
+      <p class="hm__text">
         Îți arătăm mostrele și îți spunem ce merită și ce nu pentru încăperea ta. O bucătărie și un
         dressing nu cer același material.
       </p>
       <ul class="hm__brands" aria-label="Furnizori">
-        {brands.map((b, i) => <li data-reveal style={`--i: ${i + 1}`}>{b}</li>)}
+        {brands.map((b) => <li>{b}</li>)}
       </ul>
     </div>
+
+    <!-- Tabelul de pe /materiale, strans la trei coloane: material, cum arata, pret. -->
+    <ul class="hm__cards">
+      {
+        materials.map((m, i) => (
+          <li class="hm__card" data-reveal style={`--i: ${i}`}>
+            <h3 class="hm__name">{m.name}</h3>
+            <p class="hm__look">{m.look}</p>
+            <PriceScale level={m.price} />
+          </li>
+        ))
+      }
+    </ul>
   </div>
 </section>
 
@@ -30,11 +45,10 @@ const brands = ['Egger', 'Blum', 'Hettich'];
   .hm {
     display: grid;
     gap: 40px;
-    align-items: center;
   }
 
   .hm__text {
-    max-width: 48ch;
+    max-width: 44ch;
     font-family: var(--font-serif);
     font-size: var(--fs-h3);
     line-height: 1.45;
@@ -43,14 +57,51 @@ const brands = ['Egger', 'Blum', 'Hettich'];
   .hm__brands {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px 48px;
+    align-items: baseline;
+    gap: 8px 0;
+    margin-top: 28px;
     font-family: var(--font-serif);
-    font-size: var(--fs-h2);
-    line-height: 1;
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+    line-height: 1.2;
+    color: rgb(242 239 234 / 0.5);
+  }
+
+  .hm__brands li + li::before {
+    content: '·';
+    margin-inline: 0.5em;
+  }
+
+  .hm__cards {
+    display: grid;
+    gap: 12px;
+  }
+
+  .hm__card {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: 24px;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-img);
+    background: var(--color-ink-2);
+  }
+
+  .hm__name { font-size: var(--fs-h3); }
+
+  .hm__look {
     color: var(--text-2);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+
+  .hm__card :global(.price) { margin-top: auto; }
+
+  @media (min-width: 640px) {
+    .hm__cards { grid-template-columns: repeat(2, 1fr); }
   }
 
   @media (min-width: 1024px) {
-    .hm { grid-template-columns: 1fr auto; gap: 80px; }
+    .hm { grid-template-columns: 4fr 7fr; gap: 64px; align-items: start; }
   }
 </style>

@@ -1,24 +1,33 @@
 ---
 import SectionHeading from './ui/SectionHeading.astro';
 import { processSteps } from '../data/process';
+
+interface Props {
+  /** Pe prima pagina: h2 si link spre /etape, fara textul introductiv. */
+  teaser?: boolean;
+}
+
+const { teaser = false } = Astro.props;
 ---
 
-<section class="section container">
+<section class="section container" aria-labelledby="etape-title">
   <SectionHeading
     n="IV"
     title="Etapele lucrării"
-    as="h1"
-    lead="Șase pași, aceiași de fiecare dată. Știi din prima zi ce urmează și cât durează."
+    id="etape-title"
+    as={teaser ? 'h2' : 'h1'}
+    lead={teaser ? undefined : 'Șase pași, aceiași de fiecare dată. Știi din prima zi ce urmează și cât durează.'}
+    more={teaser ? { href: '/etape', label: 'Pas cu pas' } : undefined}
   />
 
   <ol class="steps">
     {
-      processSteps.map((s) => (
-        <li class="step" data-reveal>
+      processSteps.map((s, i) => (
+        <li class="step" data-reveal style={`--i: ${i % 3}`}>
           <span class="step__n" aria-hidden="true">{s.n}</span>
           <h3 class="step__title">{s.title}</h3>
+          <p class="step__dur">{s.duration}</p>
           <p class="step__text">{s.text}</p>
-          <span class="label step__dur">{s.duration}</span>
         </li>
       ))
     }
@@ -26,36 +35,24 @@ import { processSteps } from '../data/process';
 </section>
 
 <style>
+  /* Separator pe toata latimea intre randuri; fara segmentul scurt de deasupra cifrei. */
   .step {
-    position: relative;
     display: grid;
-    grid-template-columns: 56px 1fr;
-    gap: 4px 24px;
-    padding-block: 28px;
+    grid-template-columns: 48px 1fr;
+    grid-template-areas:
+      'n title'
+      '. dur'
+      '. text';
+    align-items: baseline;
+    gap: 0 16px;
+    padding-block: 24px;
     border-top: 1px solid var(--rule);
   }
 
-  /* Segmentul scurt de alama pe linia de sus: linia de cota de pe o fisa de atelier. */
-  .step::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: -1px;
-    width: 56px;
-    height: 1px;
-    background: var(--accent);
-  }
-
-  :global(.has-reveal) .step::before {
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 900ms var(--ease) 250ms;
-  }
-
-  :global(.has-reveal) .step.is-in::before { transform: scaleX(1); }
+  .step:first-child { border-top: 0; padding-top: 0; }
 
   .step__n {
-    grid-row: span 3;
+    grid-area: n;
     font-family: var(--font-serif);
     font-size: var(--fs-h3);
     color: var(--accent);
@@ -63,25 +60,33 @@ import { processSteps } from '../data/process';
     line-height: 1;
   }
 
-  .step__text {
-    color: var(--text-2);
-    max-width: 56ch;
+  .step__title { grid-area: title; }
+
+  .step__dur {
+    grid-area: dur;
     margin-top: 6px;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgb(242 239 234 / 0.7);
   }
 
-  .step__dur { margin-top: 10px; }
+  .step__text {
+    grid-area: text;
+    margin-top: 10px;
+    max-width: 56ch;
+    color: var(--text-2);
+  }
 
   @media (min-width: 900px) {
     .step {
-      grid-template-columns: 96px minmax(0, 300px) minmax(0, 1fr) auto;
-      align-items: baseline;
+      grid-template-columns: 72px minmax(0, 260px) minmax(0, 1fr) 160px;
+      grid-template-areas: 'n title text dur';
       gap: 0 40px;
-      padding-block: 36px;
+      padding-block: 32px;
     }
 
-    .step::before { width: 96px; }
-    .step__n { grid-row: auto; }
-    .step__text { margin-top: 0; }
     .step__dur { margin-top: 0; text-align: right; }
+    .step__text { margin-top: 0; }
   }
 </style>

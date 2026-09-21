@@ -10,40 +10,68 @@ interface Props {
   id?: string;
   /** `h1` pe pagina sectiunii, `h2` pe prima pagina. */
   as?: 'h1' | 'h2';
-  /** Linkul spre pagina sectiunii, afisat in dreapta titlului pe prima pagina. */
-  more?: { href: string; label: string };
+  /** Linkul spre pagina sectiunii, in dreapta titlului. `external` = link in afara site-ului. */
+  more?: { href: string; label: string; external?: boolean };
 }
 
 const { n, title, lead, id, as: Tag = 'h2', more } = Astro.props;
+const moreHref = more && (more.external ? more.href : url(more.href));
 ---
 
+<!-- Acelasi antet pe prima pagina si pe paginile interioare: cifra, titlu, link, linie. -->
 <header class="sh" data-reveal>
-  <span class="numeral" aria-hidden="true">{n}</span>
-  <div>
-    <Tag id={id} class:list={['reveal-title', Tag === 'h1' && 'sh__h1']}>{title}</Tag>
+  <span class="numeral sh__n" aria-hidden="true">{n}</span>
+  <div class="sh__main">
+    <Tag id={id} class="sh__title">{title}</Tag>
     {lead && <p class="lead">{lead}</p>}
   </div>
-  {more && <a href={url(more.href)} class="more sh__more">{more.label}</a>}
+  {
+    (more || Astro.slots.has('aside')) && (
+      <div class="sh__aside">
+        <slot name="aside" />
+        {more && (
+          <a
+            href={moreHref}
+            class="more"
+            {...(more.external ? { target: '_blank', rel: 'noopener' } : {})}
+          >
+            {more.label}
+            {more.external && (
+              <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+                <path d="M3.5 2.5h6v6M9.5 2.5l-7 7" fill="none" stroke="currentColor" stroke-width="1.2" />
+              </svg>
+            )}
+          </a>
+        )}
+      </div>
+    )
+  }
   <span class="led sh__led" aria-hidden="true"></span>
 </header>
 
 <style>
   .sh {
     display: grid;
-    gap: 12px 24px;
     grid-template-columns: auto 1fr;
     align-items: baseline;
-    margin-bottom: clamp(40px, 5vw, 64px);
+    gap: 12px 24px;
+    margin-bottom: clamp(32px, 4vw, 56px);
   }
 
-  .sh__h1 { font-size: var(--fs-h2); }
+  .sh__title { font-size: var(--fs-h2); }
 
-  .sh__more { grid-column: 2; justify-self: start; }
+  .sh__aside {
+    grid-column: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 32px;
+  }
 
-  .sh__led { grid-column: 1 / -1; margin-top: 20px; }
+  .sh__led { grid-column: 1 / -1; margin-top: 12px; }
 
   @media (min-width: 900px) {
     .sh { grid-template-columns: auto 1fr auto; column-gap: 40px; }
-    .sh__more { grid-column: 3; }
+    .sh__aside { grid-column: 3; justify-content: flex-end; }
   }
 </style>
