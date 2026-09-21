@@ -1,0 +1,129 @@
+---
+import { Image } from 'astro:assets';
+import SectionHeading from '../ui/SectionHeading.astro';
+import LitText from '../ui/LitText.astro';
+import { resolveImage } from '../../lib/images';
+import { site } from '../../data/site';
+import { url } from '../../lib/url';
+---
+
+<section class="section container" aria-labelledby="cine-suntem-title">
+  <SectionHeading n="I" title="Cine suntem" id="cine-suntem-title" />
+
+  <!-- Fraza e piesa sectiunii: mare, pe toata latimea, se aprinde cuvant cu cuvant. -->
+  <LitText
+    class="ha__claim"
+    text="Un perete nu e niciodată drept și o nișă nu are niciodată cât scrie în plan. De aceea măsurăm cu laserul, desenăm fiecare corp *la cotă* și montăm *de probă* în atelier înainte să ajungem la tine."
+  />
+
+  <div class="ha">
+    <figure class="ha__frame" data-reveal="clip">
+      <Image
+        src={resolveImage('workshop', 'atelier.jpg')}
+        alt="Atelierul LOX Mobila: masă de debitare CNC cu o placă de MDF pregătită"
+        widths={[600, 900, 1400]}
+        sizes="(min-width: 1024px) 58vw, 100vw"
+        loading="lazy"
+        class="ha__img"
+        data-parallax="-48"
+        data-parallax-scale="1.14"
+      />
+      <figcaption class="label ha__cap">Atelierul din {site.city}</figcaption>
+    </figure>
+
+    <div class="ha__side">
+      <dl class="ha__stats">
+        {
+          site.stats.map((s, i) => (
+            <div class="ha__stat" data-reveal style={`--i: ${i}`}>
+              <dt class="label">{s.label}</dt>
+              <dd class="ha__value tabular-nums" data-countup>
+                {s.value}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <a href={url('/cine-suntem')} class="more" data-reveal style="--i: 3">Despre atelier</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  :global(.ha__claim) {
+    max-width: 28ch;
+    font-family: var(--font-serif);
+    font-size: clamp(1.75rem, 1rem + 3vw, 3.75rem);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  :global(.ha__claim .w--em) {
+    font-style: italic;
+    color: var(--color-brass-hi);
+  }
+
+  .ha {
+    display: grid;
+    gap: 48px;
+    margin-top: clamp(56px, 7vw, 104px);
+  }
+
+  .ha__frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-img);
+  }
+
+  .ha__img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+
+  .ha__cap {
+    position: absolute;
+    left: 20px;
+    bottom: 16px;
+    color: var(--color-bone);
+    text-shadow: 0 1px 8px rgb(12 12 12 / 0.8);
+  }
+
+  .ha__side {
+    display: grid;
+    gap: 32px;
+    align-content: space-between;
+  }
+
+  .ha__stats { display: grid; }
+
+  .ha__stat {
+    display: grid;
+    gap: 8px;
+    padding-block: 22px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .ha__stat:first-child { border-top: 0; padding-top: 0; }
+
+  /* In HTML eticheta (dt) vine prima; vizual cifra sta deasupra. */
+  .ha__value {
+    order: -1;
+    font-family: var(--font-serif);
+    font-size: clamp(3rem, 2rem + 3vw, 5rem);
+    line-height: 0.95;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 1023px) {
+    .ha__stats { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .ha__stat { border-top: 0; padding: 0; }
+    .ha__value { font-size: clamp(2rem, 1.2rem + 4vw, 3rem); }
+  }
+
+  @media (min-width: 1024px) {
+    .ha { grid-template-columns: 7fr 4fr; gap: clamp(48px, 7vw, 112px); align-items: stretch; }
+  }
+</style>

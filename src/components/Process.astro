@@ -3,10 +3,11 @@ import SectionHeading from './ui/SectionHeading.astro';
 import { processSteps } from '../data/process';
 ---
 
-<section id="cum-lucram" class="section container">
+<section class="section container">
   <SectionHeading
-    n="03"
-    title="Cum lucrăm"
+    n="IV"
+    title="Etapele lucrării"
+    as="h1"
     lead="Șase pași, aceiași de fiecare dată. Știi din prima zi ce urmează și cât durează."
   />
 
@@ -31,7 +32,7 @@ import { processSteps } from '../data/process';
     grid-template-columns: 56px 1fr;
     gap: 4px 24px;
     padding-block: 28px;
-    border-top: 1px solid var(--color-line);
+    border-top: 1px solid var(--rule);
   }
 
   /* Segmentul scurt de alama pe linia de sus: linia de cota de pe o fisa de atelier. */
@@ -42,7 +43,7 @@ import { processSteps } from '../data/process';
     top: -1px;
     width: 56px;
     height: 1px;
-    background: var(--color-brass);
+    background: var(--accent);
   }
 
   :global(.has-reveal) .step::before {
@@ -57,13 +58,13 @@ import { processSteps } from '../data/process';
     grid-row: span 3;
     font-family: var(--font-serif);
     font-size: var(--fs-h3);
-    color: var(--color-brass);
+    color: var(--accent);
     font-variant-numeric: tabular-nums;
     line-height: 1;
   }
 
   .step__text {
-    color: var(--color-bone-2);
+    color: var(--text-2);
     max-width: 56ch;
     margin-top: 6px;
   }

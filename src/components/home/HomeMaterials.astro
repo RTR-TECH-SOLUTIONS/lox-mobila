@@ -1,0 +1,56 @@
+---
+import SectionHeading from '../ui/SectionHeading.astro';
+
+// Numele de furnizori apar deja in fisele proiectelor; aici sunt doar enumerate.
+const brands = ['Egger', 'Blum', 'Hettich'];
+---
+
+<section class="section bg-ink-2" aria-labelledby="materiale-title">
+  <div class="container">
+    <SectionHeading
+      n="V"
+      title="Materiale"
+      id="materiale-title"
+      more={{ href: '/materiale', label: 'Comparația completă' }}
+    />
+
+    <div class="hm">
+      <p class="hm__text" data-reveal>
+        Îți arătăm mostrele și îți spunem ce merită și ce nu pentru încăperea ta. O bucătărie și un
+        dressing nu cer același material.
+      </p>
+      <ul class="hm__brands" aria-label="Furnizori">
+        {brands.map((b, i) => <li data-reveal style={`--i: ${i + 1}`}>{b}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hm {
+    display: grid;
+    gap: 40px;
+    align-items: center;
+  }
+
+  .hm__text {
+    max-width: 48ch;
+    font-family: var(--font-serif);
+    font-size: var(--fs-h3);
+    line-height: 1.45;
+  }
+
+  .hm__brands {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 48px;
+    font-family: var(--font-serif);
+    font-size: var(--fs-h2);
+    line-height: 1;
+    color: var(--text-2);
+  }
+
+  @media (min-width: 1024px) {
+    .hm { grid-template-columns: 1fr auto; gap: 80px; }
+  }
+</style>

@@ -1,12 +1,12 @@
-@import "@fontsource-variable/fraunces";
-@import "@fontsource-variable/fraunces/standard-italic.css";
+@import "@fontsource-variable/newsreader/opsz.css";
+@import "@fontsource-variable/newsreader/opsz-italic.css";
 @import "@fontsource-variable/inter";
 @import "./tokens.css";
 
 @layer base {
   html {
-    background: var(--color-ink);
-    color: var(--color-bone);
+    background: var(--surface);
+    color: var(--text);
     scroll-behavior: smooth;
     scroll-padding-top: var(--header-h);
   }
@@ -22,7 +22,7 @@
     font-family: var(--font-serif);
     font-weight: 400;
     line-height: 1.08;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
     text-wrap: balance;
   }
 
@@ -35,7 +35,7 @@
   img { display: block; max-width: 100%; height: auto; }
 
   :focus-visible {
-    outline: 2px solid var(--color-brass);
+    outline: 2px solid var(--focus);
     outline-offset: 3px;
   }
 
@@ -59,12 +59,45 @@
     font-size: var(--fs-label);
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--color-bone-2);
+    color: var(--text-2);
   }
+
+  /* Textul introductiv al unei sectiuni: corp de text, nu meta. */
+  .lead {
+    margin-top: 20px;
+    max-width: 58ch;
+    color: var(--text-body);
+  }
+
+  /* Cifra romana a sectiunii. In sans cu tracking mare, I si II se citesc ca
+     doua liniute; pe serif arata ca numere. */
+  .numeral {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    line-height: 1;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+  }
+
+  /* Link text cu subliniere de alama: „Vezi tot", „Toate proiectele". */
+  .more {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 7px;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .more:hover { color: var(--accent); }
 
   .hairline {
     height: 1px;
-    background: var(--color-brass);
+    background: var(--accent);
     border: 0;
   }
 }
@@ -123,6 +156,14 @@
   transform: none;
 }
 
+/* Text care se aprinde cuvant cu cuvant, legat de scroll (scripts/words.ts). */
+.has-words [data-words] .w {
+  opacity: 0.2;
+  transition: opacity 400ms var(--ease);
+}
+
+.has-words [data-words] .w.on { opacity: 1; }
+
 /* ---------- Eticheta de cursor ---------- */
 .cursor-label {
   position: fixed;
@@ -137,22 +178,64 @@
 .cursor-label span {
   display: grid;
   place-items: center;
-  width: 84px;
-  height: 84px;
-  margin: -42px 0 0 -42px;
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
   border-radius: 50%;
   background: var(--color-brass);
   color: var(--color-ink);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 500;
-  letter-spacing: 0.16em;
-  text-indent: 0.16em;
+  letter-spacing: 0.14em;
+  text-indent: 0.14em;
   text-transform: uppercase;
   transform: scale(0);
   transition: transform 320ms var(--ease);
 }
 
 .cursor-label.is-active span { transform: scale(1); }
+
+/* ---------- Se aprinde lumina ----------
+   Acelasi gest ca in hero, repetat discret: fotografiile pornesc stinse si se aprind cand
+   intra in ecran. Varianta `light` nu misca elementul, doar lumineaza imaginea. */
+.has-reveal [data-reveal='light'] {
+  opacity: 1;
+  transform: none;
+}
+
+.has-reveal [data-reveal='light'] img {
+  filter: brightness(0.22) saturate(0.6);
+  transition: filter 1400ms var(--ease);
+  transition-delay: calc(var(--i, 0) * 180ms);
+}
+
+.has-reveal [data-reveal='light'].is-in img { filter: none; }
+
+/* Linia de LED de sub titlurile de sectiune. Fara JS e aprinsa de la inceput. */
+.led {
+  position: relative;
+  display: block;
+  height: 1px;
+  background: var(--rule);
+}
+
+.led::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--color-brass-hi), var(--color-brass) 60%, rgb(183 150 107 / 0.25));
+  box-shadow: 0 0 10px 0 rgb(201 170 128 / 0.35);
+  transform-origin: left;
+}
+
+.has-reveal :not(.is-in) > .led::after { transform: scaleX(0); }
+.has-reveal .is-in > .led::after { animation: led-line 1600ms cubic-bezier(0.5, 0, 0.3, 1) 200ms both; }
+
+@keyframes led-line {
+  0% { transform: scaleX(0); box-shadow: 0 0 18px 2px rgb(201 170 128 / 0.9); }
+  70% { transform: scaleX(1); box-shadow: 0 0 18px 2px rgb(201 170 128 / 0.8); }
+  100% { transform: scaleX(1); box-shadow: 0 0 10px 0 rgb(201 170 128 / 0.35); }
+}
 
 /* ---------- Tranzitia de filtrare (View Transitions) ---------- */
 ::view-transition-group(*) {

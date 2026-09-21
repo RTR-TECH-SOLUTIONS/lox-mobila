@@ -3,58 +3,94 @@ import { Image } from 'astro:assets';
 import SectionHeading from './ui/SectionHeading.astro';
 import { resolveImage } from '../lib/images';
 import { services } from '../data/services';
+
+interface Props {
+  /** Pe prima pagina: bento cu textul pe poza si link spre pagina completa. */
+  teaser?: boolean;
+}
+
+const { teaser = false } = Astro.props;
+const lead =
+  'Orice piesă care trebuie să intre fix într-un loc anume. Dacă se găsește gata făcută la dimensiunea ta, îți spunem de unde s-o cumperi.';
 ---
 
-<section id="ce-facem" class="section container">
+<section class="section container" aria-labelledby="ce-construim-title">
   <SectionHeading
-    n="01"
-    title="Ce facem"
-    lead="Orice piesă care trebuie să intre fix într-un loc anume. Dacă se găsește gata făcută la dimensiunea ta, îți spunem de unde s-o cumperi."
+    n="II"
+    title="Ce construim"
+    id="ce-construim-title"
+    as={teaser ? 'h2' : 'h1'}
+    lead={teaser ? undefined : lead}
+    more={teaser ? { href: '/ce-construim', label: 'Detalii' } : undefined}
   />
 
-  <div class="svc">
+  {
+    teaser ? (
+      <div class="bento">
+        {services.map((s, i) => (
+          <article class="bento__item" data-size={s.size} data-reveal="clip" style={`--i: ${i % 4}`}>
+            <Image
+              src={resolveImage('services', s.image)}
+              alt={`${s.title} la comandă`}
+              widths={[480, 800, 1200]}
+              sizes="(min-width: 900px) 50vw, 100vw"
+              loading="lazy"
+            />
+            <div class="bento__body">
+              <h3>{s.title}</h3>
+              <p class="bento__line">{s.line}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    ) : (
+  <div class="svc svc--full">
     {
       services.map((s, i) => (
-        <article class="svc__item" data-size={s.size} data-reveal="clip" style={`--i: ${i % 4}`}>
-          <Image
-            src={resolveImage('services', s.image)}
-            alt={`${s.title} la comandă`}
-            widths={[480, 800, 1200]}
-            sizes="(min-width: 900px) 50vw, 100vw"
-            loading="lazy"
-          />
-          <div class="svc__body">
+        <figure class="svc__item" data-reveal="clip" style={`--i: ${i % 3}`}>
+          <div class="svc__media">
+            <Image
+              src={resolveImage('services', s.image)}
+              alt={`${s.title} la comandă`}
+              widths={[480, 800, 1200]}
+              sizes="(min-width: 900px) 50vw, 100vw"
+              loading="lazy"
+            />
+          </div>
+          <figcaption>
             <h3>{s.title}</h3>
             <p class="svc__line">{s.line}</p>
-          </div>
-        </article>
+          </figcaption>
+        </figure>
       ))
     }
   </div>
+    )
+  }
 </section>
 
 <style>
-  .svc {
+  /* ---------- Prima pagina: bento cu textul pe poza ---------- */
+  .bento {
     display: grid;
     gap: 12px;
-    grid-template-columns: 1fr;
   }
 
   @media (min-width: 900px) {
-    .svc {
+    .bento {
       grid-template-columns: repeat(12, 1fr);
       /* 6 randuri de 130px = exact inaltimea a trei carduri `md` stivuite, deci
          coloana mare si cea mica se termina la aceeasi cota. */
       grid-auto-rows: 130px;
     }
 
-    /* Bucatarii ocupa toata coloana din stanga; restul se stivuiesc in dreapta. */
-    .svc__item[data-size='lg'] { grid-column: span 6; grid-row: span 6; }
-    .svc__item[data-size='md'] { grid-column: span 6; grid-row: span 2; }
-    .svc__item[data-size='sm'] { grid-column: span 6; grid-row: span 2; }
+    /* Bucatariile ocupa toata coloana din stanga; restul se stivuiesc in dreapta. */
+    .bento__item[data-size='lg'] { grid-column: span 6; grid-row: span 6; }
+    .bento__item[data-size='md'],
+    .bento__item[data-size='sm'] { grid-column: span 6; grid-row: span 2; }
   }
 
-  .svc__item {
+  .bento__item {
     position: relative;
     overflow: hidden;
     border-radius: var(--radius-img);
@@ -64,36 +100,103 @@ import { services } from '../data/services';
     align-items: end;
   }
 
-  .svc__item :global(img) {
+  .bento__item :global(img) {
     position: absolute;
     inset: 0;
+    z-index: -2;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    z-index: -2;
     transition: transform 600ms var(--ease);
   }
 
-  .svc__item::after {
+  /* Platou de opacitate fixa sub text, ca in orice poza contrastul sa fie acelasi. */
+  .bento__item::after {
     content: '';
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: linear-gradient(180deg, transparent 30%, rgb(12 12 12 / 0.9) 100%);
+    background: linear-gradient(
+      180deg,
+      transparent 30%,
+      rgb(12 12 12 / 0.5) 58%,
+      rgb(12 12 12 / 0.86) 76%,
+      rgb(12 12 12 / 0.86) 100%
+    );
   }
 
-  .svc__item:hover :global(img) { transform: scale(1.03); }
+  .bento__item:hover :global(img) { transform: scale(1.03); }
 
-  .svc__body { padding: 24px; }
+  .bento__body { padding: 24px; }
 
-  .svc__line {
+  .bento__line {
     margin-top: 8px;
     max-width: 38ch;
     color: var(--color-bone-2);
     font-size: 0.95rem;
   }
 
+  /* ---------- Pagina completa: legenda sub poza ---------- */
+  .svc {
+    display: grid;
+    gap: 48px 24px;
+  }
+
+  .svc__media {
+    overflow: hidden;
+    border-radius: var(--radius-img);
+    background: var(--color-ink-2);
+  }
+
+  .svc__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 4 / 5;
+    transition: transform 600ms var(--ease);
+  }
+
+  .svc__item:hover .svc__media :global(img) { transform: scale(1.03); }
+
+  figcaption { margin-top: 20px; }
+
+  /* Sub titlu, o linie de alama care se intinde la hover. */
+  h3 {
+    display: inline-block;
+    background: linear-gradient(var(--accent), var(--accent)) 0 100% / 0 1px no-repeat;
+    padding-bottom: 4px;
+    transition: background-size 500ms var(--ease);
+  }
+
+  .svc__item:hover h3 { background-size: 100% 1px; }
+
+  .svc__line {
+    margin-top: 8px;
+    max-width: 40ch;
+    color: var(--text-2);
+    font-size: 0.95rem;
+  }
+
+  /* Pe telefon cadrul vertical ar lungi pagina de trei ori; orizontal e destul. */
+  @media (max-width: 699px) {
+    .svc__media :global(img) { aspect-ratio: 4 / 3; }
+  }
+
+  @media (min-width: 700px) {
+    .svc { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (min-width: 900px) {
+
+    /* Pagina completa: doua cadre mari, apoi patru mici. */
+    .svc--full { grid-template-columns: repeat(12, 1fr); }
+    .svc--full .svc__item { grid-column: span 3; }
+    .svc--full .svc__item:nth-child(-n + 2) { grid-column: span 6; }
+    .svc--full .svc__item:nth-child(-n + 2) .svc__media :global(img) { aspect-ratio: 4 / 3; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .svc__item:hover :global(img) { transform: none; }
+    .bento__item:hover :global(img),
+    .svc__item:hover .svc__media :global(img) { transform: none; }
   }
 </style>

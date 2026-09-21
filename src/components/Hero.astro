@@ -1,350 +1,222 @@
 ---
-import { Image } from 'astro:assets';
+import { getImage } from 'astro:assets';
 import Button from './ui/Button.astro';
-import HeroBlueprint from './HeroBlueprint.astro';
 import { resolveImage } from '../lib/images';
 import { site } from '../data/site';
 import { url } from '../lib/url';
 
-const hero = resolveImage('hero', 'hero.jpg');
+// Straturile vin din scripts/hero-led.py: baza stinsa + cate un strat de lumina pe zona.
+// Fiecare strat are doua cadre, lat (desktop) si vertical (`m-`, telefon), cu aceeasi cheie,
+// ca pe telefon sa se vada toate LED-urile, nu doar mijlocul pozei late.
+// `at` = momentul aprinderii (ms), `fx` = cum se aprinde.
+const layers = [
+  { key: 'off', at: 0, fx: '' },
+  { key: 's1', at: 300, fx: 'flicker' },
+  { key: 's2', at: 560, fx: 'flicker' },
+  { key: 's3', at: 820, fx: 'flicker' },
+  { key: 'bs', at: 1150, fx: 'sweep-x' },
+  { key: 'vt', at: 1700, fx: 'sweep-y' },
+  { key: 'tk', at: 2150, fx: 'flicker' },
+  { key: 'is', at: 2350, fx: 'sweep-x' },
+  { key: 'amb', at: 2800, fx: 'fade' },
+] as const;
+
+const MOBILE = '(max-width: 800px) and (orientation: portrait)';
+
+const pictures = await Promise.all(
+  layers.map(async (l) => {
+    const [wide, tall] = await Promise.all([
+      getImage({ src: resolveImage('hero-led', `${l.key}.jpg`), widths: [1280, 1920, 2688], format: 'webp' }),
+      getImage({ src: resolveImage('hero-led', `m-${l.key}.jpg`), widths: [640, 960, 1520], format: 'webp' }),
+    ]);
+    return { ...l, wide, tall };
+  }),
+);
 ---
 
 <section class="hero" aria-labelledby="hero-title" data-hero>
-  <!--
-    Doua straturi din aceeasi sursa, deci o singura descarcare:
-    `plan` e vizibil imediat (nu intarzie LCP-ul), `real` se developeaza in urma laserului.
-    Containerul e pregatit sa primeasca mai tarziu un <video poster> in locul pozei.
-  -->
-  <div class="hero__media" data-parallax="-140">
-    <Image
-      src={hero}
-      alt=""
-      widths={[768, 1280, 1920, 2400]}
-      sizes="100vw"
-      loading="eager"
-      fetchpriority="high"
-      class="hero__img hero__img--plan"
-    />
-    <div class="hero__develop">
-      <Image
-        src={hero}
-        alt=""
-        widths={[768, 1280, 1920, 2400]}
-        sizes="100vw"
-        loading="eager"
-        class="hero__img"
-      />
-    </div>
+  <div class="hero__scene">
+    {
+      pictures.map((p) => (
+        <picture>
+          <source media={MOBILE} srcset={p.tall.srcSet.attribute} sizes="100vw" />
+          <img
+            src={p.wide.src}
+            srcset={p.wide.srcSet.attribute}
+            sizes="100vw"
+            alt={p.key === 'off' ? 'Bucătărie LOX cu iluminare LED integrată în corpuri, în rafturi și pe plinte' : ''}
+            class:list={['hero__img', p.key !== 'off' && 'hero__light']}
+            data-at={p.key !== 'off' ? p.at : undefined}
+            data-fx={p.fx || undefined}
+            loading="eager"
+            fetchpriority={p.key === 'off' ? 'high' : undefined}
+            decoding="async"
+          />
+        </picture>
+      ))
+    }
   </div>
 
-  <div class="hero__shade" aria-hidden="true"></div>
-
-  <!-- Aceeasi rama si acelasi parallax ca `.hero__media`, altfel desenul nu cade pe muchii. -->
-  <div class="hero__plan" data-parallax="-140">
-    <HeroBlueprint />
-  </div>
-
-  <span class="hero__laser" aria-hidden="true"></span>
-
-  <div class="hero__cross" data-crosshair hidden aria-hidden="true">
-    <span class="hero__cross-v"></span>
-    <span class="hero__cross-h"></span>
-    <span class="hero__cross-read" data-crosshair-read></span>
-  </div>
+  <div class="hero__veil" aria-hidden="true"></div>
 
   <div class="container hero__inner">
-    <h1 id="hero-title">
-      <span class="line" style="--i: 0"><span>Mobilă făcută</span></span>
-      <span class="line" style="--i: 1"
-        ><span>pe <em class="mm">milimetrul<i class="mm__brace" aria-hidden="true"></i></em> tău.</span></span
-      >
-    </h1>
-
-    <hr class="hairline hero__rule" />
-
-    <p class="hero__lead hero__rise" style="--i: 3">
-      Bucătării, dressinguri și mobilier la comandă în {site.city}. Proiectăm 3D, executăm în
-      atelierul nostru și montăm cu echipa noastră.
-    </p>
-
-    <div class="hero__cta hero__rise" style="--i: 4">
-      <Button href={url('/#contact')}>Cere ofertă</Button>
+    <h1 id="hero-title">Mobilă făcută<br />pe <em>milimetrul</em> tău.</h1>
+    <p class="hero__lead">Bucătării, dressinguri și mobilier la comandă în {site.city}.</p>
+    <div class="hero__cta">
+      <Button href={url('/contact')}>Cere ofertă</Button>
       <Button href={url('/proiecte')} variant="link">Vezi proiectele</Button>
     </div>
-
-    <ul class="hero__signals label hero__rise" style="--i: 5">
-      <li>Proiectare 3D</li>
-      <li>Atelier propriu în {site.city}</li>
-      <li>Montaj inclus</li>
-    </ul>
   </div>
 </section>
 
 <style>
   .hero {
     position: relative;
-    min-height: min(100svh, 920px);
+    min-height: max(100svh, 620px);
     display: grid;
-    align-items: end;
+    place-items: center;
     isolation: isolate;
     overflow: clip;
-    background: var(--color-ink);
+    background: #000;
   }
 
-  /* Parallax-ul muta rama; animatia de intrare sta pe imagini. */
-  .hero__media {
-    position: absolute;
-    inset: -8% 0;
-    z-index: -3;
-    will-change: transform;
-  }
+  .hero__scene { position: absolute; inset: 0; z-index: -2; }
 
   .hero__img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: 50% 0;
   }
 
-  .hero__img--plan {
+  /* Lumina se aduna peste baza stinsa: toate straturile aprinse = fotografia intreaga. */
+  .hero__light { mix-blend-mode: plus-lighter; }
+
+  /* Voalul estompeaza scena cat sa se citeasca textul; header-ul are nevoie de umbra sus. */
+  .hero__veil {
     position: absolute;
     inset: 0;
-    opacity: 0.16;
-    filter: grayscale(1) contrast(1.1);
-  }
-
-  .hero__develop {
-    position: absolute;
-    inset: 0;
-  }
-
-  .hero__plan {
-    position: absolute;
-    inset: -8% 0;
     z-index: -1;
-    pointer-events: none;
-    will-change: transform;
-  }
-
-  .hero__shade {
-    position: absolute;
-    inset: 0;
-    z-index: -2;
-    background: linear-gradient(
-      180deg,
-      rgb(12 12 12 / 0.7) 0%,
-      rgb(12 12 12 / 0.26) 30%,
-      rgb(12 12 12 / 0.42) 64%,
-      rgb(12 12 12 / 0.86) 90%,
-      #0c0c0c 100%
-    );
-  }
-
-  /* Laserul: linia care developeaza fotografia. Exista doar in timpul introducerii. */
-  .hero__laser {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 3;
-    width: 2px;
-    background: linear-gradient(
-      180deg,
-      transparent,
-      var(--color-brass-hi) 12%,
-      var(--color-brass-hi) 88%,
-      transparent
-    );
-    box-shadow: 0 0 34px 4px rgb(201 170 128 / 0.7);
-    opacity: 0;
-    pointer-events: none;
+    background:
+      linear-gradient(180deg, rgb(0 0 0 / 0.5), transparent 18%),
+      rgb(0 0 0 / 0.55);
   }
 
   .hero__inner {
-    position: relative;
-    z-index: 1;
-    padding-top: calc(var(--header-h) + 48px);
-    padding-bottom: clamp(40px, 7vw, 96px);
+    padding-block: calc(var(--header-h) + 32px) 48px;
+    text-align: center;
   }
 
-  h1 { font-size: var(--fs-display); }
-
-  .line {
-    display: block;
-    padding-bottom: 0.14em;
-    margin-bottom: -0.14em;
-  }
-
-  /* Masca taie pe toate laturile, deci ar reteza si acolada de cota de sub „milimetrul".
-     O tinem doar cat dureaza urcarea randurilor. */
-  :global(.has-intro) .line { overflow: hidden; }
-
-  /* Inline-ul ignora transform: fara block, randul nu urca din masca. */
-  .line > span { display: block; }
-
-  /* „milimetrul" primeste italicul lui Fraunces si o acolada de cota dedesubt. */
-  .mm {
-    position: relative;
+  .hero h1 em {
     font-style: italic;
-    font-variation-settings: 'SOFT' 40, 'WONK' 1;
-  }
-
-  .mm__brace {
-    position: absolute;
-    left: 0.04em;
-    right: 0.02em;
-    bottom: -0.1em;
-    height: 0.1em;
-    border: 1px solid var(--color-brass);
-    border-top: 0;
-    opacity: 0.85;
-  }
-
-  .mm__brace::after {
-    content: '1 mm';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translate(-50%, 2px);
-    font-family: var(--font-sans);
-    font-style: normal;
-    font-size: 0.155em;
-    letter-spacing: 0.18em;
-    color: var(--color-brass);
-    white-space: nowrap;
-  }
-
-  .hero__rule {
-    width: 96px;
-    margin-block: clamp(38px, 4.6vw, 58px) clamp(26px, 3.4vw, 42px);
-    transform-origin: left;
+    color: var(--color-brass-hi);
   }
 
   .hero__lead {
-    max-width: 52ch;
-    color: var(--color-bone);
+    margin-top: 18px;
+    color: rgb(242 239 234 / 0.85);
   }
 
   .hero__cta {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     align-items: center;
     gap: 16px 28px;
     margin-top: 32px;
   }
 
-  .hero__signals {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 28px;
-    margin-top: clamp(32px, 5vw, 64px);
-    padding-top: 20px;
-    border-top: 1px solid rgb(242 239 234 / 0.16);
+  /* ---------- Aprinderea ----------
+     .is-lighting o pune JS-ul. Fara el (fara JS sau cu reduced motion) scena e deja aprinsa
+     si textul e pe loc. */
+  :global(.is-lighting) .hero__light { opacity: 0; }
+  :global(.is-lighting) .hero__veil { opacity: 0; }
+  :global(.is-lighting) .hero__inner > * { opacity: 0; transform: translateY(12px); }
+
+  :global(.is-lighting) .hero__light.is-on[data-fx='flicker'] { animation: led-flicker 700ms linear both; }
+  :global(.is-lighting) .hero__light.is-on[data-fx='fade'] { animation: led-fade 900ms var(--ease) both; }
+
+  :global(.is-lighting) .hero__light.is-on[data-fx='sweep-x'] {
+    mask: linear-gradient(90deg, #000 46%, transparent 54%) 0 0 / 300% 100% no-repeat;
+    animation:
+      led-fade 200ms linear both,
+      led-sweep-x 1100ms cubic-bezier(0.5, 0, 0.3, 1) both;
   }
 
-  /* ---------- Firele de par ---------- */
-  .hero__cross {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 220ms var(--ease);
+  :global(.is-lighting) .hero__light.is-on[data-fx='sweep-y'] {
+    mask: linear-gradient(180deg, #000 46%, transparent 54%) 0 0 / 100% 300% no-repeat;
+    animation:
+      led-fade 150ms linear both,
+      led-sweep-y 900ms cubic-bezier(0.5, 0, 0.3, 1) both;
   }
 
-  .hero__cross[data-on] { opacity: 1; }
+  :global(.is-lit) .hero__veil { opacity: 1; transition: opacity 1200ms var(--ease); }
 
-  .hero__cross-v,
-  .hero__cross-h {
-    position: absolute;
-    background: var(--color-brass);
-    opacity: 0.55;
+  :global(.is-lit) .hero__inner > * {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 900ms var(--ease),
+      transform 900ms var(--ease);
   }
 
-  .hero__cross-v {
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    transform: translateX(var(--cx, -100px));
+  :global(.is-lit) .hero__inner > :nth-child(2) { transition-delay: 120ms; }
+  :global(.is-lit) .hero__inner > :nth-child(3) { transition-delay: 240ms; }
+
+  /* Un LED real pornește cu o scurta palpaire, nu cu un fade. */
+  @keyframes led-flicker {
+    0% { opacity: 0; }
+    6% { opacity: 0.8; }
+    11% { opacity: 0.1; }
+    18% { opacity: 1; }
+    24% { opacity: 0.35; }
+    34%, 100% { opacity: 1; }
   }
 
-  .hero__cross-h {
-    left: 0;
-    right: 0;
-    height: 1px;
-    transform: translateY(var(--cy, -100px));
+  @keyframes led-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
-  .hero__cross-read {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform: translate(var(--cx, -100px), var(--cy, -100px)) translate(14px, 12px);
-    font-family: var(--font-sans);
-    font-size: 0.72rem;
-    letter-spacing: 0.16em;
-    color: var(--color-brass);
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-    text-shadow: 0 1px 6px rgb(12 12 12 / 0.9);
+  @keyframes led-sweep-x {
+    from { mask-position: 100% 0; }
+    to { mask-position: 0 0; }
   }
 
-  /* ---------- Introducerea ---------- */
-  /* .has-intro se pune din JS: fara el totul e in starea finala, vizibila. */
-  :global(.has-intro) .hero__develop {
-    clip-path: inset(0 100% 0 0);
-    animation: hero-develop 1150ms var(--ease) 880ms forwards;
+  @keyframes led-sweep-y {
+    from { mask-position: 0 100%; }
+    to { mask-position: 0 0; }
   }
 
-  :global(.has-intro) .hero__laser {
-    animation: hero-laser 1150ms var(--ease) 880ms forwards;
-  }
+  /* Pe telefon vertical vine cadrul vertical; textul sta sus, pe corpurile negre,
+     ca rafturile, blatul si plintele sa ramana vizibile dedesubt. */
+  @media (max-width: 800px) and (orientation: portrait) {
+    .hero { place-items: start center; }
 
-  :global(.has-intro) .line > span {
-    animation: hero-line 1100ms var(--ease) both;
-    animation-delay: calc(1320ms + var(--i) * 140ms);
-  }
+    /* Cadrul ocupa toata latimea si coboara cat e el de inalt: taiat pe laturi, ar pierde
+       rafturile din stanga si profilul vertical din dreapta. Sub el, podeaua trece in negru. */
+    .hero__img {
+      bottom: auto;
+      height: auto;
+      aspect-ratio: 1520 / 2688;
+    }
 
-  :global(.has-intro) .hero__rule {
-    animation: hero-rule 900ms var(--ease) 1620ms both;
-  }
+    .hero__scene::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(100vw * 2688 / 1520 - 160px);
+      height: 160px;
+      background: linear-gradient(180deg, transparent, #000);
+    }
 
-  :global(.has-intro) .hero__rise {
-    animation: hero-rise 900ms var(--ease) both;
-    animation-delay: calc(1420ms + var(--i) * 130ms);
-  }
-
-  :global(.has-intro) .mm__brace {
-    animation: hero-rise 700ms var(--ease) 2150ms both;
-  }
-
-  @keyframes hero-develop {
-    to { clip-path: inset(0 0 0 0); }
-  }
-
-  @keyframes hero-laser {
-    0% { left: 0; opacity: 0; }
-    8% { opacity: 1; }
-    88% { opacity: 1; }
-    100% { left: 100%; opacity: 0; }
-  }
-
-  @keyframes hero-line {
-    from { transform: translateY(105%); }
-    to { transform: none; }
-  }
-
-  @keyframes hero-rise {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: none; }
-  }
-
-  @keyframes hero-rule {
-    from { transform: scaleX(0); }
-    to { transform: scaleX(1); }
-  }
-
-  /* Ecrane scurte de laptop: titlul nu are voie sa impinga CTA-ul sub fold. */
-  @media (max-height: 760px) and (min-width: 1024px) {
-    .hero h1 { font-size: clamp(2.5rem, 7.2vh, 4.25rem); }
+    .hero__inner { padding-top: calc(var(--header-h) + 28px); }
+    .hero__veil {
+      background:
+        linear-gradient(180deg, rgb(0 0 0 / 0.75) 0%, rgb(0 0 0 / 0.55) 45%, rgb(0 0 0 / 0.15) 70%, transparent);
+    }
   }
 </style>
