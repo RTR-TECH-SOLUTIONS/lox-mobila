@@ -20,17 +20,18 @@ import { url } from '../../lib/url';
     </div>
 
     <figure class="ha__frame" data-reveal style="--i: 1">
-      <Image
-        src={resolveImage('workshop', 'atelier.jpg')}
-        alt="Atelierul LOX Mobila: masă de debitare CNC cu o placă de MDF pregătită"
-        widths={[600, 900, 1400]}
-        sizes="(min-width: 1024px) 58vw, 100vw"
-        loading="lazy"
-        class="ha__img"
-        data-parallax="-32"
-        data-parallax-scale="1.1"
-      />
-      <span class="photo-shade" aria-hidden="true"></span>
+      <div class="ha__media">
+        <Image
+          src={resolveImage('workshop', 'atelier.jpg')}
+          alt="Atelierul LOX Mobila: masă de debitare CNC cu o placă de MDF pregătită"
+          widths={[600, 900, 1400]}
+          sizes="(min-width: 1024px) 58vw, 100vw"
+          loading="lazy"
+          class="ha__img"
+          data-parallax="-32"
+          data-parallax-scale="1.1"
+        />
+      </div>
       <figcaption class="label ha__cap">Atelierul din {site.city}</figcaption>
     </figure>
   </div>
@@ -69,8 +70,7 @@ import { url } from '../../lib/url';
     color: var(--color-brass-hi);
   }
 
-  .ha__frame {
-    position: relative;
+  .ha__media {
     overflow: hidden;
     border-radius: var(--radius-img);
   }
@@ -81,11 +81,10 @@ import { url } from '../../lib/url';
     object-fit: cover;
   }
 
+  /* Eticheta sta sub poza, nu peste ea: imaginea ramane fara voal. */
   .ha__cap {
-    position: absolute;
-    left: 24px;
-    bottom: 20px;
-    color: var(--color-bone);
+    margin-top: 12px;
+    color: var(--text-2);
   }
 
   /* Eticheta la stanga, cifra la dreapta, pe aceeasi linie de baza. */
