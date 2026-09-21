@@ -46,7 +46,7 @@
 }
 
 @layer components {
-  .container {
+  .wrap {
     width: 100%;
     max-width: var(--container);
     margin-inline: auto;
