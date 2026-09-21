@@ -1,6 +1,6 @@
 // Galeria orizontala fixata din sectiunea de proiecte.
-// De la 1024px scroll-ul vertical se traduce in deplasare orizontala, cu inertie.
-// In rest (tableta, telefon, ecran foarte scund, miscare redusa) ramane caruselul nativ cu scroll-snap.
+// Pe orice latime scroll-ul vertical se traduce in deplasare orizontala, cu inertie.
+// Pe ecran foarte scund (telefon culcat) sau cu miscare redusa ramane caruselul nativ cu scroll-snap.
 // Sagetile si tastele ← → merg in ambele moduri.
 
 const PER_SLIDE = 0.9; // cat scroll vertical costa un panou, in inaltimi de ecran
@@ -21,10 +21,14 @@ if (root) {
   const total = panels.filter((p) => p.querySelector('[data-sc-img]')).length;
 
   const mq = window.matchMedia(
-    '(min-width: 1024px) and (min-height: 560px) and (prefers-reduced-motion: no-preference)',
+    '(min-height: 600px) and (prefers-reduced-motion: no-preference)',
   );
 
+  // Pe telefon doar fereastra galeriei e lipita; titlul de deasupra urca intai (`lead` px de scroll).
+  const phone = window.matchMedia('(max-width: 1023px)');
+
   let pinned = false;
+  let lead = 0;
   let max = 0; // cursa orizontala totala
   let target = 0;
   let x = 0;
@@ -71,24 +75,26 @@ if (root) {
     raf = x === target ? 0 : requestAnimationFrame(tick);
   };
 
-  const scrollRange = () => root.offsetHeight - window.innerHeight;
+  // Cursa de scroll in care galeria e lipita si panourile se misca.
+  const scrollRange = () => root.offsetHeight - window.innerHeight - lead;
+  const rootTop = () => root.getBoundingClientRect().top + window.scrollY + lead;
 
   // Cand scroll-ul se opreste intre doua panouri, il ducem pe cel mai apropiat,
   // ca in fereastra sa nu ramana jumatate din doua proiecte.
   let settle = 0;
   const snap = () => {
     const range = scrollRange();
-    const top = root.getBoundingClientRect().top;
+    const top = rootTop() - window.scrollY;
     if (!pinned || range <= 0 || top >= 0 || -top >= range) return;
     const to = stops[nearest(target)]!;
     if (Math.abs(to - target) < 2) return;
-    window.scrollTo({ top: window.scrollY + top + (max ? to / max : 0) * range, behavior: 'smooth' });
+    window.scrollTo({ top: rootTop() + (max ? to / max : 0) * range, behavior: 'smooth' });
   };
 
   const onScroll = () => {
     if (!pinned) return;
     const range = scrollRange();
-    const progress = range > 0 ? clamp(-root.getBoundingClientRect().top / range, 0, 1) : 0;
+    const progress = range > 0 ? clamp((window.scrollY - rootTop()) / range, 0, 1) : 0;
     target = progress * max;
     if (!raf) raf = requestAnimationFrame(tick);
     clearTimeout(settle);
@@ -112,14 +118,21 @@ if (root) {
     }
     centers = panels.map((p) => p.offsetLeft + p.offsetWidth / 2);
     const length = Math.min(max * SCROLL_FACTOR, (panels.length - 1) * window.innerHeight * PER_SLIDE);
-    root.style.height = pinned ? `${window.innerHeight + length}px` : '';
+    const headerH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 0;
+    lead = 0;
+    if (pinned && phone.matches) {
+      // Masuram pozitia fara lipire: cat urca titlul pana cand fereastra ajunge sub header.
+      viewport.style.position = 'static';
+      lead = viewport.getBoundingClientRect().top - root.getBoundingClientRect().top - headerH;
+      viewport.style.position = '';
+    }
+    root.style.height = pinned ? `${window.innerHeight + lead + length}px` : '';
   };
 
   const goTo = (i: number) => {
     const to = stops[clamp(i, 0, stops.length - 1)]!;
     if (pinned) {
-      const top = root.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top: top + (max ? to / max : 0) * scrollRange(), behavior: 'smooth' });
+      window.scrollTo({ top: rootTop() + (max ? to / max : 0) * scrollRange(), behavior: 'smooth' });
     } else {
       viewport.scrollTo({ left: to, behavior: 'smooth' });
     }
@@ -180,14 +193,20 @@ if (root) {
     requestAnimationFrame(() => {
       viewport.scrollLeft = 0;
       const i = panels.indexOf(panel);
-      const top = root.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top: top + (max ? stops[i]! / max : 0) * scrollRange(), behavior: 'instant' });
+      window.scrollTo({ top: rootTop() + (max ? stops[i]! / max : 0) * scrollRange(), behavior: 'instant' });
     });
   });
 
   window.addEventListener('scroll', onScroll, { passive: true });
   viewport.addEventListener('scroll', onNativeScroll, { passive: true });
-  window.addEventListener('resize', setMode);
+  // Pe telefon bara browserului apare si dispare la scroll si schimba inaltimea ferestrei;
+  // re-masuram doar cand se schimba latimea, altfel galeria ar sari.
+  let lastWidth = window.innerWidth;
+  window.addEventListener('resize', () => {
+    if (window.innerWidth === lastWidth) return;
+    lastWidth = window.innerWidth;
+    setMode();
+  });
   mq.addEventListener('change', setMode);
   new ResizeObserver(measure).observe(track);
 
