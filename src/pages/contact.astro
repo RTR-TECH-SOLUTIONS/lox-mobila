@@ -157,8 +157,8 @@ const faq = [
 
   .info__card:hover { background: var(--color-ink-3); }
   .info__card svg { margin-bottom: 14px; color: var(--color-brass); }
-  .info__card--dark { background: var(--color-brass); color: var(--color-ink); }
-  .info__card--dark svg { color: var(--color-ink); }
+  .info__card--dark { background: var(--color-brass); color: var(--color-on-accent); }
+  .info__card--dark svg { color: var(--color-on-accent); }
   .info__card--dark:hover { background: var(--color-brass-hi); }
 
   .info__title { font-weight: 600; font-size: 1.1rem; }
@@ -186,7 +186,7 @@ const faq = [
     max-width: 640px;
     padding: clamp(24px, 3vw, 36px);
     background: var(--color-ink-2);
-    box-shadow: 0 20px 50px rgb(0 0 0 / 0.4);
+    box-shadow: 0 20px 50px rgb(var(--shadow-rgb) / calc(0.4 * var(--shadow-k)));
   }
 
   .form h2 { font-size: 1.3rem; }
@@ -222,7 +222,7 @@ const faq = [
     transition: background-color var(--dur) var(--ease);
   }
 
-  .form__btn:hover { background: var(--color-brass-hi); }
+  .form__btn:hover { background: var(--color-brass-hi); color: var(--color-on-accent); }
   .form__note { color: var(--text-2); font-size: 0.8rem; }
 
   /* ---------- Întrebări frecvente ---------- */

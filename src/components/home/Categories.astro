@@ -18,7 +18,7 @@ const link = (slug: string) =>
       {
         services.map((s, i) => (
           <li data-reveal="img" style={`--i: ${i % 3}`}>
-            <a href={link(s.slug)} class="tile">
+            <a href={link(s.slug)} class="tile on-photo">
               <Image
                 src={resolveImage('services', s.image)}
                 alt={`${s.title} la comandă`}
@@ -92,7 +92,7 @@ const link = (slug: string) =>
     padding: 20px;
   }
 
-  .tile__kicker { grid-area: kicker; font-size: 0.8rem; color: rgb(242 239 234 / 0.75); }
+  .tile__kicker { grid-area: kicker; font-size: 0.8rem; color: color-mix(in srgb, var(--color-bone) 75%, transparent); }
 
   .tile__name {
     grid-area: name;

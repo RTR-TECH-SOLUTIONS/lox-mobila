@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+/* Paleta e a temei din src/content/theme.json: ink = fundal, bone = text, brass = accent.
+   Valorile de aici sunt tema originala; Base.astro le suprascrie cu cele calculate in src/lib/theme.ts. */
 @theme {
   --color-ink: #0C0C0C;
   --color-ink-2: #141414;
@@ -9,6 +11,9 @@
   --color-bone-2: #A8A39B;
   --color-brass: #B7966B;
   --color-brass-hi: #C9AA80;
+  /* Subsolul, cu o treapta sub fundal, si textul de pe butoanele pline de accent. */
+  --color-deep: #080808;
+  --color-on-accent: #0C0C0C;
 
   --font-serif: "Newsreader Variable", "Iowan Old Style", Georgia, serif;
   --font-sans: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -34,11 +39,15 @@
   /* ---------- Stratul semantic ---------- */
   --surface: var(--color-ink);
   --text: var(--color-bone);
-  --text-body: rgb(242 239 234 / 0.88);
+  --text-body: color-mix(in srgb, var(--color-bone) 88%, transparent);
   --text-2: var(--color-bone-2);
   --rule: var(--color-line);
   --accent: var(--color-brass);
   --focus: var(--color-brass);
+  --photo-brass-hi: #C9AA80;
+  /* Umbrele: negre pe tema inchisa, maro foarte slab pe cea deschisa (vezi deriveTheme). */
+  --shadow-rgb: 0 0 0;
+  --shadow-k: 1;
 }
 
 @media (min-width: 768px) {
@@ -51,4 +60,25 @@
 
 @media (min-width: 1024px) {
   :root { --section-y: 88px; }
+}
+
+/* Peste fotografii (hero, bannere, banda de final, placile de categorii) ramane paleta
+   inchisa, ca textul sa se citeasca si pe tema deschisa. Headerul intra aici cat timp
+   sta transparent peste hero. */
+:is(.on-photo, [data-header][data-overlay='true']:not(.is-scrolled)) {
+  --color-ink: #0C0C0C;
+  --color-ink-2: #141414;
+  --color-ink-3: #1E1E1E;
+  --color-line: #2A2A2A;
+  --color-bone: #F2EFEA;
+  --color-bone-2: #A8A39B;
+  --color-brass-hi: var(--photo-brass-hi);
+  --shadow-rgb: 0 0 0;
+  --shadow-k: 1;
+  --surface: var(--color-ink);
+  --text: var(--color-bone);
+  --text-body: color-mix(in srgb, var(--color-bone) 88%, transparent);
+  --text-2: var(--color-bone-2);
+  --rule: var(--color-line);
+  color: var(--text);
 }

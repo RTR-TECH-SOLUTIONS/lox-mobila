@@ -34,7 +34,7 @@ const pictures = await Promise.all(
 );
 ---
 
-<section class="hero" aria-labelledby="hero-title" data-hero>
+<section class="hero on-photo" aria-labelledby="hero-title" data-hero>
   <div class="hero__scene">
     {
       pictures.map((p) => (
@@ -139,7 +139,7 @@ const pictures = await Promise.all(
   .hero__lead {
     max-width: 46ch;
     margin: 18px auto 0;
-    color: rgb(242 239 234 / 0.85);
+    color: color-mix(in srgb, var(--color-bone) 85%, transparent);
   }
 
   .hero__cta {

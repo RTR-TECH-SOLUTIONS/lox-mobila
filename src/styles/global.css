@@ -42,7 +42,7 @@
 
   ::selection {
     background: var(--color-brass);
-    color: var(--color-ink);
+    color: var(--color-on-accent);
   }
 }
 
@@ -82,7 +82,7 @@
     min-height: 44px;
     color: var(--text);
     text-decoration: underline;
-    text-decoration-color: rgb(242 239 234 / 0.35);
+    text-decoration-color: color-mix(in srgb, var(--color-bone) 35%, transparent);
     text-decoration-thickness: 1px;
     text-underline-offset: 7px;
     transition: color var(--dur) var(--ease);
