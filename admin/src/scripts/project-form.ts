@@ -1,7 +1,7 @@
 import Sortable from 'sortablejs';
 import { buildObject } from '../lib/form-data';
 import { downscale } from './downscale';
-import { initRepeaters, initSaveForm, markClean, markDirty, serialize, setMessage, type SaveResult } from './form';
+import { initRepeaters, initSaveForm, markClean, markDirty, serialize, setMessage, type Issue, type SaveResult } from './form';
 
 const form = document.querySelector<HTMLFormElement>('form[data-project-form]');
 
@@ -13,7 +13,8 @@ if (form) {
   let counter = 0;
 
   initRepeaters(form);
-  Sortable.create(grid, { animation: 150, delayOnTouchOnly: true, delay: 120, filter: 'button', preventOnFilter: false, onEnd: markDirty });
+  const animation = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 150;
+  Sortable.create(grid, { animation, delayOnTouchOnly: true, delay: 120, filter: 'button', preventOnFilter: false, onEnd: markDirty });
 
   grid.addEventListener('click', (e) => {
     const btn = (e.target as HTMLElement).closest('button');
@@ -36,7 +37,10 @@ if (form) {
     const files = [...(input.files ?? [])];
     input.value = '';
     if (!files.length) return;
+    // O poza noua sterge mesajul vechi din bara si eroarea „fara poze”.
     setMessage(form, 'Se pregătesc pozele…');
+    const photosError = form.querySelector<HTMLElement>('[data-error-for="photos"]');
+    if (photosError) photosError.hidden = true;
     for (const file of files) {
       const key = `n${++counter}`;
       const blob = await downscale(file).catch(() => file);
@@ -52,7 +56,17 @@ if (form) {
 
   const tokens = () => [...grid.querySelectorAll<HTMLElement>('.photo')].map((p) => p.dataset.token ?? '');
 
+  // Aceleasi mesaje ca pe server; asa pozele nu se mai urca degeaba.
+  const validate = (): Issue[] => {
+    const issues: Issue[] = [];
+    const title = form.querySelector<HTMLInputElement>('[name="title"]');
+    if (!title?.value.trim()) issues.push({ path: 'title', message: 'Câmpul e obligatoriu.' });
+    if (!tokens().length) issues.push({ path: 'photos', message: 'Proiectul are nevoie de cel puțin o poză.' });
+    return issues;
+  };
+
   initSaveForm(form, {
+    validate,
     body: async () => {
       const photos = tokens();
       const body = new FormData();
