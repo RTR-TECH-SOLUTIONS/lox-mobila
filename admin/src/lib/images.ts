@@ -20,11 +20,17 @@ export async function prepareImage(input: Buffer): Promise<Buffer> {
     throw new ImageError('Fișierul nu e o poză validă.');
   }
   if (!format || !ACCEPTED.has(format)) throw new ImageError('Sunt acceptate doar poze JPEG, PNG sau WebP.');
-  return sharp(input)
-    .rotate()
-    .resize({ width: MAX_SIDE, height: MAX_SIDE, fit: 'inside', withoutEnlargement: true })
-    .jpeg({ quality: 82, mozjpeg: true })
-    .toBuffer();
+  try {
+    return await sharp(input)
+      .rotate()
+      .resize({ width: MAX_SIDE, height: MAX_SIDE, fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 82, mozjpeg: true })
+      .toBuffer();
+  } catch (e) {
+    // Antetul e bun, dar poza se rupe la mijloc (urcare intrerupta, fisier stricat).
+    console.error(e);
+    throw new ImageError('Poza nu a putut fi prelucrată. Încearcă altă poză.');
+  }
 }
 
 /** Miniatura pentru listele din admin. */
