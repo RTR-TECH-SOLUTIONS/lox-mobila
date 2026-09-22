@@ -194,7 +194,7 @@ dialog.confirm p { margin-top: 8px; color: var(--text-2); }
 .presets__row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .preview { position: sticky; top: 24px; }
 .preview__bar { display: flex; gap: 6px; margin-bottom: 10px; }
-.preview__frame { display: block; width: 100%; height: calc(100vh - 220px); min-height: 520px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
+.preview__frame { display: block; width: 100%; height: calc(100vh - 250px); min-height: 420px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
 .preview.is-phone .preview__frame { width: 390px; max-width: 100%; margin-inline: auto; }
 @media (max-width: 1099px) {
   .aspect { grid-template-columns: minmax(0, 1fr); }
