@@ -1,9 +1,10 @@
 import { existsSync } from 'node:fs';
+import { HASH_FORMAT } from './password.mjs';
 
 export interface AdminUser {
   email: string;
   name: string;
-  /** scrypt$<sare>$<hash>, generat cu `npm run user`. */
+  /** scrypt:<sare>:<hash>, generat cu `npm run user` (sau scrypt$<sare>$<hash>, formatul vechi). */
   hash: string;
 }
 
@@ -40,6 +41,7 @@ export function readEnv(source: Record<string, string | undefined>): AdminEnv {
     throw new Error('ADMIN_USERS nu e JSON valid');
   }
   if (!Array.isArray(users)) throw new Error('ADMIN_USERS trebuie sa fie o lista');
+  users.forEach(checkUser);
 
   return {
     githubToken: localRepoDir ? (source.GITHUB_TOKEN ?? '') : need('GITHUB_TOKEN'),
@@ -51,6 +53,20 @@ export function readEnv(source: Record<string, string | undefined>): AdminEnv {
     siteUrl: need('PUBLIC_SITE_URL').replace(/\/$/, ''),
     adminOrigin: need('ADMIN_ORIGIN').replace(/\/$/, ''),
   };
+}
+
+/** Un cont stricat opreste pornirea (si /health), in loc sa lase pe toata lumea fara login. */
+function checkUser(value: unknown, index: number): void {
+  const u = (value && typeof value === 'object' ? value : {}) as Record<string, unknown>;
+  const bad =
+    typeof u.email !== 'string' || !u.email.includes('@')
+      ? 'email'
+      : typeof u.name !== 'string' || !u.name.trim()
+        ? 'name'
+        : typeof u.hash !== 'string' || !HASH_FORMAT.test(u.hash)
+          ? 'hash'
+          : null;
+  if (bad) throw new Error(`ADMIN_USERS: contul ${index + 1} nu e valid (${bad})`);
 }
 
 let cached: AdminEnv | undefined;

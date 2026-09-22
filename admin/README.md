@@ -15,6 +15,12 @@ Fiecare salvare face un commit pe `main`; workflow-ul `deploy.yml` publică site
 
 Linia afișată se adaugă în lista `ADMIN_USERS` din Coolify, apoi se repornește aplicația.
 
+În Coolify, `ADMIN_USERS` (și orice valoare care conține `$`) se bifează „Is Literal”. Altfel Coolify
+citește `$ceva` ca pe o variabilă și îl înlocuiește cu text gol. Formatul nou al parolelor
+(`scrypt:<sare>:<hash>`) nu mai are `$`, dar conturile vechi (`scrypt$...`) încă îl au.
+Un cont scris greșit oprește adminul la pornire, cu mesajul `ADMIN_USERS: contul <nr> nu e valid (<câmp>)`
+în log, iar verificarea `/health` pică.
+
 ## Productie
 
 Coolify, aplicație Dockerfile: contextul `/`, fișierul `admin/Dockerfile`, portul 4321, verificarea `/health`.
