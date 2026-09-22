@@ -216,7 +216,32 @@ export type PagePhotos = z.output<typeof pagePhotosSchema>;
 export type Theme = z.output<typeof themeSchema>;
 export type Content = { [K in ContentKey]: z.output<(typeof CONTENT_SCHEMAS)[K]> };
 
+export interface Issue {
+  path: string;
+  message: string;
+}
+
 /** Erorile in forma „cale.camp: mesaj", pentru build si pentru formularele adminului. */
-export function formatIssues(error: z.ZodError): { path: string; message: string }[] {
+export function formatIssues(error: z.ZodError): Issue[] {
   return error.issues.map((i) => ({ path: i.path.map(String).join('.'), message: i.message }));
 }
+
+/** Validare fara exceptii, pentru admin: datele curate sau lista de erori pe campuri. */
+export function parseContent<S extends z.ZodType>(
+  schema: S,
+  data: unknown,
+): { ok: true; data: z.output<S> } | { ok: false; issues: Issue[] } {
+  const r = schema.safeParse(data);
+  return r.success ? { ok: true, data: r.data } : { ok: false, issues: formatIssues(r.error) };
+}
+
+// Ce trimit ecranele adminului, cand forma difera de fisierul salvat. Stau aici ca adminul
+// sa nu aiba nevoie de o a doua copie de zod.
+export const reviewsFormSchema = z.object({ items: reviewsSchema });
+export const categoryFormSchema = categoryPageSchema.omit({ key: true });
+export const projectFieldsSchema = projectSchema.omit({ slug: true, photos: true });
+export const projectOrderSchema = z.object({
+  order: z.array(z.string()),
+  featured: z.record(z.string(), z.boolean()),
+});
+export const slugRequestSchema = z.object({ slug: z.string().regex(SLUG) });

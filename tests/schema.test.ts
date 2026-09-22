@@ -4,6 +4,7 @@ import {
   categoriesSchema,
   contactSchema,
   formatIssues,
+  parseContent,
   phoneHref,
   projectsSchema,
   statsSchema,
@@ -113,5 +114,16 @@ describe('themeSchema', () => {
   it('uppercases hex colors and rejects color names', () => {
     expect(themeSchema.parse({ background: '#0c0c0c', text: '#f2efea', accent: '#b7966b' }).background).toBe('#0C0C0C');
     expect(themeSchema.safeParse({ background: 'black', text: '#F2EFEA', accent: '#B7966B' }).success).toBe(false);
+  });
+});
+
+describe('parseContent', () => {
+  it('returns clean data or field issues without throwing', () => {
+    expect(parseContent(themeSchema, { background: '#000000', text: '#ffffff', accent: '#b7966b' })).toEqual({
+      ok: true,
+      data: { background: '#000000', text: '#FFFFFF', accent: '#B7966B' },
+    });
+    const bad = parseContent(themeSchema, { background: 'negru', text: '#FFFFFF', accent: '#B7966B' });
+    expect(bad).toEqual({ ok: false, issues: [{ path: 'background', message: 'Culoarea se scrie ca #RRGGBB.' }] });
   });
 });
