@@ -44,7 +44,7 @@ const id = Math.random().toString(36).slice(2, 7);
     gap: 16px;
     padding: 28px;
     background: var(--color-ink-3);
-    box-shadow: 0 20px 50px rgb(0 0 0 / 0.4);
+    box-shadow: 0 20px 50px rgb(var(--shadow-rgb) / calc(0.4 * var(--shadow-k)));
   }
 
   .cf__title { font-size: 1.2rem; }
@@ -84,7 +84,7 @@ const id = Math.random().toString(36).slice(2, 7);
     padding-inline: 22px;
     border-radius: 8px;
     background: var(--color-brass);
-    color: var(--color-ink);
+    color: var(--color-on-accent);
     font-weight: 500;
     transition: background-color var(--dur) var(--ease);
   }

@@ -8,6 +8,7 @@ import {
   projectsSchema,
   reviewsSchema,
   statsSchema,
+  themeSchema,
 } from '../content/schema';
 import projectsJson from '../content/projects.json';
 import reviewsJson from '../content/reviews.json';
@@ -15,6 +16,7 @@ import categoriesJson from '../content/categories.json';
 import contactJson from '../content/contact.json';
 import statsJson from '../content/stats.json';
 import pagePhotosJson from '../content/page-photos.json';
+import themeJson from '../content/theme.json';
 
 /** Valideaza un fisier de continut; o greseala opreste build-ul cu calea si campul exact. */
 export function load<S extends z.ZodType>(file: string, schema: S, data: unknown): z.output<S> {
@@ -32,3 +34,4 @@ export const contact = load(CONTENT_FILES.contact, contactSchema, contactJson);
 export const stats = load(CONTENT_FILES.stats, statsSchema, statsJson);
 export const pagePhotos = load(CONTENT_FILES.pagePhotos, pagePhotosSchema, pagePhotosJson);
 export const projects = load(CONTENT_FILES.projects, projectsSchema, projectsJson);
+export const theme = load(CONTENT_FILES.theme, themeSchema, themeJson);
