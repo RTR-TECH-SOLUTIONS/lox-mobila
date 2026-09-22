@@ -125,8 +125,8 @@ const categories = CATEGORY_KEYS.map((k) => ({ value: k, label: CATEGORY_LABELS[
 
 {
   project && (
-    <dialog class="confirm" data-delete-dialog>
-      <h2>Ștergi „{project.title}”?</h2>
+    <dialog class="confirm" data-delete-dialog aria-labelledby="sterge-titlu">
+      <h2 id="sterge-titlu">Ștergi „{project.title}”?</h2>
       <p>Proiectul și pozele lui dispar de pe site. Din admin nu se mai pot recupera.</p>
       <div class="confirm__actions">
         <button type="button" class="btn btn--ghost" data-delete-cancel>Renunță</button>

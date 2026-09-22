@@ -33,5 +33,7 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
   headers.set('X-Content-Type-Options', 'nosniff');
   headers.set('Referrer-Policy', 'same-origin');
   headers.set('X-Robots-Tag', 'noindex, nofollow');
+  // HSTS doar pe https; local (http://localhost) browserul l-ar ignora oricum.
+  if (adminOrigin.startsWith('https://')) headers.set('Strict-Transport-Security', 'max-age=31536000');
   return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
 });
