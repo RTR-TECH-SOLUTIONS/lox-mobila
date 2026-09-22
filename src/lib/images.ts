@@ -12,7 +12,7 @@ const files = import.meta.glob<{ default: ImageMetadata }>(
 // Pana primim pozele clientului, pozele de continut sunt placeholdere gri
 // (scripts/placeholders.py). Heroul si banda de contact raman fotografii: sunt efectul de lumina.
 // Pe false revin fotografiile.
-const PLACEHOLDERS = true;
+const PLACEHOLDERS = false;
 const PLACEHOLDER_FOLDERS: Folder[] = ['projects', 'services', 'workshop'];
 
 export function resolveImage(folder: Folder, file: string): ImageMetadata {

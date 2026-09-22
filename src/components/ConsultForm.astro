@@ -1,0 +1,95 @@
+---
+import { site } from '../data/site';
+
+interface Props {
+  /** Ce scrie la „Proiect” în mesajul de WhatsApp. */
+  project?: string;
+}
+
+const { project = 'Consultanță gratuită' } = Astro.props;
+const id = Math.random().toString(36).slice(2, 7);
+---
+
+<!-- Cardul închis „Consultanță gratuită” din paginile de mobilier: nume, telefon, trimis pe WhatsApp. -->
+<form
+  class="cf"
+  data-quote-form
+  data-wa={site.whatsappNumber}
+  action={`https://wa.me/${site.whatsappNumber}`}
+  method="get"
+  target="_blank"
+>
+  <h2 class="cf__title">Consultanță gratuită</h2>
+  <input type="hidden" name="projectType" value={project} />
+  <div class="cf__fields">
+    <div class="cf__field">
+      <label for={`cf-name-${id}`}>Nume</label>
+      <input id={`cf-name-${id}`} name="name" type="text" required autocomplete="name" />
+    </div>
+    <div class="cf__field">
+      <label for={`cf-phone-${id}`}>Telefon *</label>
+      <input id={`cf-phone-${id}`} name="phone" type="tel" required autocomplete="tel" pattern="[0-9+ ]{10,15}" placeholder="07xx xxx xxx" />
+    </div>
+  </div>
+  <label class="cf__check">
+    <input type="checkbox" required />
+    <span>Sunt de acord să fiu contactat pe telefon sau WhatsApp.</span>
+  </label>
+  <button type="submit" class="cf__btn">Solicită consultanță</button>
+</form>
+
+<style>
+  .cf {
+    display: grid;
+    gap: 16px;
+    padding: 28px;
+    background: var(--color-ink-3);
+    box-shadow: 0 20px 50px rgb(0 0 0 / 0.4);
+  }
+
+  .cf__title { font-size: 1.2rem; }
+
+  .cf__fields { display: grid; gap: 14px; }
+
+  .cf__field { display: grid; gap: 6px; }
+  .cf__field label { font-size: var(--fs-label); color: var(--text-2); }
+
+  .cf input[type='text'],
+  .cf input[type='tel'] {
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+    padding-inline: 12px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--color-ink);
+    color: var(--text);
+  }
+
+  .cf input:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+
+  .cf__check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: var(--text-2);
+    font-size: 0.85rem;
+  }
+
+  .cf__check input { margin-top: 3px; accent-color: var(--color-brass); }
+
+  .cf__btn {
+    justify-self: start;
+    height: 46px;
+    padding-inline: 22px;
+    border-radius: 8px;
+    background: var(--color-brass);
+    color: var(--color-ink);
+    font-weight: 500;
+    transition: background-color var(--dur) var(--ease);
+  }
+
+  .cf__btn:hover { background: var(--color-brass-hi); }
+
+  .cf__fields { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+</style>

@@ -2,9 +2,6 @@
 import { url } from '../../lib/url';
 
 interface Props {
-  /** Numarul sectiunii cu cifra romana, ex. "IV". Pasii dinauntrul unei sectiuni raman
-   *  pe cifre arabe, ca sa se vada cele doua niveluri. */
-  n: string;
   title: string;
   lead?: string;
   id?: string;
@@ -14,13 +11,12 @@ interface Props {
   more?: { href: string; label: string; external?: boolean };
 }
 
-const { n, title, lead, id, as: Tag = 'h2', more } = Astro.props;
+const { title, lead, id, as: Tag = 'h2', more } = Astro.props;
 const moreHref = more && (more.external ? more.href : url(more.href));
 ---
 
-<!-- Acelasi antet pe prima pagina si pe paginile interioare: cifra, titlu, link, linie. -->
+<!-- Acelasi antet pe prima pagina si pe paginile interioare: titlu si link. -->
 <header class="sh" data-reveal>
-  <span class="numeral sh__n" aria-hidden="true">{n}</span>
   <div class="sh__main">
     <Tag id={id} class="sh__title">{title}</Tag>
     {lead && <p class="lead">{lead}</p>}
@@ -46,13 +42,12 @@ const moreHref = more && (more.external ? more.href : url(more.href));
       </div>
     )
   }
-  <span class="led sh__led" aria-hidden="true"></span>
 </header>
 
 <style>
   .sh {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: 1fr;
     align-items: baseline;
     gap: 12px 24px;
     margin-bottom: clamp(32px, 4vw, 56px);
@@ -61,17 +56,14 @@ const moreHref = more && (more.external ? more.href : url(more.href));
   .sh__title { font-size: var(--fs-h2); }
 
   .sh__aside {
-    grid-column: 2;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 12px 32px;
   }
 
-  .sh__led { grid-column: 1 / -1; margin-top: 12px; }
-
   @media (min-width: 900px) {
-    .sh { grid-template-columns: auto 1fr auto; column-gap: 40px; }
-    .sh__aside { grid-column: 3; justify-content: flex-end; }
+    .sh { grid-template-columns: 1fr auto; column-gap: 40px; }
+    .sh__aside { justify-content: flex-end; }
   }
 </style>

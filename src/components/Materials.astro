@@ -1,17 +1,10 @@
 ---
-import SectionHeading from './ui/SectionHeading.astro';
 import PriceScale from './ui/PriceScale.astro';
 import { materials, hardwareNote } from '../data/materials';
 ---
 
 <section class="section">
   <div class="wrap">
-    <SectionHeading
-      n="V"
-      title="Materiale"
-      as="h1"
-      lead="Îți arătăm mostrele și îți spunem ce merită și ce nu pentru încăperea ta. O bucătărie și un dressing nu cer același material."
-    />
 
     <table class="mat" data-reveal>
       <caption class="sr-only">
@@ -72,7 +65,8 @@ import { materials, hardwareNote } from '../data/materials';
   .mat td { color: var(--text-body); }
 
   .mat__name {
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
+    font-weight: 600;
     font-size: var(--fs-h3);
     font-weight: 400;
     color: var(--text);
@@ -132,8 +126,6 @@ import { materials, hardwareNote } from '../data/materials';
     .mat td::before {
       content: attr(data-label);
       font-size: var(--fs-label);
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
       color: var(--text-2);
     }
   }

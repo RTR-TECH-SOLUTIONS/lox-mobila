@@ -1,0 +1,298 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Button from '../../components/ui/Button.astro';
+import ConsultForm from '../../components/ConsultForm.astro';
+import Reviews from '../../components/home/Reviews.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { projects } from '../../data/projects';
+import { CATEGORY_LABELS, type Project } from '../../data/types';
+import { resolveImage } from '../../lib/images';
+import { projectMaterials } from '../../lib/catalog';
+import { url } from '../../lib/url';
+
+export function getStaticPaths() {
+  return projects.map((p) => ({ params: { slug: p.slug }, props: { project: p } }));
+}
+
+const { project: p } = Astro.props as { project: Project };
+const images = [p.cover, ...p.gallery];
+const related = [
+  ...projects.filter((o) => o.category === p.category && o.slug !== p.slug),
+  ...projects.filter((o) => o.category !== p.category),
+].slice(0, 3);
+const materials = projectMaterials(p);
+const category = CATEGORY_LABELS[p.category];
+---
+
+<Base
+  title={`${p.title}, ${p.district} | LOX Mobila Iași`}
+  description={`${p.title} în ${p.district}, Iași: ${p.specs.map((s) => `${s.label.toLowerCase()} ${s.value}`).join(', ')}.`}
+>
+  <section class="wrap pd">
+    <nav class="crumbs" aria-label="Pesmet">
+      <a href={url('/mobilier')}>Mobilier</a>
+      <span aria-hidden="true">/</span>
+      <a href={url(`/mobilier/${p.category}`)}>{category}</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{p.title}</span>
+    </nav>
+
+    <div class="gal" data-gallery>
+      <div class="gal__main" data-reveal="img">
+        {
+          images.map((f, i) => (
+            <Image
+              src={resolveImage('projects', f)}
+              alt={i === 0 ? `${p.title}, ${p.district}` : `${p.title}, detaliu`}
+              widths={[800, 1200, 1800]}
+              sizes="(min-width: 1280px) 1184px, 100vw"
+              loading={i === 0 ? 'eager' : 'lazy'}
+              class:list={['gal__img', i === 0 && 'is-active']}
+              data-gal-img
+            />
+          ))
+        }
+      </div>
+      {
+        images.length > 1 && (
+          <div class="gal__thumbs">
+            {images.map((f, i) => (
+              <button type="button" class="gal__thumb" data-gal-thumb={i} aria-label={`Poza ${i + 1}`} aria-pressed={i === 0 ? 'true' : 'false'}>
+                <Image src={resolveImage('projects', f)} alt="" widths={[320]} sizes="240px" loading="lazy" />
+              </button>
+            ))}
+          </div>
+        )
+      }
+    </div>
+
+    <div class="pd__head">
+      <div>
+        <h1>{p.title} – {p.district}</h1>
+        <p class="pd__sub">{category} la comandă, montată în {p.weeks} săptămâni. Materialele și culorile le alegi tu.</p>
+      </div>
+      <Button href={url('/contact')}>
+        Cere ofertă
+        <svg class="arrow" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4" /></svg>
+      </Button>
+    </div>
+
+    <dl class="specs">
+      {
+        p.specs.map((s) => (
+          <div class="spec">
+            <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 20 20 4M14 4h6v6M4 14v6h6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <div>
+              <dt>{s.label}</dt>
+              <dd>{s.value}</dd>
+            </div>
+          </div>
+        ))
+      }
+    </dl>
+
+    <div class="pd__body">
+      <div class="desc">
+        <h2>Descriere</h2>
+        <p>
+          {`${p.title} pentru o locuință din ${p.district}. De la măsurători până la montaj au trecut ${p.weeks} săptămâni.`}
+        </p>
+        <p>
+          Toate piesele au fost debitate pe CNC în atelierul nostru din Iași, direct din fișierul
+          proiectului, și montate de probă înainte de livrare.
+          {materials.length > 0 && ` Materiale folosite: ${materials.join(', ')}.`}
+        </p>
+        <ul>
+          {p.specs.map((s) => <li><strong>{s.label}:</strong> {s.value}</li>)}
+        </ul>
+      </div>
+      <ConsultForm project={`${p.title} (${p.district})`} />
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="mat-band">
+      <Image
+        src={resolveImage('hero-led', 'amb.jpg')}
+        alt=""
+        widths={[800, 1400]}
+        sizes="(min-width: 1280px) 1184px, 100vw"
+        loading="lazy"
+        class="mat-band__img"
+      />
+      <h2>Mobila se face la comandă, cu materialele alese de tine</h2>
+      <div class="mat-band__actions">
+        <Button href={url('/contact')} variant="outline">Contactează-ne</Button>
+        <a href={url('/materiale')} class="more">Vezi materialele</a>
+      </div>
+    </div>
+  </section>
+
+  <Reviews />
+
+  <section class="wrap rel" aria-labelledby="rel-title">
+    <h2 id="rel-title">Te-ar putea interesa și</h2>
+    <ul class="rel__grid">
+      {
+        related.map((o) => (
+          <li>
+            <a href={url(`/proiect/${o.slug}`)} class="rel__link">
+              <span class="rel__media">
+                <Image src={resolveImage('projects', o.cover)} alt={`${o.title}, ${o.district}`} widths={[480, 800]} sizes="(min-width: 1024px) 33vw, 100vw" loading="lazy" />
+              </span>
+              <span class="rel__title">{o.title} – {o.district}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .pd { padding-top: 24px; }
+
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+    color: var(--text-2);
+    font-size: var(--fs-label);
+  }
+
+  .crumbs a:hover,
+  .crumbs [aria-current] { color: var(--text); }
+
+  .gal__main {
+    display: grid;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--color-ink-2);
+  }
+
+  .gal__img {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 300ms var(--ease);
+  }
+
+  .gal__img.is-active { opacity: 1; }
+
+  .gal__thumbs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .gal__thumb {
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    opacity: 0.55;
+    transition: opacity var(--dur) var(--ease);
+  }
+
+  .gal__thumb[aria-pressed='true'],
+  .gal__thumb:hover { opacity: 1; }
+
+  .gal__thumb :global(img) { width: 100%; height: 100%; object-fit: cover; }
+
+  .pd__head {
+    display: grid;
+    gap: 18px;
+    margin-top: 32px;
+  }
+
+  .pd__head h1 { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.1rem); }
+  .pd__sub { margin-top: 6px; color: var(--text-2); font-size: 0.95rem; }
+
+  .specs {
+    display: grid;
+    gap: 18px 24px;
+    margin-top: 28px;
+    padding: 24px;
+    background: var(--color-ink-2);
+  }
+
+  .spec { display: flex; gap: 12px; align-items: flex-start; }
+  .spec svg { flex: none; color: var(--color-brass); }
+  .spec dt { font-weight: 600; }
+  .spec dd { color: var(--text-2); font-size: 0.875rem; }
+
+  .pd__body {
+    display: grid;
+    gap: 40px;
+    margin-top: 40px;
+    align-items: start;
+  }
+
+  .desc h2 { font-size: 1.05rem; margin-bottom: 12px; }
+  .desc p { max-width: 62ch; color: var(--text-2); font-size: 0.95rem; }
+  .desc p + p, .desc p + ul { margin-top: 14px; }
+  .desc ul { display: grid; gap: 4px; color: var(--text-2); font-size: 0.95rem; }
+  .desc strong { color: var(--text); font-weight: 500; }
+
+  .mat-band {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: grid;
+    gap: 18px;
+    margin-top: var(--section-y);
+    padding: clamp(28px, 4vw, 44px);
+  }
+
+  .mat-band__img {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.35);
+  }
+
+  .mat-band h2 { max-width: 26ch; font-size: clamp(1.25rem, 1.1rem + 0.7vw, 1.6rem); }
+  .mat-band__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; }
+
+  .rel h2 { font-size: 1.3rem; margin-bottom: 20px; }
+  .rel__grid { display: grid; gap: 24px 18px; }
+  .rel__media { display: block; aspect-ratio: 3 / 2; overflow: hidden; background: var(--color-ink-2); }
+  .rel__media :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .rel__title { display: block; margin-top: 10px; font-size: 0.95rem; }
+  .rel__link:hover .rel__title { color: var(--color-brass-hi); }
+
+  @media (min-width: 640px) {
+    .specs { grid-template-columns: repeat(2, 1fr); }
+    .rel__grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (min-width: 900px) {
+    .pd__head { grid-template-columns: 1fr auto; align-items: center; }
+    .specs { grid-template-columns: repeat(4, 1fr); }
+    .pd__body { grid-template-columns: 1fr 420px; gap: 56px; }
+  }
+</style>
+
+<script>
+  // Miniaturile schimbă poza mare.
+  document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((g) => {
+    const imgs = [...g.querySelectorAll<HTMLElement>('[data-gal-img]')];
+    const thumbs = [...g.querySelectorAll<HTMLButtonElement>('[data-gal-thumb]')];
+    thumbs.forEach((t, i) =>
+      t.addEventListener('click', () => {
+        imgs.forEach((im, k) => im.classList.toggle('is-active', k === i));
+        thumbs.forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
+      }),
+    );
+  });
+</script>

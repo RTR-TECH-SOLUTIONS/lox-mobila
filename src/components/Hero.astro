@@ -67,7 +67,7 @@ const pictures = await Promise.all(
     </p>
     <div class="hero__cta">
       <Button href={url('/contact')}>Cere ofertă</Button>
-      <Button href={url('/proiecte')} variant="outline">Vezi proiectele</Button>
+      <Button href={url('/mobilier')} variant="outline">Vezi proiectele</Button>
     </div>
   </div>
 </section>
@@ -122,6 +122,13 @@ const pictures = await Promise.all(
   /* Pe ecran ingust ruptura fixa lasa „nostru." singur pe rand; acolo echilibreaza browserul. */
   @media (max-width: 639px) {
     .hero h1 br { display: none; }
+  }
+
+  .hero h1 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -0.015em;
   }
 
   .hero h1 em {
@@ -198,6 +205,9 @@ const pictures = await Promise.all(
 
   /* Pe telefon vertical vine cadrul vertical; textul sta la mijloc, pe o banda mai intunecata. */
   @media (max-width: 800px) and (orientation: portrait) {
+
+    /* Heroul nu trece de marginea de jos a cadrului vertical: altfel ramane o banda neagra. */
+    .hero { min-height: min(max(100svh, 620px), calc(100vw * 2688 / 1520)); }
 
     /* Cadrul ocupa toata latimea si coboara cat e el de inalt: taiat pe laturi, ar pierde
        rafturile din stanga si profilul vertical din dreapta. Sub el, podeaua trece in negru. */

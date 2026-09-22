@@ -32,13 +32,23 @@ export const site: SiteData = {
   ],
 
   nav: [
-    { label: 'Cine suntem', href: '/cine-suntem', n: 'I' },
-    { label: 'Ce construim', href: '/ce-construim', n: 'II' },
-    { label: 'Proiecte', href: '/proiecte', n: 'III' },
-    { label: 'Etapele lucrării', href: '/etape', n: 'IV' },
-    { label: 'Materiale', href: '/materiale', n: 'V' },
-    { label: 'Contact', href: '/contact', n: 'VII' },
+    { label: 'Acasă', href: '/' },
+    {
+      label: 'Mobilier',
+      href: '/mobilier',
+      children: [
+        { label: 'Bucătării', href: '/mobilier/bucatarii' },
+        { label: 'Dressing', href: '/mobilier/dressing' },
+        { label: 'Dormitor', href: '/mobilier/dormitor' },
+        { label: 'Living', href: '/mobilier/living' },
+      ],
+    },
+    { label: 'Servicii', href: '/servicii' },
+    { label: 'Materiale', href: '/materiale' },
+    { label: 'Despre noi', href: '/cine-suntem' },
+    { label: 'Contact', href: '/contact' },
   ],
 
   googleReviewsUrl: '#', // PLACEHOLDER
+  googleRating: { score: '4,9', count: 38 }, // PLACEHOLDER: nota si numarul reale din profilul Google
 };

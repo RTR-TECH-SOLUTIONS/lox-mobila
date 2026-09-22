@@ -1,0 +1,92 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageBanner from '../../components/ui/PageBanner.astro';
+import Catalog from '../../components/Catalog.astro';
+import ConsultForm from '../../components/ConsultForm.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { projects } from '../../data/projects';
+import { categoryPages, type CategoryPage } from '../../data/categories';
+
+export function getStaticPaths() {
+  return categoryPages.map((c) => ({ params: { categorie: c.key }, props: { page: c } }));
+}
+
+const { page } = Astro.props as { page: CategoryPage };
+const items = projects.filter((p) => p.category === page.key);
+---
+
+<Base
+  title={`${page.title} în Iași | LOX Mobila`}
+  description={`${page.title} în Iași. ${page.lead}`}
+  headerOverlay
+>
+  <PageBanner title={page.label} categories active={page.key} />
+
+  <section class="section wrap">
+    <Catalog items={items} active={page.key} />
+
+    <div class="below">
+      <ConsultForm project={page.title} />
+
+      <article class="seo">
+        {
+          page.body.map((b) => (
+            <>
+              <h2>{b.heading}</h2>
+              {b.paragraphs.map((t) => <p>{t}</p>)}
+              {b.list && (
+                <ul>
+                  {b.list.map((li) => <li>{li}</li>)}
+                </ul>
+              )}
+            </>
+          ))
+        }
+      </article>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .below {
+    display: grid;
+    gap: 40px;
+    margin-top: 56px;
+  }
+
+  .seo {
+    padding: clamp(24px, 3vw, 40px);
+    background: var(--color-ink-2);
+  }
+
+  .seo h2 { font-size: 1.3rem; }
+  .seo h2 + p, .seo h2 + ul { margin-top: 10px; }
+  .seo * + h2 { margin-top: 28px; }
+  .seo p { max-width: 70ch; color: var(--text-2); font-size: 0.95rem; }
+
+  .seo ul { display: grid; gap: 6px; }
+
+  .seo li {
+    position: relative;
+    padding-left: 18px;
+    color: var(--text-2);
+    font-size: 0.95rem;
+  }
+
+  .seo li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 0.62em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-brass);
+  }
+
+  @media (min-width: 1024px) {
+    .below { margin-left: 300px; }
+  }
+</style>

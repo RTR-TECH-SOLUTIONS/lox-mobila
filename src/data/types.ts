@@ -16,8 +16,9 @@ export interface SiteData {
   social: { label: string; href: string }[];
   stats: { value: string; label: string }[];
   /** `n` = cifra romana a sectiunii, aceeasi pe prima pagina si pe pagina ei. */
-  nav: { label: string; href: string; n: string }[];
+  nav: { label: string; href: string; children?: { label: string; href: string }[] }[];
   googleReviewsUrl: string;
+  googleRating: { score: string; count: number };
 }
 
 export interface Service {
@@ -50,6 +51,8 @@ export interface ProcessStep {
   title: string;
   text: string;
   duration: string;
+  /** Zilele din graficul unei bucatarii obisnuite (0-42), [inceput, sfarsit]. */
+  days: [number, number];
 }
 
 export interface MaterialRow {

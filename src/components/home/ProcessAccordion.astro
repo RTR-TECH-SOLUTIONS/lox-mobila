@@ -1,0 +1,115 @@
+---
+import Button from '../ui/Button.astro';
+import { processSteps } from '../../data/process';
+import { url } from '../../lib/url';
+---
+
+<section class="section wrap pa" aria-labelledby="proces-title">
+  <div class="pa__text" data-reveal="left">
+    <h2 id="proces-title">Procesul nostru</h2>
+    <p class="pa__sub">De la prima discuție până la montaj, cu aceeași echipă.</p>
+    <p>
+      Fiecare lucrare trece prin aceiași șase pași. Știi din prima zi ce urmează, cât durează și
+      cine vine la tine acasă.
+    </p>
+    <p>Măsurătorile sunt gratuite în Iași și nu te obligă la nimic.</p>
+    <Button href={url('/etape')} variant="outline">
+      Vezi etapele
+      <svg class="arrow" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4" /></svg>
+    </Button>
+  </div>
+
+  <div class="pa__card" data-reveal="right" style="--i: 1">
+    {
+      processSteps.map((s, i) => (
+        <details class="step" name="proces" open={i === 0}>
+          <summary>
+            <span class="step__n tabular-nums">{s.n}.</span>
+            <span class="step__title">{s.title}</span>
+            <span class="step__dur">{s.duration}</span>
+            <span class="step__icon" aria-hidden="true" />
+          </summary>
+          <p>{s.text}</p>
+        </details>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .pa {
+    display: grid;
+    gap: 40px;
+    align-items: center;
+  }
+
+  .pa__text { display: grid; gap: 14px; justify-items: start; }
+  .pa__text p { max-width: 50ch; color: var(--text-2); }
+  .pa__text .pa__sub { color: var(--text-body); }
+  .pa__text :global(a) { margin-top: 12px; }
+
+  .pa__card {
+    padding: 16px 32px;
+    background: var(--color-ink-3);
+    box-shadow: 0 20px 50px rgb(0 0 0 / 0.45);
+  }
+
+  .step + .step { border-top: 1px solid var(--rule); }
+
+  summary {
+    display: grid;
+    grid-template-columns: auto 1fr auto 16px;
+    align-items: baseline;
+    gap: 12px;
+    padding-block: 18px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker { display: none; }
+
+  .step__n { color: rgb(242 239 234 / 0.35); font-size: 0.95rem; }
+  .step__title { font-weight: 600; }
+  .step__dur { color: var(--text-2); font-size: var(--fs-label); white-space: nowrap; }
+
+  /* Plus care devine x cand pasul e deschis. */
+  .step__icon {
+    position: relative;
+    width: 12px;
+    height: 12px;
+    align-self: center;
+  }
+
+  .step__icon::before,
+  .step__icon::after {
+    content: '';
+    position: absolute;
+    inset: 5.5px 0 auto;
+    height: 1px;
+    background: currentColor;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .step__icon::after { transform: rotate(90deg); }
+  .step[open] .step__icon::before { transform: rotate(45deg); }
+  .step[open] .step__icon::after { transform: rotate(135deg); }
+
+  .step p {
+    max-width: 52ch;
+    padding: 0 0 20px 36px;
+    color: var(--text-2);
+    font-size: 0.95rem;
+  }
+
+  summary:hover .step__title { color: var(--color-brass-hi); }
+
+  @media (max-width: 479px) {
+    .pa__card { padding-inline: 20px; }
+    .step__dur { display: none; }
+    summary { grid-template-columns: auto 1fr 16px; }
+  }
+
+  @media (min-width: 1024px) {
+    .pa { grid-template-columns: 1fr 1fr; gap: 80px; }
+  }
+</style>

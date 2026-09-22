@@ -1,0 +1,138 @@
+---
+import { Image } from 'astro:assets';
+import { resolveImage } from '../../lib/images';
+import { services } from '../../data/services';
+import { url } from '../../lib/url';
+import { categoryPages } from '../../data/categories';
+
+// Serviciile fără pagină de lucrări (băi, spații comerciale) duc la ofertă.
+const link = (slug: string) =>
+  categoryPages.some((c) => c.key === slug) ? url(`/mobilier/${slug}`) : url('/contact');
+---
+
+<section class="section cat" aria-labelledby="categorii-title">
+  <div class="wrap">
+    <h2 id="categorii-title" class="cat__title">Categorii de mobilier</h2>
+
+    <ul class="cat__grid">
+      {
+        services.map((s, i) => (
+          <li data-reveal="img" style={`--i: ${i % 3}`}>
+            <a href={link(s.slug)} class="tile">
+              <Image
+                src={resolveImage('services', s.image)}
+                alt={`${s.title} la comandă`}
+                widths={[480, 800, 1200]}
+                sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                loading="lazy"
+                class="tile__img"
+              />
+              <span class="tile__shade" aria-hidden="true" />
+              <span class="tile__body">
+                <span class="tile__kicker">Mobilier</span>
+                <span class="tile__name">{s.title}</span>
+                <span class="tile__more">
+                  {link(s.slug).endsWith('/contact') ? 'Cere ofertă' : 'Vezi proiecte'}
+                  <svg class="arrow" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4" /></svg>
+                </span>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .cat__title { margin-bottom: 28px; }
+
+  .cat__grid {
+    display: grid;
+    gap: 12px;
+  }
+
+  .tile {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--color-ink-2);
+  }
+
+  .tile__img {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 500ms var(--ease);
+  }
+
+  .tile:hover .tile__img { transform: scale(1.04); }
+
+  .tile__shade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(to top, rgb(0 0 0 / 0.7), rgb(0 0 0 / 0) 40%);
+  }
+
+  /* La hover textul urcă puțin și sub nume crește o linie de alamă. */
+  .tile__body {
+    transition: transform 350ms var(--ease);
+    position: absolute;
+    inset: auto 0 0;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: 'kicker .' 'name more';
+    align-items: end;
+    padding: 20px;
+  }
+
+  .tile__kicker { grid-area: kicker; font-size: 0.8rem; color: rgb(242 239 234 / 0.75); }
+
+  .tile__name {
+    grid-area: name;
+    font-size: 1.3rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .tile__more {
+    grid-area: more;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding-bottom: 3px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .tile:hover .tile__more { color: var(--color-brass-hi); }
+  .tile:hover .tile__body { transform: translateY(-6px); }
+
+  .tile__name {
+    background: linear-gradient(var(--color-brass), var(--color-brass)) 0 100% / 0 1px no-repeat;
+    padding-bottom: 2px;
+    transition: background-size 450ms var(--ease);
+  }
+
+  .tile:hover .tile__name { background-size: 100% 1px; }
+
+  @media (min-width: 640px) {
+    .cat__grid { grid-template-columns: repeat(2, 1fr); }
+    .tile { aspect-ratio: 4 / 5; }
+  }
+
+  @media (min-width: 1024px) {
+    .cat__grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .tile { aspect-ratio: 3 / 4; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tile:hover .tile__img { transform: none; }
+  }
+</style>

@@ -1,13 +1,26 @@
 ---
 import Base from '../layouts/Base.astro';
-import About from '../components/About.astro';
+import PageBanner from '../components/ui/PageBanner.astro';
+import Experience from '../components/home/Experience.astro';
+import Stats from '../components/home/Stats.astro';
+import ProcessAccordion from '../components/home/ProcessAccordion.astro';
+import Reviews from '../components/home/Reviews.astro';
 import CtaBand from '../components/CtaBand.astro';
 ---
 
 <Base
-  title="Cine suntem | LOX Mobila Iași"
+  title="Despre noi | LOX Mobila Iași"
   description="Atelierul LOX Mobila din Iași: debitare CNC, cant aplicat la cald și montaj de probă în atelier înainte de livrare."
+  headerOverlay
 >
-  <About />
+  <PageBanner title="Despre noi" lead="Un atelier de mobilă la comandă din Iași, de la măsurători la montaj." />
+  <div class="pt"><Experience /></div>
+  <Stats />
+  <ProcessAccordion />
+  <Reviews />
   <CtaBand />
 </Base>
+
+<style>
+  .pt { padding-top: var(--section-y); }
+</style>
