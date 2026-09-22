@@ -1,0 +1,48 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import Field from '../../components/Field.astro';
+import Repeater from '../../components/Repeater.astro';
+import SaveBar from '../../components/SaveBar.astro';
+import BodyRow from '../../components/rows/BodyRow.astro';
+import { CATEGORY_LABELS } from '@site/content/schema';
+import { readContent } from '../../lib/content';
+import { repo } from '../../lib/repo';
+
+const pages = await readContent(repo(), 'categories');
+const page = pages.find((p) => p.key === Astro.params.key);
+if (!page) return Astro.redirect('/categorii');
+const label = CATEGORY_LABELS[page.key];
+---
+
+<Admin title={`Texte: ${label}`} section="categorii">
+  <div class="page-head">
+    <div>
+      <p class="crumb"><a href="/categorii">Texte categorii</a></p>
+      <h1>{label}</h1>
+    </div>
+  </div>
+
+  <form action={`/api/save/categorii/${page.key}`} data-save-form data-view={`/mobilier/${page.key}`} novalidate>
+    <section class="panel">
+      <h2 class="panel__title">Antetul paginii</h2>
+      <div class="fields">
+        <Field label="Titlu" name="title" value={page.title} max={80} />
+        <Field label="Introducere" name="lead" type="textarea" rows={2} value={page.lead} max={200} hint="O frază scurtă, sub titlu." />
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel__title">Textul de sub catalog</h2>
+      <Repeater name="body" addLabel="Adaugă un bloc de text">
+        {page.body.map((b) => <BodyRow heading={b.heading} paragraphs={b.paragraphs} list={b.list} />)}
+        <BodyRow slot="template" />
+      </Repeater>
+    </section>
+
+    <SaveBar />
+  </form>
+</Admin>
+
+<script>
+  import '../../scripts/form.ts';
+</script>

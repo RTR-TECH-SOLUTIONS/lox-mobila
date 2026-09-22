@@ -1,0 +1,19 @@
+---
+import Field from '../Field.astro';
+import RowTools from '../RowTools.astro';
+
+interface Props {
+  label?: string;
+  href?: string;
+}
+
+const { label = '', href = '' } = Astro.props;
+---
+
+<div class="row" data-row>
+  <div class="row__fields">
+    <Field label="Rețea" row="label" value={label} max={30} hint="De exemplu Facebook sau Instagram." />
+    <Field label="Link" row="href" type="url" value={href} hint="Adresa paginii, cu https://" />
+  </div>
+  <RowTools />
+</div>

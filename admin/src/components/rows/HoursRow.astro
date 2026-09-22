@@ -1,0 +1,19 @@
+---
+import Field from '../Field.astro';
+import RowTools from '../RowTools.astro';
+
+interface Props {
+  days?: string;
+  time?: string;
+}
+
+const { days = '', time = '' } = Astro.props;
+---
+
+<div class="row" data-row>
+  <div class="row__fields">
+    <Field label="Zile" row="days" value={days} max={40} />
+    <Field label="Ore" row="time" value={time} max={40} />
+  </div>
+  <RowTools />
+</div>
