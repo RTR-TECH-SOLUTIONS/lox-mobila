@@ -1,3 +1,5 @@
+import { safeView } from '../lib/redirect';
+
 type State = 'pending' | 'success' | 'failure' | 'slow';
 
 interface Job {
@@ -32,7 +34,8 @@ function render(state: State, job: Job): void {
   const text = Object.assign(document.createElement('span'), { textContent: TEXT[state] });
   bar.replaceChildren(dot, text);
   if (state === 'success') {
-    const a = Object.assign(document.createElement('a'), { href: `${siteUrl}${job.view ?? '/'}`, target: '_blank', rel: 'noopener', textContent: 'Vezi pe site' });
+    // Calea vine din adresa paginii (?vezi=); o lipim de adresa site-ului doar daca e o cale simpla.
+    const a = Object.assign(document.createElement('a'), { href: siteUrl + safeView(job.view), target: '_blank', rel: 'noopener', textContent: 'Vezi pe site' });
     bar.append(a);
   }
   if (state !== 'pending') {

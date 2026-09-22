@@ -10,3 +10,8 @@ export function safeNext(next: string | null | undefined, fallback = '/proiecte'
     return fallback;
   }
 }
+
+/** Pagina de pe site pentru „Vezi pe site”: doar o cale simpla; orice altceva duce la prima pagina. */
+export function safeView(view: string | null | undefined): string {
+  return view && /^\/(?!\/)/.test(view) && !/[@\\\s]/.test(view) ? view : '/';
+}
