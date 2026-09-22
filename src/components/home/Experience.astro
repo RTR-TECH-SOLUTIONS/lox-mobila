@@ -1,0 +1,122 @@
+---
+import { Image } from 'astro:assets';
+import { resolveImage } from '../../lib/images';
+import Partners from '../ui/Partners.astro';
+import { site } from '../../data/site';
+
+const features = [
+  {
+    title: 'Măsurat și desenat la cotă',
+    text: 'Venim cu laserul și desenăm fiecare corp pe pereții tăi, nu pe dimensiuni de catalog.',
+    icon: 'M3 17h18M5 17V9m4 8v-5m4 5V9m4 8v-5m4 5V9',
+  },
+  {
+    title: 'Materiale verificate',
+    text: 'Plăci Egger, feronerie Blum și Hettich, canturi aplicate la cald cu adeziv poliuretanic.',
+    icon: 'M12 3 3 8l9 5 9-5-9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5',
+  },
+  {
+    title: 'Măsurători gratuite',
+    text: `În ${site.city} venim gratuit și îți spunem sincer dacă bugetul se leagă de ce îți dorești.`,
+    icon: 'M4 5h16v11H8l-4 4V5Zm4 5h8M8 13h5',
+  },
+];
+
+---
+
+<section class="exp" aria-labelledby="experienta-title">
+  <div class="wrap exp__top">
+    <div class="exp__text" data-reveal="left">
+      <h2 id="experienta-title">Mobilier făcut în atelierul nostru, montat de noi</h2>
+      <p>
+        Mobilă la comandă în {site.city}, de la măsurători la montaj. La LOX Mobila fiecare piesă se
+        debitează pe CNC direct din fișierul proiectului tău.
+      </p>
+      <p>
+        Facem bucătării, dressinguri, livinguri, dormitoare și mobilier pentru spații comerciale.
+        Înainte de livrare montăm totul de probă în atelier: dacă o ușă freacă, freacă la noi, nu la
+        tine acasă.
+      </p>
+    </div>
+
+    <ul class="exp__card" data-reveal="right" style="--i: 1">
+      {
+        features.map((f) => (
+          <li class="feat">
+            <svg class="feat__icon" width="30" height="30" viewBox="0 0 24 24" aria-hidden="true">
+              <path d={f.icon} fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" />
+            </svg>
+            <h3>{f.title}</h3>
+            <p>{f.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <div class="exp__photo" data-reveal="img">
+    <Image
+      data-parallax="-60"
+      data-parallax-scale="1.18"
+      src={resolveImage('workshop', 'atelier.jpg')}
+      alt="Atelierul LOX Mobila: masă de debitare CNC cu o placă de MDF pregătită"
+      widths={[800, 1400, 2000]}
+      sizes="100vw"
+      loading="lazy"
+    />
+  </div>
+
+  <Partners />
+</section>
+
+<style>
+  .exp { padding-top: 0; }
+
+  .exp__top {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 32px;
+  }
+
+  .exp__text { display: grid; gap: 14px; align-content: start; }
+  .exp__text h2 { max-width: 20ch; margin-bottom: 6px; }
+  .exp__text p { max-width: 56ch; color: var(--text-2); font-size: 0.975rem; }
+
+  .exp__card {
+    padding: 28px 32px;
+    background: var(--color-ink-3);
+    box-shadow: 0 20px 50px rgb(0 0 0 / 0.45);
+  }
+
+  .feat { padding-block: 18px; }
+  .feat + .feat { border-top: 1px solid var(--rule); }
+  .feat:first-child { padding-top: 0; }
+  .feat:last-child { padding-bottom: 0; }
+
+  .feat__icon { color: var(--color-brass); margin-bottom: 10px; }
+  .feat h3 { font-size: 1.15rem; }
+  .feat p { margin-top: 4px; color: var(--text-2); font-size: 0.9rem; line-height: 1.55; }
+
+  .exp__photo {
+    margin-top: 32px;
+    height: clamp(300px, 42vw, 560px);
+    overflow: hidden;
+    background: var(--color-ink-2);
+  }
+
+  .exp__photo :global(img) { width: 100%; height: 100%; object-fit: cover; }
+
+
+  /* Pe desktop cardul coboara peste poza, ca la Mobili Design. */
+  @media (min-width: 1024px) {
+    .exp__top {
+      grid-template-columns: 1fr 380px;
+      gap: 80px;
+    }
+
+    .exp__card { margin-bottom: -220px; }
+    .exp__text { padding-top: 24px; }
+    .exp__photo { margin-top: 0; }
+  }
+</style>

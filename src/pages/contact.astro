@@ -1,13 +1,279 @@
 ---
 import Base from '../layouts/Base.astro';
-import ContactForm from '../components/ContactForm.astro';
-import Reviews from '../components/Reviews.astro';
+import PageBanner from '../components/ui/PageBanner.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site } from '../data/site';
+import { url } from '../lib/url';
+
+const cards = [
+  { title: 'Telefon', value: site.phoneDisplay, href: site.phoneHref, icon: 'M6 3h3l1.5 4-2 1.5a11 11 0 0 0 5 5l1.5-2 4 1.5v3a2 2 0 0 1-2 2A15 15 0 0 1 4 5a2 2 0 0 1 2-2Z' },
+  { title: 'E-mail', value: site.email, href: `mailto:${site.email}`, icon: 'M3 6h18v12H3V6Zm0 0 9 7 9-7' },
+  { title: 'Atelier', value: site.address, href: site.mapsUrl, icon: 'M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Zm0-8.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z' },
+];
+
+const types = ['Bucătărie', 'Dressing', 'Living', 'Dormitor', 'Baie', 'Spațiu comercial', 'Altceva'];
+
+const faq = [
+  {
+    q: 'Cât durează o lucrare, de la comandă la montaj?',
+    a: 'Execuția în atelier durează între 2 și 6 săptămâni după ce aprobi proiectul 3D. Un dressing iese mai repede, o bucătărie cu insulă durează cel mai mult. Termenul trece în contract.',
+  },
+  {
+    q: 'Cât costă măsurătorile?',
+    a: `Nimic. În ${site.city} și în județ venim gratuit cu laserul și nu te obligă la nimic.`,
+  },
+  {
+    q: 'Cum se calculează prețul?',
+    a: 'În 2-3 zile după măsurători primești o schiță cotată și un preț defalcat pe corpuri, materiale și feronerie. Vezi exact pe ce se duc banii, fără sume adăugate la final.',
+  },
+  {
+    q: 'Ce materiale folosiți?',
+    a: 'PAL melaminat, MDF infoliat, MDF vopsit și furnir natural, cu feronerie Blum și Hettich. Îți arătăm mostrele și îți spunem ce merită pentru încăperea ta.',
+  },
+  {
+    q: 'Cine face montajul?',
+    a: 'Echipa noastră, nu subcontractori. Înainte de livrare montăm totul de probă în atelier, iar la tine reglăm fiecare ușă și facem curat.',
+  },
+  {
+    q: 'Pot schimba ceva după ce văd proiectul 3D?',
+    a: 'Da. Culorile, compartimentarea și feroneria se pot ajusta până aprobi proiectul, iar abia apoi intră în producție.',
+  },
+];
 ---
 
 <Base
   title="Contact | LOX Mobila Iași"
   description="Cere o ofertă pentru mobilă la comandă în Iași. Măsurătorile sunt gratuite."
+  headerOverlay
 >
-  <ContactForm />
-  <Reviews />
+  <PageBanner title="Contact" lead="Ai un proiect în minte? Scrie-ne sau sună-ne și găsim împreună cea mai bună soluție." />
+
+  <section class="section wrap">
+    <ul class="info">
+      {
+        cards.map((c, i) => (
+          <li>
+            <a href={c.href} class:list={['info__card', i === 2 && 'info__card--dark']}>
+              <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true">
+                <path d={c.icon} fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+              </svg>
+              <span class="info__title">{c.title}</span>
+              <span class="info__value">{c.value}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="social">
+      <span>Ne găsești și aici:</span>
+      {site.social.map((s) => <a href={s.href}>{s.label}</a>)}
+      <a href={`https://wa.me/${site.whatsappNumber}`}>WhatsApp</a>
+    </div>
+
+    <form
+      class="form"
+      data-quote-form
+      data-wa={site.whatsappNumber}
+      action={`https://wa.me/${site.whatsappNumber}`}
+      method="get"
+      target="_blank"
+    >
+      <h2>Formular de contact</h2>
+      <p class="form__sub">Scrie-ne și revenim în cel mai scurt timp, de obicei în aceeași zi lucrătoare.</p>
+
+      <div class="form__row">
+        <div class="field">
+          <label for="name">Nume</label>
+          <input id="name" name="name" type="text" required autocomplete="name" />
+        </div>
+        <div class="field">
+          <label for="phone">Telefon *</label>
+          <input id="phone" name="phone" type="tel" required autocomplete="tel" pattern="[0-9+ ]{10,15}" placeholder="07xx xxx xxx" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="projectType">Ce vrei să facem</label>
+        <select id="projectType" name="projectType" required>
+          {types.map((t) => <option value={t}>{t}</option>)}
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="message">Mesaj</label>
+        <textarea id="message" name="message" rows="5" placeholder="Ex: bucătărie în L, 3,2 m x 2,4 m, apartament nou"></textarea>
+      </div>
+
+      <label class="form__check">
+        <input type="checkbox" required />
+        <span>Sunt de acord să fiu contactat pe telefon sau WhatsApp.</span>
+      </label>
+
+      <button type="submit" class="form__btn">Trimite mesajul</button>
+      <p class="form__note">Se deschide WhatsApp cu mesajul gata scris.</p>
+    </form>
+  </section>
+
+  <section class="faq">
+    <div class="wrap faq__inner">
+      <div class="faq__intro">
+        <h2>Întrebări frecvente</h2>
+        <p>
+          Răspunsuri la ce ne întreabă cei mai mulți clienți despre durată, preț, materiale și
+          montaj. Pentru restul, <a href={url('/contact')} class="more">scrie-ne</a>.
+        </p>
+      </div>
+      <div class="faq__list">
+        {
+          faq.map((f, i) => (
+            <details name="faq" open={i === 0}>
+              <summary>
+                <span>{f.q}</span>
+                <span class="faq__icon" aria-hidden="true" />
+              </summary>
+              <p>{f.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
 </Base>
+
+<style>
+  .info { display: grid; gap: 14px; }
+
+  .info__card {
+    display: grid;
+    gap: 4px;
+    height: 100%;
+    padding: 28px;
+    background: var(--color-ink-2);
+    transition: background-color var(--dur) var(--ease);
+  }
+
+  .info__card:hover { background: var(--color-ink-3); }
+  .info__card svg { margin-bottom: 14px; color: var(--color-brass); }
+  .info__card--dark { background: var(--color-brass); color: var(--color-ink); }
+  .info__card--dark svg { color: var(--color-ink); }
+  .info__card--dark:hover { background: var(--color-brass-hi); }
+
+  .info__title { font-weight: 600; font-size: 1.1rem; }
+  .info__value { font-size: 0.95rem; opacity: 0.85; }
+
+  .social {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px 20px;
+    margin-block: 36px 48px;
+    padding-block: 16px;
+    border-block: 1px solid var(--rule);
+    color: var(--text-2);
+    font-size: 0.9rem;
+  }
+
+  .social a { color: var(--text); }
+  .social a:hover { color: var(--color-brass); }
+
+  .form {
+    display: grid;
+    gap: 18px;
+    max-width: 640px;
+    padding: clamp(24px, 3vw, 36px);
+    background: var(--color-ink-2);
+    box-shadow: 0 20px 50px rgb(0 0 0 / 0.4);
+  }
+
+  .form h2 { font-size: 1.3rem; }
+  .form__sub { margin-top: -10px; color: var(--text-2); font-size: 0.9rem; }
+
+  .form__row { display: grid; gap: 18px; }
+
+  .field { display: grid; gap: 6px; }
+  .field label { font-size: var(--fs-label); color: var(--text-2); }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--color-ink);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.95rem;
+  }
+
+  .form__check { display: flex; gap: 10px; color: var(--text-2); font-size: 0.85rem; }
+  .form__check input { margin-top: 3px; accent-color: var(--color-brass); }
+
+  .form__btn {
+    height: 48px;
+    border-radius: 8px;
+    background: var(--color-bone);
+    color: var(--color-ink);
+    font-weight: 600;
+    transition: background-color var(--dur) var(--ease);
+  }
+
+  .form__btn:hover { background: var(--color-brass-hi); }
+  .form__note { color: var(--text-2); font-size: 0.8rem; }
+
+  /* ---------- Întrebări frecvente ---------- */
+  .faq {
+    padding-block: var(--section-y);
+    background: var(--color-ink-2);
+  }
+
+  .faq__inner { display: grid; gap: 32px; align-items: center; }
+  .faq__intro h2 { margin-bottom: 10px; }
+  .faq__intro p { max-width: 40ch; color: var(--text-2); font-size: 0.95rem; }
+
+  .faq__list details { border-bottom: 1px solid var(--rule); }
+
+  .faq__list summary {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 16px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq__list summary::-webkit-details-marker { display: none; }
+  .faq__list summary:hover { color: var(--color-brass-hi); }
+
+  .faq__icon { position: relative; flex: none; width: 12px; height: 12px; margin-top: 5px; }
+
+  .faq__icon::before,
+  .faq__icon::after {
+    content: '';
+    position: absolute;
+    inset: 5.5px 0 auto;
+    height: 1px;
+    background: currentColor;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .faq__icon::after { transform: rotate(90deg); }
+  details[open] .faq__icon::after { transform: rotate(0); }
+
+  .faq__list p { padding-bottom: 18px; max-width: 64ch; color: var(--text-2); font-size: 0.925rem; }
+
+  @media (min-width: 640px) {
+    .info { grid-template-columns: repeat(3, 1fr); }
+    .form__row { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (min-width: 1024px) {
+    .faq__inner { grid-template-columns: 1fr 1.4fr; gap: 80px; }
+  }
+</style>

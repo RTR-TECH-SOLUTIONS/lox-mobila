@@ -1,0 +1,104 @@
+---
+import { reviews } from '../../data/reviews';
+import { site } from '../../data/site';
+
+const initials = (name: string) =>
+  name.split(/\s+/).filter((w) => /^[A-ZĂÂÎȘȚ]/.test(w)).slice(0, 2).map((w) => w[0]).join('');
+const { score, count } = site.googleRating;
+---
+
+<section class="section wrap rv" aria-labelledby="recenzii-title">
+  <ul class="rv__list">
+    {
+      reviews.map((r) => (
+        <li class="rv__card">
+          <div class="rv__head">
+            <span class="rv__avatar" aria-hidden="true">{initials(r.author)}</span>
+            <div>
+              <p class="rv__name">{r.author}</p>
+              <p class="rv__stars" aria-label="5 din 5 stele">★★★★★</p>
+            </div>
+          </div>
+          <blockquote>„{r.text}”</blockquote>
+          <p class="rv__meta">{r.project}, {r.district}</p>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="rv__intro" data-reveal="right">
+    <h2 id="recenzii-title">Recenzii clienți</h2>
+    <p>
+      Fiecare lucrare se termină într-o casă din {site.city}. Iată ce spun cei care au ales LOX
+      Mobila.
+    </p>
+    <p class="rv__score">
+      <strong class="tabular-nums">{score}</strong> din 5 pe Google, {count} de recenzii
+    </p>
+    <a href={site.googleReviewsUrl} class="more" target="_blank" rel="noopener">Toate pe Google</a>
+  </div>
+</section>
+
+<style>
+  .rv {
+    display: grid;
+    gap: 40px;
+  }
+
+  .rv__list {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(220px, 1fr);
+    gap: 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+  }
+
+  .rv__card { scroll-snap-align: start; }
+
+  .rv__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .rv__avatar {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--color-ink-3);
+    color: var(--color-brass-hi);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .rv__name { font-weight: 600; }
+  .rv__stars { color: var(--color-brass); letter-spacing: 0.08em; font-size: 0.85rem; }
+
+  .rv blockquote {
+    margin-top: 16px;
+    color: var(--text-body);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .rv__meta { margin-top: 12px; color: var(--text-2); font-size: var(--fs-label); }
+
+  .rv__intro { display: grid; gap: 12px; justify-items: start; align-content: center; }
+  .rv__intro p { max-width: 36ch; color: var(--text-2); }
+  .rv__score strong { color: var(--text); font-size: 1.25rem; }
+
+  @media (min-width: 1024px) {
+    .rv {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      gap: 64px;
+      align-items: center;
+    }
+  }
+</style>

@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageBanner from '../../components/ui/PageBanner.astro';
+import Catalog from '../../components/Catalog.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { projects } from '../../data/projects';
+---
+
+<Base
+  title="Mobilier la comandă | LOX Mobila Iași"
+  description="Lucrări de mobilă la comandă montate în Iași: bucătării, dressinguri, living și dormitor, cu materialele și feroneria folosite la fiecare."
+  headerOverlay
+>
+  <PageBanner title="Mobilă la comandă" categories />
+  <section class="section wrap">
+    <Catalog items={projects} />
+  </section>
+  <CtaBand />
+</Base>

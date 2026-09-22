@@ -3,90 +3,195 @@ import SectionHeading from './ui/SectionHeading.astro';
 import { processSteps } from '../data/process';
 
 interface Props {
-  /** Pe prima pagina: h2 si link spre /etape, fara textul introductiv. */
+  /** Pe prima pagina: h2 si link spre /etape. */
   teaser?: boolean;
 }
 
 const { teaser = false } = Astro.props;
+
+// Graficul de lucrari al unei bucatarii obisnuite: sase saptamani, o bara pe etapa.
+const WEEKS = 6;
+const TOTAL = WEEKS * 7;
+const pct = (d: number) => `${((d / TOTAL) * 100).toFixed(2)}%`;
+const weeks = Array.from({ length: WEEKS }, (_, i) => i + 1);
 ---
 
 <section class="section wrap" aria-labelledby="etape-title">
   <SectionHeading
-    n="IV"
-    title="Etapele lucrării"
+    title={teaser ? 'Etapele lucrării' : 'Calendarul unei lucrări'}
     id="etape-title"
-    as={teaser ? 'h2' : 'h1'}
-    lead={teaser ? undefined : 'Șase pași, aceiași de fiecare dată. Știi din prima zi ce urmează și cât durează.'}
+    lead="Așa arată calendarul unei bucătării obișnuite, de la primul telefon până la montaj: cam șase săptămâni."
     more={teaser ? { href: '/etape', label: 'Pas cu pas' } : undefined}
   />
 
-  <ol class="steps">
-    {
-      processSteps.map((s, i) => (
-        <li class="step" data-reveal style={`--i: ${i % 3}`}>
-          <span class="step__n" aria-hidden="true">{s.n}</span>
-          <h3 class="step__title">{s.title}</h3>
-          <p class="step__dur">{s.duration}</p>
-          <p class="step__text">{s.text}</p>
-        </li>
-      ))
-    }
-  </ol>
+  <div class="plan" data-reveal>
+    <div class="plan__axis" aria-hidden="true">
+      <span class="plan__axis-label">Etapa</span>
+      <span class="plan__weeks">
+        {weeks.map((w) => <span>Săpt. {w}</span>)}
+      </span>
+    </div>
+
+    <ol class="plan__rows">
+      {
+        processSteps.map((s) => (
+          <li class="plan__row">
+            <div class="plan__info">
+              <h3 class="plan__title">{s.title}</h3>
+              <p class="plan__text">{s.text}</p>
+            </div>
+            <div class="plan__track">
+              {s.days[1] - s.days[0] > 14 ? (
+                <span
+                  class="plan__bar plan__bar--shop"
+                  style={`left: ${pct(s.days[0])}; width: ${pct(s.days[1] - s.days[0])}`}
+                >
+                  {s.duration}
+                </span>
+              ) : (
+                <>
+                  <span
+                    class="plan__bar"
+                    style={`left: ${pct(s.days[0])}; width: max(8px, ${pct(s.days[1] - s.days[0])})`}
+                  />
+                  <span
+                    class="plan__dur"
+                    style={
+                      s.days[1] > TOTAL * 0.8
+                        ? `right: calc(${pct(TOTAL - s.days[0])} + 10px)`
+                        : `left: calc(${pct(s.days[1])} + 10px)`
+                    }
+                  >
+                    {s.duration}
+                  </span>
+                </>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <p class="plan__note">
+      Bara aurie e partea din atelier. Durata ei depinde de mărime: un dressing iese în două
+      săptămâni, o bucătărie cu insulă în șase.
+    </p>
+  </div>
 </section>
 
 <style>
-  /* Separator pe toata latimea intre randuri; fara segmentul scurt de deasupra cifrei. */
-  .step {
-    display: grid;
-    grid-template-columns: 48px 1fr;
-    grid-template-areas:
-      'n title'
-      '. dur'
-      '. text';
-    align-items: baseline;
-    gap: 0 16px;
-    padding-block: 24px;
+  /* Coloana din stanga: etapa. Coloana din dreapta: saptamanile, cu linii verticale. */
+  .plan {
+    --cols: minmax(0, 1fr);
     border-top: 1px solid var(--rule);
   }
 
-  .step:first-child { border-top: 0; padding-top: 0; }
-
-  .step__n {
-    grid-area: n;
-    font-family: var(--font-serif);
-    font-size: var(--fs-h3);
-    color: var(--accent);
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
+  .plan__axis,
+  .plan__row {
+    display: grid;
+    grid-template-columns: var(--cols);
   }
 
-  .step__title { grid-area: title; }
-
-  .step__dur {
-    grid-area: dur;
-    margin-top: 6px;
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgb(242 239 234 / 0.7);
-  }
-
-  .step__text {
-    grid-area: text;
-    margin-top: 10px;
-    max-width: 56ch;
+  .plan__axis {
+    padding-block: 14px;
+    border-bottom: 1px solid var(--rule);
     color: var(--text-2);
+    font-size: var(--fs-label);
+  }
+
+  .plan__axis-label { display: none; }
+
+  .plan__weeks {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .plan__weeks span { padding-left: 6px; white-space: nowrap; }
+
+  .plan__row {
+    gap: 14px;
+    padding-block: 22px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .plan__title { font-size: 1.25rem; }
+
+  .plan__text {
+    max-width: 52ch;
+    margin-top: 6px;
+    color: var(--text-2);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .plan__track,
+  .plan__weeks {
+    background: linear-gradient(to right, var(--rule) 1px, transparent 1px) 0 0 / calc(100% / 6) 100%;
+  }
+
+  .plan__track {
+    position: relative;
+    min-height: 28px;
+  }
+
+  .plan__bar {
+    position: absolute;
+    top: 50%;
+    height: 12px;
+    margin-top: -6px;
+    border-radius: 2px;
+    background: var(--color-bone-2);
+  }
+
+  /* Bara lunga (atelierul) e destul de lata cat sa-si scrie singura durata. */
+  .plan__bar--shop {
+    display: flex;
+    align-items: center;
+    height: 26px;
+    margin-top: -13px;
+    padding-inline: 10px;
+    background: var(--color-brass);
+    color: var(--color-ink);
+    font-size: var(--fs-label);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .plan__dur {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding-inline: 4px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: var(--fs-label);
+    white-space: nowrap;
+  }
+
+  .plan__note {
+    max-width: 60ch;
+    margin-top: 20px;
+    color: var(--text-2);
+    font-size: var(--fs-label);
+  }
+
+  @media (max-width: 639px) {
+    .plan__weeks span { font-size: 0.75rem; padding-left: 3px; }
   }
 
   @media (min-width: 900px) {
-    .step {
-      grid-template-columns: 72px minmax(0, 260px) minmax(0, 1fr) 160px;
-      grid-template-areas: 'n title text dur';
-      gap: 0 40px;
-      padding-block: 32px;
+    .plan { --cols: minmax(0, 5fr) minmax(0, 7fr); }
+
+    .plan__axis { column-gap: 48px; }
+    .plan__axis-label { display: block; }
+
+    .plan__row {
+      column-gap: 48px;
+      align-items: stretch;
+      padding-block: 0;
     }
 
-    .step__dur { margin-top: 0; text-align: right; }
-    .step__text { margin-top: 0; }
+    .plan__info { padding-block: 24px; }
+    .plan__track { min-height: 100%; }
   }
 </style>

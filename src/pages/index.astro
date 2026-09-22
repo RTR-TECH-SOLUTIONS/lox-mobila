@@ -1,29 +1,23 @@
 ---
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
-import HomeAbout from '../components/home/HomeAbout.astro';
-import Services from '../components/Services.astro';
-import ProjectShowcase from '../components/ProjectShowcase.astro';
-import Process from '../components/Process.astro';
-import HomeMaterials from '../components/home/HomeMaterials.astro';
-import HomeReview from '../components/home/HomeReview.astro';
-import HomeContact from '../components/home/HomeContact.astro';
-import Lightbox from '../components/Lightbox.astro';
-import { projects } from '../data/projects';
-
-const featured = projects.filter((p) => p.featured);
+import Categories from '../components/home/Categories.astro';
+import Experience from '../components/home/Experience.astro';
+import Projects from '../components/home/Projects.astro';
+import Stats from '../components/home/Stats.astro';
+import ProcessAccordion from '../components/home/ProcessAccordion.astro';
+import Reviews from '../components/home/Reviews.astro';
+import CtaBand from '../components/CtaBand.astro';
 ---
 
-<!-- Aspectul versiunii intai (bento, galerie cu fise, lista de etape), cu mai putin text:
-     descrierile lungi, tabelul de materiale si formularul stau pe paginile lor. -->
+<!-- Aceeasi ordine ca mobilidesign.ro, fara pachetele cu preturi si fara blog. -->
 <Base title="LOX Mobila | Mobilă la comandă în Iași" headerOverlay>
   <Hero />
-  <HomeAbout />
-  <Services teaser />
-  <ProjectShowcase projects={featured} total={projects.length} />
-  <Process teaser />
-  <HomeMaterials />
-  <HomeReview />
-  <HomeContact />
-  <Lightbox />
+  <Categories />
+  <Experience />
+  <Projects />
+  <Stats />
+  <ProcessAccordion />
+  <Reviews />
+  <CtaBand />
 </Base>

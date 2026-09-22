@@ -24,15 +24,26 @@ const here = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, 
 
     <nav aria-label="Principal" class="hidden xl:flex items-center gap-6 2xl:gap-8">
       {
-        site.nav.map((item) => (
-          <a
-            href={url(item.href)}
-            class="nav-link"
-            aria-current={here === item.href ? 'page' : undefined}
-          >
-            {item.label}
-          </a>
-        ))
+        site.nav.map((item) => {
+          const current = item.href === '/' ? here === '/' : here.startsWith(item.href);
+          return item.children ? (
+            <div class="nav-drop">
+              <a href={url(item.href)} class="nav-link" aria-current={current ? 'page' : undefined}>
+                {item.label}
+                <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="m2 3.5 3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.3" /></svg>
+              </a>
+              <ul class="nav-drop__menu">
+                {item.children.map((c) => (
+                  <li><a href={url(c.href)} aria-current={here === c.href ? 'page' : undefined}>{c.label}</a></li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <a href={url(item.href)} class="nav-link" aria-current={current ? 'page' : undefined}>
+              {item.label}
+            </a>
+          );
+        })
       }
     </nav>
 
@@ -82,8 +93,12 @@ const here = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, 
     border-bottom: 1px solid transparent;
     transition:
       background-color var(--dur) var(--ease),
-      border-color var(--dur) var(--ease);
+      border-color var(--dur) var(--ease),
+      transform 350ms var(--ease);
   }
+
+  [data-header].is-hidden { transform: translateY(-100%); }
+  [data-header]:focus-within { transform: none; }
 
   /* Transparent peste hero; cu fundal, blur si o linie fina cand pagina a pornit la vale. */
   [data-header][data-overlay='false'],
@@ -123,6 +138,46 @@ const here = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, 
   .nav-link:hover::after,
   .nav-link:focus-visible::after,
   .nav-link[aria-current='page']::after { transform: scaleX(1); }
+
+  .nav-link svg { display: inline; margin-left: 4px; vertical-align: 1px; }
+
+  /* Submeniul „Mobilier”: apare la hover și la focus din tastatură. */
+  .nav-drop { position: relative; }
+
+  .nav-drop__menu {
+    position: absolute;
+    top: calc(100% + 18px);
+    left: -18px;
+    min-width: 190px;
+    padding: 8px 0;
+    background: var(--color-ink-2);
+    box-shadow: 0 18px 40px rgb(0 0 0 / 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px);
+    transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease), visibility 0s var(--dur);
+  }
+
+  /* Puntea invizibilă ține meniul deschis cât mouse-ul coboară spre el. */
+  .nav-drop__menu::before { content: ''; position: absolute; inset: -18px 0 auto; height: 18px; }
+
+  .nav-drop:hover .nav-drop__menu,
+  .nav-drop:focus-within .nav-drop__menu {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease), visibility 0s;
+  }
+
+  .nav-drop__menu a {
+    display: block;
+    padding: 9px 18px;
+    color: rgb(242 239 234 / 0.8);
+    font-size: 0.9rem;
+  }
+
+  .nav-drop__menu a:hover,
+  .nav-drop__menu a[aria-current='page'] { color: var(--color-brass-hi); }
 
   .header__call {
     display: grid;

@@ -26,10 +26,10 @@
   --dur: 200ms;
 
   --fs-display: clamp(2.5rem, 1.4rem + 4.6vw, 5.25rem);
-  --fs-h2: clamp(2rem, 1.4rem + 2.6vw, 3.5rem);
-  --fs-h3: clamp(1.25rem, 1.1rem + 0.7vw, 1.6rem);
+  --fs-h2: clamp(1.625rem, 1.3rem + 1.2vw, 2.25rem);
+  --fs-h3: clamp(1.125rem, 1.05rem + 0.35vw, 1.3rem);
   --fs-body: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
-  --fs-label: 0.8125rem;
+  --fs-label: 0.875rem;
 
   /* ---------- Stratul semantic ---------- */
   --surface: var(--color-ink);
@@ -50,5 +50,5 @@
 }
 
 @media (min-width: 1024px) {
-  :root { --section-y: 96px; }
+  :root { --section-y: 88px; }
 }

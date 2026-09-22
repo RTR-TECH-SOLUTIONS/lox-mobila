@@ -15,10 +15,7 @@ import { url } from '../lib/url';
           site.nav.map((item) => (
             <li>
               <a href={url(item.href)}>
-                <span class="numeral mobile-nav__n" aria-hidden="true">
-                  {item.n}
-                </span>
-                <span class="font-serif">{item.label}</span>
+                <span class="font-semibold">{item.label}</span>
               </a>
             </li>
           ))
@@ -27,7 +24,7 @@ import { url } from '../lib/url';
     </nav>
 
     <div class="mobile-nav__foot">
-      <a href={site.phoneHref} class="font-serif text-[var(--fs-h3)]">{site.phoneDisplay}</a>
+      <a href={site.phoneHref} class="font-semibold text-[var(--fs-h3)]">{site.phoneDisplay}</a>
       <a href={`https://wa.me/${site.whatsappNumber}`} class="label mobile-nav__wa hover:text-brass">
         Scrie pe WhatsApp
       </a>
@@ -71,8 +68,6 @@ import { url } from '../lib/url';
     line-height: 1.1;
   }
 
-  .mobile-nav__n { min-width: 2.2em; }
-
   .mobile-nav__foot {
     display: flex;
     flex-direction: column;
@@ -81,6 +76,4 @@ import { url } from '../lib/url';
     border-top: 1px solid var(--color-line);
   }
 
-  /* Tracking-ul normal de .label rupe eticheta pe doua randuri la 360px. */
-  .mobile-nav__wa { letter-spacing: 0.12em; }
 </style>

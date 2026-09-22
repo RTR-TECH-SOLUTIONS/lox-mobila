@@ -2,12 +2,15 @@
 import Base from '../layouts/Base.astro';
 import Process from '../components/Process.astro';
 import CtaBand from '../components/CtaBand.astro';
+import PageBanner from '../components/ui/PageBanner.astro';
 ---
 
 <Base
   title="Etapele lucrării | LOX Mobila Iași"
   description="Șase pași, de la discuție la montaj: măsurători gratuite în Iași, schiță cotată, proiect 3D, execuție în atelier."
+  headerOverlay
 >
+  <PageBanner title="Etapele lucrării" lead="Șase pași, aceiași de fiecare dată. Știi din prima zi ce urmează și cât durează." />
   <Process />
   <CtaBand />
 </Base>

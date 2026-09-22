@@ -1,0 +1,78 @@
+---
+// Logourile partenerilor rulează într-o bandă continuă, ca pe site-urile de mobilier.
+// Până primim fișierele de la client, fiecare loc are un placeholder cu același format.
+const slots = Array.from({ length: 8 });
+---
+
+<div class="partners" aria-label="Parteneri">
+  <p class="partners__label">Lucrăm cu materiale și feronerie de la</p>
+  <div class="partners__viewport">
+    <ul class="partners__track">
+      {
+        [...slots, ...slots].map((_, i) => (
+          <li class="logo" aria-hidden={i >= slots.length ? 'true' : undefined}>
+            <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="1.4" />
+              <path d="m3 16 5-5 4 4 3-3 6 6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" />
+              <circle cx="15.5" cy="8.5" r="1.6" fill="currentColor" />
+            </svg>
+            <span class="logo__text">Logo partener</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</div>
+
+<style>
+  .partners { padding-block: 40px; }
+
+  .partners__label {
+    margin-bottom: 20px;
+    color: var(--text-2);
+    font-size: var(--fs-label);
+    text-align: center;
+  }
+
+  /* Marginile se sting, ca logourile să intre și să iasă din ceață, nu tăiate. */
+  .partners__viewport {
+    overflow: hidden;
+    mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  }
+
+  .partners__track {
+    display: flex;
+    gap: 16px;
+    width: max-content;
+    animation: marquee 38s linear infinite;
+  }
+
+  .partners__viewport:hover .partners__track { animation-play-state: paused; }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+    width: 200px;
+    height: 72px;
+    padding-inline: 18px;
+    border: 1px dashed rgb(242 239 234 / 0.18);
+    border-radius: 8px;
+    color: rgb(242 239 234 / 0.45);
+    transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+
+  .logo:hover { color: var(--color-bone); border-color: var(--color-brass); }
+  .logo svg { flex: none; }
+  .logo__text { font-size: 0.95rem; font-weight: 600; }
+
+  @keyframes marquee {
+    to { transform: translateX(calc(-50% - 8px)); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .partners__viewport { overflow-x: auto; }
+    .partners__track { animation: none; }
+  }
+</style>

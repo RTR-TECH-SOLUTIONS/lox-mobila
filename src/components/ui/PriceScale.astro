@@ -1,14 +1,19 @@
 ---
-/** Patru bare de 3px; cele active sunt aurii. Textul complet e in title si pentru cititoare. */
+/** Nivelul de pret spus in cuvinte, relativ la celelalte materiale din tabel. */
 interface Props {
   level: number;
 }
 
 const { level } = Astro.props;
-const text = `Nivel de preț ${level} din 4`;
+const words = ['cel mai accesibil', 'mediu', 'peste mediu', 'cel mai scump'];
 ---
 
-<span class="price" title={text}>
-  {[1, 2, 3, 4].map((i) => <i class:list={[i <= level && 'is-on']} aria-hidden="true" />)}
-  <span class="sr-only">{text}</span>
-</span>
+<span class="price">{words[level - 1]}</span>
+
+<style>
+  .price {
+    font-size: var(--fs-label);
+    color: var(--text-2);
+    white-space: nowrap;
+  }
+</style>

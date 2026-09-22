@@ -1,0 +1,302 @@
+---
+import { Image } from 'astro:assets';
+import { projects } from '../data/projects';
+import { categoryPages } from '../data/categories';
+import type { Project } from '../data/types';
+import { resolveImage } from '../lib/images';
+import { url } from '../lib/url';
+import { allMaterials, projectMaterials, worksLabel } from '../lib/catalog';
+
+interface Props {
+  items: Project[];
+  /** Categoria paginii curente, marcată în bara laterală. */
+  active?: string;
+}
+
+const { items, active } = Astro.props;
+const districts = [...new Set(items.map((p) => p.district))].sort((a, b) => a.localeCompare(b, 'ro'));
+const materials = allMaterials.filter((m) => items.some((p) => projectMaterials(p).includes(m)));
+---
+
+<!-- Catalogul ca la mobilidesign.ro: filtre în stânga, lucrările pe două coloane în dreapta. -->
+<div class="cat" data-catalog>
+  <aside class="side" aria-label="Filtre">
+    <details class="side__box" open>
+      <summary class="side__toggle">Filtre</summary>
+
+      <div class="side__group">
+        <h2 class="side__h">Materiale</h2>
+        {
+          materials.map((m) => (
+            <label class="side__opt">
+              <input type="checkbox" data-filter-group="material" value={m} />
+              <span>{m}</span>
+            </label>
+          ))
+        }
+      </div>
+
+      <div class="side__group">
+        <h2 class="side__h">Cartier</h2>
+        {
+          districts.map((d) => (
+            <label class="side__opt">
+              <input type="checkbox" data-filter-group="district" value={d} />
+              <span>{d}</span>
+            </label>
+          ))
+        }
+      </div>
+
+      <div class="side__group">
+        <h2 class="side__h">Categorii de mobilier</h2>
+        <ul>
+          {
+            categoryPages.map((c) => (
+              <li>
+                <a
+                  href={url(`/mobilier/${c.key}`)}
+                  class="side__cat"
+                  aria-current={active === c.key ? 'page' : undefined}
+                >
+                  <span>{c.label}</span>
+                  <span class="side__count tabular-nums">{projects.filter((p) => p.category === c.key).length}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </details>
+  </aside>
+
+  <div class="cat__main">
+    <div class="cat__bar">
+      <p class="cat__shown" aria-live="polite">
+        Se afișează <strong data-catalog-count>{worksLabel(items.length)}</strong>
+      </p>
+      <label class="cat__sort">
+        <span class="sr-only">Sortare</span>
+        <select data-catalog-sort>
+          <option value="default">Sortare implicită</option>
+          <option value="short">Durată: cele mai rapide</option>
+          <option value="long">Durată: cele mai mari</option>
+        </select>
+      </label>
+    </div>
+
+    <ul class="cat__grid" data-catalog-grid>
+      {
+        items.map((p, i) => (
+          <li
+            class="work"
+            data-work
+            data-index={i}
+            style={`--k: ${i % 4}`}
+            data-weeks={p.weeks}
+            data-district={p.district}
+            data-material={projectMaterials(p).join('|')}
+          >
+            <a href={url(`/proiect/${p.slug}`)} class="work__link">
+              <span class="work__media">
+                <Image
+                  src={resolveImage('projects', p.cover)}
+                  alt={`${p.title}, ${p.district}`}
+                  widths={[480, 800, 1200]}
+                  sizes="(min-width: 1024px) 38vw, (min-width: 640px) 50vw, 100vw"
+                  loading={i < 4 ? 'eager' : 'lazy'}
+                />
+              </span>
+              <span class="work__title">{p.title} – {p.district}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="cat__empty" data-catalog-empty hidden>
+      Nicio lucrare nu se potrivește filtrelor. Debifează unul dintre ele.
+    </p>
+  </div>
+</div>
+
+<style>
+  .cat {
+    display: grid;
+    gap: 28px;
+    align-items: start;
+  }
+
+  /* ---------- Bara laterală ---------- */
+  .side__box {
+    padding: 8px 22px;
+    background: var(--color-ink-2);
+    box-shadow: 0 16px 40px rgb(0 0 0 / 0.35);
+  }
+
+  .side__toggle {
+    padding-block: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .side__group { padding-block: 16px; border-top: 1px solid var(--rule); }
+
+  .side__h { margin-bottom: 10px; font-size: 1rem; }
+
+  .side__opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 34px;
+    color: var(--text-2);
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .side__opt input { width: 15px; height: 15px; accent-color: var(--color-brass); }
+  .side__opt:hover { color: var(--text); }
+
+  .side__cat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 34px;
+    color: var(--text-2);
+    font-size: 0.9rem;
+  }
+
+  .side__cat:hover,
+  .side__cat[aria-current='page'] { color: var(--text); }
+
+  .side__count {
+    min-width: 26px;
+    padding: 1px 7px;
+    border-radius: 99px;
+    background: var(--color-ink-3);
+    font-size: 0.75rem;
+    text-align: center;
+  }
+
+  .side__cat[aria-current='page'] .side__count { background: var(--color-brass); color: var(--color-ink); }
+
+  /* ---------- Lista de lucrări ---------- */
+  .cat__bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .cat__shown { color: var(--text-2); font-size: 0.9rem; }
+  .cat__shown strong { color: var(--text); font-weight: 500; }
+
+  .cat__sort select {
+    height: 40px;
+    padding-inline: 12px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--color-ink-2);
+    color: var(--text);
+    font-size: 0.875rem;
+  }
+
+  .cat__grid {
+    display: grid;
+    gap: 28px 18px;
+  }
+
+  .work[hidden] { display: none; }
+  .work:not([hidden]) { animation: rise 550ms var(--ease) both; animation-delay: calc(var(--k) * 70ms); }
+
+  .work__media {
+    display: block;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: var(--color-ink-2);
+  }
+
+  .work__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 500ms var(--ease);
+  }
+
+  .work__link:hover :global(img) { transform: scale(1.03); }
+
+  .work__title {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.95rem;
+  }
+
+  .work__link:hover .work__title { color: var(--color-brass-hi); }
+
+  .cat__empty { padding-block: 40px; color: var(--text-2); }
+
+  @media (min-width: 640px) {
+    .cat__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (min-width: 1024px) {
+    .cat { grid-template-columns: 260px 1fr; gap: 40px; }
+    .side { position: sticky; top: calc(var(--header-h) + 24px); }
+    .side__toggle { pointer-events: none; list-style: none; }
+    .side__toggle::-webkit-details-marker { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .work__link:hover :global(img) { transform: none; }
+  }
+</style>
+
+<script>
+  import { worksLabel } from '../lib/catalog';
+
+  // Filtrele: SAU în interiorul unui grup, ȘI între grupuri. Sortarea mută elementele în listă.
+  document.querySelectorAll<HTMLElement>('[data-catalog]').forEach((root) => {
+    const grid = root.querySelector<HTMLElement>('[data-catalog-grid]')!;
+    const works = [...grid.querySelectorAll<HTMLElement>('[data-work]')];
+    const boxes = [...root.querySelectorAll<HTMLInputElement>('[data-filter-group]')];
+    const count = root.querySelector<HTMLElement>('[data-catalog-count]')!;
+    const empty = root.querySelector<HTMLElement>('[data-catalog-empty]')!;
+    const sort = root.querySelector<HTMLSelectElement>('[data-catalog-sort]')!;
+
+    const apply = () => {
+      const picked = (group: string) =>
+        boxes.filter((b) => b.dataset.filterGroup === group && b.checked).map((b) => b.value);
+      const mats = picked('material');
+      const dists = picked('district');
+      let shown = 0;
+
+      works.forEach((w) => {
+        const okMat = !mats.length || mats.some((m) => w.dataset.material!.split('|').includes(m));
+        const okDist = !dists.length || dists.includes(w.dataset.district!);
+        w.hidden = !(okMat && okDist);
+        if (!w.hidden) shown += 1;
+      });
+
+      count.textContent = worksLabel(shown);
+      empty.hidden = shown > 0;
+    };
+
+    const order = () => {
+      const key = sort.value;
+      const sorted = [...works].sort((a, b) => {
+        if (key === 'short') return Number(a.dataset.weeks) - Number(b.dataset.weeks);
+        if (key === 'long') return Number(b.dataset.weeks) - Number(a.dataset.weeks);
+        return Number(a.dataset.index) - Number(b.dataset.index);
+      });
+      grid.append(...sorted);
+    };
+
+    // Pe telefon filtrele pornesc strânse, ca lucrările să fie primele pe ecran.
+    const box = root.querySelector<HTMLDetailsElement>('.side__box')!;
+    if (matchMedia('(max-width: 1023px)').matches) box.open = false;
+
+    boxes.forEach((b) => b.addEventListener('change', apply));
+    sort.addEventListener('change', order);
+  });
+</script>

@@ -2,12 +2,15 @@
 import Base from '../layouts/Base.astro';
 import Materials from '../components/Materials.astro';
 import CtaBand from '../components/CtaBand.astro';
+import PageBanner from '../components/ui/PageBanner.astro';
 ---
 
 <Base
   title="Materiale | LOX Mobila Iași"
   description="PAL melaminat, MDF infoliat, MDF vopsit și furnir natural, comparate: cum arată, cum rezistă la umezeală și unde le folosim."
+  headerOverlay
 >
+  <PageBanner title="Materiale" lead="Îți arătăm mostrele și îți spunem ce merită și ce nu pentru încăperea ta. O bucătărie și un dressing nu cer același material." />
   <Materials />
   <CtaBand />
 </Base>

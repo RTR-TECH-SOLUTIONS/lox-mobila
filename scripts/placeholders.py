@@ -22,8 +22,8 @@ for folder in FOLDERS:
         d = ImageDraw.Draw(im)
         base = min(w, h)
         big = ImageFont.truetype(FONT, int(base * 0.07))
-        # Pe bento titlul serviciului sta jos, peste poza: eticheta urca in treimea de sus.
-        cx, cy = w / 2, h * (0.38 if folder == 'services' else 0.5)
+        # Serviciile si atelierul au textul jos, peste poza: eticheta urca in partea de sus.
+        cx, cy = w / 2, h * {'services': 0.38, 'workshop': 0.28}.get(folder, 0.5)
         d.text((cx, cy), 'POZĂ', font=big, fill=FG, anchor='mm')
         im.save(OUT / folder / src.name, quality=80)
         print(folder, src.name, w, h)

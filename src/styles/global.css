@@ -18,11 +18,12 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* Titlurile in sans bold, ca pe site-urile atelierelor din piata. Serifa ramane doar in hero. */
   h1, h2, h3 {
-    font-family: var(--font-serif);
-    font-weight: 400;
-    line-height: 1.08;
-    letter-spacing: -0.015em;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
     text-wrap: balance;
   }
 
@@ -58,14 +59,11 @@
   .section { padding-block: var(--section-y); }
   .section + .section { padding-top: 0; }
   .section:has(+ .cta) { padding-bottom: 24px; }
-  [data-showcase] + .section { padding-top: calc(var(--section-y) / 2); }
-  .section:has(+ .hc) { padding-bottom: 24px; }
-  .section:has(+ [data-showcase]) { padding-bottom: 0; }
 
+  /* Meta mic (cartier, durata, legende): scris normal. Etichetele uppercase cu spatiere mare
+     deasupra fiecarui bloc sunt semnatura unui landing generat. */
   .label {
     font-size: var(--fs-label);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
     color: var(--text-2);
   }
 
@@ -76,16 +74,6 @@
     color: var(--text-body);
   }
 
-  /* Cifra romana a sectiunii. In sans cu tracking mare, I si II se citesc ca
-     doua liniute; pe serif arata ca numere. */
-  .numeral {
-    font-family: var(--font-serif);
-    font-size: 1.25rem;
-    line-height: 1;
-    letter-spacing: 0.06em;
-    color: var(--accent);
-  }
-
   /* Link text cu subliniere de alama: „Vezi tot", „Toate proiectele". */
   .more {
     display: inline-flex;
@@ -94,14 +82,14 @@
     min-height: 44px;
     color: var(--text);
     text-decoration: underline;
-    text-decoration-color: var(--accent);
+    text-decoration-color: rgb(242 239 234 / 0.35);
     text-decoration-thickness: 1px;
     text-underline-offset: 7px;
     transition: color var(--dur) var(--ease);
   }
 
   .more:hover,
-  .more:focus-visible { color: var(--accent); }
+  .more:focus-visible { color: var(--accent); text-decoration-color: currentColor; }
 
   .more svg { flex: none; }
 
@@ -124,6 +112,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
   html { scroll-behavior: auto; }
   *, *::before, *::after {
     animation: none !important;
@@ -150,59 +139,84 @@
   transform: none;
 }
 
-/* ---------- Eticheta de cursor ---------- */
-.cursor-label {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 90;
-  pointer-events: none;
-  transform: translate3d(-200px, -200px, 0);
-  will-change: transform;
+/* Variante: poza se descoperă de jos în sus și se așază din zoom; blocurile laterale vin din lateral. */
+.has-reveal [data-reveal='img'] {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 850ms cubic-bezier(0.65, 0, 0.2, 1);
+  transition-delay: calc(var(--i, 0) * 90ms);
 }
 
-.cursor-label span {
-  display: grid;
-  place-items: center;
-  width: 64px;
-  height: 64px;
-  margin: -32px 0 0 -32px;
-  border-radius: 50%;
-  background: var(--color-brass);
-  color: var(--color-ink);
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-indent: 0.14em;
-  text-transform: uppercase;
-  transform: scale(0);
-  transition: transform 320ms var(--ease);
+.has-reveal [data-reveal='img'] :is(img, .tile__img) {
+  scale: 1.18;
+  transition:
+    scale 1300ms cubic-bezier(0.22, 0.61, 0.36, 1) calc(var(--i, 0) * 90ms),
+    transform 500ms var(--ease);
 }
 
-.cursor-label.is-active span { transform: scale(1); }
+.has-reveal [data-reveal='img'].is-in { clip-path: inset(0 0 0 0); }
+.has-reveal [data-reveal='img'].is-in :is(img, .tile__img) { scale: 1; }
 
-/* Linia aurie de sub titlurile de sectiune: statica, pe toata latimea. */
-.led {
-  display: block;
-  height: 1px;
-  background: var(--accent);
-  opacity: 0.7;
+.has-reveal [data-reveal='left'] { transform: translateX(-40px); }
+.has-reveal [data-reveal='right'] { transform: translateX(40px); }
+
+.has-reveal [data-reveal='left'],
+.has-reveal [data-reveal='right'] {
+  transition-duration: 800ms, 800ms;
 }
 
-/* Scara de pret a materialelor: patru bare, cele active aurii. */
-.price {
-  display: inline-flex;
-  gap: 4px;
+.has-reveal [data-reveal='left'].is-in,
+.has-reveal [data-reveal='right'].is-in { transform: none; }
+
+/* ---------- Detalii de mișcare ---------- */
+
+/* Săgeata din butoane împinge spre dreapta la hover. */
+.arrow { transition: transform 250ms var(--ease); }
+a:hover .arrow,
+button:hover .arrow { transform: translateX(4px); }
+
+/* Luciu care trece peste butonul principal la hover. */
+.btn-shine { position: relative; overflow: hidden; isolation: isolate; }
+
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.45) 50%, transparent 70%);
+  transform: translateX(-120%);
 }
 
-.price i {
-  display: block;
-  width: 16px;
-  height: 3px;
-  background: var(--color-line);
+.btn-shine:hover::after { transform: translateX(120%); transition: transform 700ms var(--ease); }
+
+/* Elementele care apar după filtrare sau schimbarea tab-ului urcă pe rând. */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
 }
 
-.price i.is-on { background: var(--accent); }
+/* Acordeoanele se deschid lin unde browserul știe să anime înălțimea. */
+@supports (interpolate-size: allow-keywords) {
+  :root { interpolate-size: allow-keywords; }
+
+  details::details-content {
+    height: 0;
+    overflow: clip;
+    transition: height 350ms var(--ease), content-visibility 350ms allow-discrete;
+  }
+
+  details[open]::details-content { height: auto; }
+}
+
+/* Trecerea între pagini: un fade scurt în loc de clipire albă. */
+@view-transition { navigation: auto; }
+
+::view-transition-old(root) { animation: 220ms var(--ease) both vt-out; }
+::view-transition-new(root) { animation: 320ms var(--ease) both vt-in; }
+
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(10px); } }
 
 /* Overlay-ul comun pentru text pe fotografie: imaginea ramane cum e, doar josul se inchide. */
 .photo-shade {
