@@ -2543,7 +2543,7 @@ git commit -m "feat(admin): scheletul adminului, configurarea si cadrul de pagin
 ### Task 9: Parole, sesiuni și limitarea login-ului
 
 **Files:**
-- Create: `admin/src/lib/auth.ts`, `admin/scripts/user.mjs`, `admin/tests/auth.test.ts`
+- Create: `admin/src/lib/password.mjs`, `admin/src/lib/auth.ts`, `admin/scripts/user.mjs`, `admin/tests/auth.test.ts`
 
 **Interfaces:**
 - Consumes: `AdminUser` (Task 8).
@@ -2627,18 +2627,30 @@ Expected: FAIL, `Failed to resolve import "../src/lib/auth"`.
 
 - [ ] **Step 2: Scrie autentificarea**
 
+`admin/src/lib/password.mjs` (JavaScript simplu, ca să-l folosească și scriptul `npm run user` fără compilare):
+
+```js
+import { randomBytes, scryptSync } from 'node:crypto';
+
+/**
+ * Hash de parola in formatul „scrypt$<sare>$<hash>”, in base64url.
+ * @param {string} password
+ * @param {Buffer} [salt]
+ * @returns {string}
+ */
+export function hashPassword(password, salt = randomBytes(16)) {
+  return `scrypt$${salt.toString('base64url')}$${scryptSync(password, salt, 64).toString('base64url')}`;
+}
+```
+
 `admin/src/lib/auth.ts`:
 
 ```ts
-import { createHmac, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
+import { createHmac, scryptSync, timingSafeEqual } from 'node:crypto';
 import type { AdminUser } from './env';
+import { hashPassword } from './password.mjs';
 
-const KEYLEN = 64;
-
-/** Hash de parola in formatul „scrypt$<sare>$<hash>”, in base64url. */
-export function hashPassword(password: string, salt: Buffer = randomBytes(16)): string {
-  return `scrypt$${salt.toString('base64url')}$${scryptSync(password, salt, KEYLEN).toString('base64url')}`;
-}
+export { hashPassword };
 
 export function verifyPassword(password: string, stored: string): boolean {
   const [kind, salt, hash] = stored.split('$');
@@ -2721,17 +2733,14 @@ export const limiter = new LoginLimiter();
 
 ```js
 // Genereaza linia unui cont pentru ADMIN_USERS: npm run user -- <email> "<Nume>" "<parola>"
-// Acelasi format ca hashPassword din src/lib/auth.ts.
-import { randomBytes, scryptSync } from 'node:crypto';
+import { hashPassword } from '../src/lib/password.mjs';
 
 const [email, name, password] = process.argv.slice(2);
 if (!email || !name || !password || password.length < 10) {
   console.error('Folosire: npm run user -- <email> "<Nume>" "<parola de minimum 10 caractere>"');
   process.exit(1);
 }
-const salt = randomBytes(16);
-const hash = `scrypt$${salt.toString('base64url')}$${scryptSync(password, salt, 64).toString('base64url')}`;
-console.log(JSON.stringify({ email, name, hash }));
+console.log(JSON.stringify({ email, name, hash: hashPassword(password) }));
 ```
 
 - [ ] **Step 3: Rulează testul și confirmă că trece**
@@ -2743,7 +2752,7 @@ Expected: PASS, 7 teste.
 
 ```bash
 cd ..
-git add admin/src/lib/auth.ts admin/scripts/user.mjs admin/tests/auth.test.ts
+git add admin/src/lib/password.mjs admin/src/lib/auth.ts admin/scripts/user.mjs admin/tests/auth.test.ts
 git commit -m "feat(admin): parole scrypt, sesiune semnata si limitarea incercarilor"
 ```
 
@@ -6362,8 +6371,8 @@ expect(read('categories').find((c) => c.key === 'bucatarii').lead === 'Corpuri c
 await page.goto(`${ADMIN}/aspect`);
 await page.click('[data-preset*="F5F2ED"]');
 const frame = page.frameLocator('iframe[data-frame]');
-await frame.locator('html[data-scheme="light"]').waitFor({ timeout: 5000 });
-expect(true, 'previzualizarea trece pe tema deschisa');
+await frame.locator('html[data-scheme="light"]').waitFor({ timeout: 5000 }).catch(() => {});
+expect((await frame.locator('html').getAttribute('data-scheme')) === 'light', 'previzualizarea trece pe tema deschisa');
 await save();
 expect(read('theme').background === '#F5F2ED', 'tema deschisa e salvata');
 
