@@ -107,12 +107,21 @@ export function setMessage(form: HTMLFormElement, text: string, error = false): 
   msg.classList.toggle('is-error', error);
 }
 
-/** Erorile apar sub campul lor; cele fara camp, in bara de salvare. */
-export function showIssues(form: HTMLFormElement, issues: Issue[]): void {
+let errorIds = 0;
+
+/**
+ * Erorile apar sub campul lor; cele fara camp, in bara de salvare.
+ * Intoarce cate mesaje au ajuns in bara, ca apelantul sa nu le scrie peste.
+ */
+export function showIssues(form: HTMLFormElement, issues: Issue[]): number {
   form.querySelectorAll('.field.has-error').forEach((f) => f.classList.remove('has-error'));
   form.querySelectorAll<HTMLElement>('.field__error').forEach((e) => {
     e.hidden = true;
     e.textContent = '';
+  });
+  form.querySelectorAll('[aria-invalid]').forEach((el) => {
+    el.removeAttribute('aria-invalid');
+    el.removeAttribute('aria-describedby');
   });
 
   const loose: string[] = [];
@@ -128,11 +137,16 @@ export function showIssues(form: HTMLFormElement, issues: Issue[]): void {
     field?.classList.add('has-error');
     box.textContent = issue.message;
     box.hidden = false;
+    // Cititorul de ecran anunta eroarea odata cu campul.
+    box.id ||= `eroare-${++errorIds}`;
+    input?.setAttribute('aria-invalid', 'true');
+    input?.setAttribute('aria-describedby', box.id);
     first ??= input ?? box;
   }
   if (loose.length) setMessage(form, loose.join(' '), true);
   first?.scrollIntoView({ block: 'center', behavior: 'smooth' });
   if (first instanceof HTMLInputElement || first instanceof HTMLTextAreaElement || first instanceof HTMLSelectElement) first.focus({ preventScroll: true });
+  return loose.length;
 }
 
 function send(url: string, body: XMLHttpRequestBodyInit, isJson: boolean, onProgress?: (p: number) => void): Promise<SaveResult> {
@@ -152,6 +166,8 @@ function send(url: string, body: XMLHttpRequestBodyInit, isJson: boolean, onProg
 }
 
 interface SaveOptions {
+  /** Verificari facute inainte de trimitere; daca intoarce erori, nu se trimite nimic. */
+  validate?: (form: HTMLFormElement) => Issue[];
   /** Corpul cererii; implicit, JSON-ul formularului. */
   body?: (form: HTMLFormElement) => Promise<{ body: XMLHttpRequestBodyInit; json: boolean }>;
   /** Ce se intampla dupa salvare; implicit porneste bara de publicare. */
@@ -166,6 +182,11 @@ export function initSaveForm(form: HTMLFormElement, opts: SaveOptions = {}): voi
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (button?.disabled) return;
+    const local = opts.validate?.(form) ?? [];
+    if (local.length) {
+      if (!showIssues(form, local)) setMessage(form, 'Verifică câmpurile marcate.', true);
+      return;
+    }
     if (button) button.disabled = true;
     setMessage(form, 'Se salvează…');
     try {
@@ -182,8 +203,8 @@ export function initSaveForm(form: HTMLFormElement, opts: SaveOptions = {}): voi
         if (opts.onSaved) opts.onSaved(result);
         else startStatus(result.sha, form.dataset.view);
       } else {
-        showIssues(form, result.issues ?? []);
-        setMessage(form, result.error ?? 'Nu s-a putut salva.', true);
+        const loose = showIssues(form, result.issues ?? []);
+        if (!loose) setMessage(form, result.error ?? 'Nu s-a putut salva.', true);
       }
     } catch {
       setMessage(form, 'Nu s-a putut trimite. Verifică conexiunea la internet și încearcă din nou.', true);

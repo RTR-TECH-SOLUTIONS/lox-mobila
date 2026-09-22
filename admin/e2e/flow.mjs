@@ -70,10 +70,29 @@ await page.fill('input[name=email]', 'contact');
 await page.locator('[data-save]').click();
 await page.getByText('Adresa de email nu e validă.').waitFor();
 expect(commits() === before, 'emailul invalid nu face commit');
+const described = await page.locator('input[name=email]').evaluate(
+  (el) =>
+    el.getAttribute('aria-invalid') === 'true' &&
+    document.getElementById(el.getAttribute('aria-describedby') ?? '')?.textContent === 'Adresa de email nu e validă.',
+);
+expect(described, 'campul gresit are aria-invalid si eroarea legata prin aria-describedby');
 await page.reload();
 
-// Proiect nou cu doua poze, editare, stergere
+// Proiect nou: fara titlu si fara poze nu se trimite nimic
 await page.goto(`${ADMIN}/proiecte/nou`);
+let projectPosts = 0;
+page.on('request', (r) => r.url().endsWith('/api/projects/save') && projectPosts++);
+await page.locator('[data-save]').click();
+await page.locator('[data-error-for="photos"]:not([hidden])').waitFor();
+expect(
+  projectPosts === 0 &&
+    (await page.locator('input[name=title]').getAttribute('aria-invalid')) === 'true' &&
+    (await page.locator('[data-error-for="photos"]').textContent()) === 'Proiectul are nevoie de cel puțin o poză.' &&
+    (await page.locator('[data-save-msg]').textContent()) === 'Verifică câmpurile marcate.',
+  'fara titlu si fara poze, formularul arata erorile si nu trimite nimic',
+);
+
+// Proiect nou cu doua poze, editare, stergere
 await page.fill('input[name=title]', 'Bucătărie de test');
 await page.fill('input[name=weeks]', '3');
 await page.locator('[data-name=value]').first().fill('MDF vopsit mat');
@@ -100,9 +119,14 @@ expect(read('projects').length === initial && goneFromRepo('src/assets/images/pr
 
 // Ordinea si bifa de prima pagina
 await page.locator('[data-slug]').first().locator('[data-down]').click();
-await save();
+const [orderRequest] = await Promise.all([page.waitForRequest(`${ADMIN}/api/projects/order`), save()]);
 const order = read('projects').map((x) => x.slug);
 expect(order.length === initial && lastCommit() === 'Ordinea proiectelor', 'ordinea se salveaza');
+const sentFeatured = orderRequest.postDataJSON().featured;
+expect(
+  !Array.isArray(sentFeatured) && Object.keys(sentFeatured).length === initial,
+  'bifele de prima pagina pleaca ca obiect, cate una pe proiect',
+);
 
 // Poza de pagina
 await page.goto(`${ADMIN}/poze`);
