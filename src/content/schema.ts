@@ -88,8 +88,8 @@ export const projectSchema = z.object({
     .string()
     .trim()
     .max(1200, 'Cel mult 1200 de caractere.')
-    .optional()
-    .transform((v) => (v ? fixDiacritics(v) : undefined)),
+    .transform((v) => (v ? fixDiacritics(v) : undefined))
+    .optional(),
   specs: z
     .array(z.object({ label: required(40), value: required(120) }))
     .min(1, 'Adaugă cel puțin o specificație.')
@@ -129,8 +129,8 @@ export const categoryPageSchema = z.object({
         paragraphs: z.array(required(1500)),
         list: z
           .array(required(160))
-          .optional()
-          .transform((v) => (v && v.length ? v : undefined)),
+          .transform((v) => (v.length ? v : undefined))
+          .optional(),
       }),
     )
     .max(8, 'Cel mult 8 blocuri de text.'),
