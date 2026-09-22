@@ -9,6 +9,8 @@ interface Job {
 const KEY = 'lox-publish';
 const POLL_MS = 4000;
 const SLOW_MS = 6 * 60_000;
+const SLOW_POLL_MS = POLL_MS * 3;
+const GIVE_UP_MS = 30 * 60_000;
 const SHA = /^[0-9a-f]{40}$/;
 
 const bar = document.querySelector<HTMLElement>('[data-status]');
@@ -50,11 +52,16 @@ function finish(): void {
 }
 
 async function tick(job: Job): Promise<void> {
-  if (Date.now() - job.at > SLOW_MS) {
+  const age = Date.now() - job.at;
+  // Peste 30 de minute renuntam sa mai intrebam; mesajul de "dureaza mai mult" ramane pe bara.
+  if (age > GIVE_UP_MS) {
     finish();
-    render('slow', job);
+    if (bar?.dataset.state !== 'slow') render('slow', job);
     return;
   }
+  // Dupa 6 minute aratam mesajul de intarziere, dar continuam sa intrebam, mai rar, ca sa prindem finalul.
+  const slow = age > SLOW_MS;
+  if (slow && bar?.dataset.state !== 'slow') render('slow', job);
   try {
     const res = await fetch(`/api/status?sha=${job.sha}`);
     const data = (await res.json()) as { state?: State };
@@ -66,7 +73,7 @@ async function tick(job: Job): Promise<void> {
   } catch {
     /* reincercam la urmatorul pas */
   }
-  timer = window.setTimeout(() => tick(job), POLL_MS);
+  timer = window.setTimeout(() => tick(job), slow ? SLOW_POLL_MS : POLL_MS);
 }
 
 export function startStatus(sha: string, view?: string): void {
