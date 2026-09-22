@@ -30,19 +30,24 @@ export async function buildProjectSave(input: {
     throw new ValidationError([{ path: '', message: 'Proiectul nu mai există. Poate a fost șters între timp.' }]);
   }
 
-  // Intai campurile, ca sa nu prelucram poze degeaba.
-  const fields = check(
-    parseContent(projectFieldsSchema, {
-      title: draft.title,
-      category: draft.category,
-      weeks: draft.weeks,
-      featured: draft.featured === true,
-      description: draft.description,
-      specs: draft.specs,
-    }),
-  );
+  // Campurile si pozele se verifica impreuna, ca utilizatorul sa vada toate erorile deodata.
+  const fieldsResult = parseContent(projectFieldsSchema, {
+    title: draft.title,
+    category: draft.category,
+    weeks: draft.weeks,
+    featured: draft.featured === true,
+    description: draft.description,
+    specs: draft.specs,
+  });
   const tokens = Array.isArray(draft.photos) ? draft.photos.map(String) : [];
-  if (tokens.length === 0) throw new ValidationError([{ path: 'photos', message: 'Proiectul are nevoie de cel puțin o poză.' }]);
+  const noPhotos = tokens.length === 0;
+  if (!fieldsResult.ok || noPhotos) {
+    throw new ValidationError([
+      ...(fieldsResult.ok ? [] : fieldsResult.issues),
+      ...(noPhotos ? [{ path: 'photos', message: 'Proiectul are nevoie de cel puțin o poză.' }] : []),
+    ]);
+  }
+  const fields = fieldsResult.data;
 
   const slug = existing?.slug ?? uniqueSlug(fields.title, list.map((p) => p.slug));
   const files: FileChange[] = [];
