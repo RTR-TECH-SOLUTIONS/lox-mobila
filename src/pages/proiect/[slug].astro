@@ -16,7 +16,7 @@ export function getStaticPaths() {
 }
 
 const { project: p } = Astro.props as { project: Project };
-const images = [p.cover, ...p.gallery];
+const images = p.photos;
 const related = [
   ...projects.filter((o) => o.category === p.category && o.slug !== p.slug),
   ...projects.filter((o) => o.category !== p.category),
@@ -97,14 +97,22 @@ const category = CATEGORY_LABELS[p.category];
     <div class="pd__body">
       <div class="desc">
         <h2>Descriere</h2>
-        <p>
-          {`Totul a fost desenat pe cotele casei, după măsurători cu laserul. De la măsurători până la montaj au trecut ${p.weeks} săptămâni.`}
-        </p>
-        <p>
-          Toate piesele au fost debitate pe CNC în atelierul nostru din Iași, direct din fișierul
-          proiectului, și montate de probă înainte de livrare.
-          {materials.length > 0 && ` Materiale folosite: ${materials.join(', ')}.`}
-        </p>
+        {
+          p.description ? (
+            p.description.split(/\n\s*\n/).map((para) => <p>{para}</p>)
+          ) : (
+            <>
+              <p>
+                {`Totul a fost desenat pe cotele casei, după măsurători cu laserul. De la măsurători până la montaj au trecut ${p.weeks} săptămâni.`}
+              </p>
+              <p>
+                Toate piesele au fost debitate pe CNC în atelierul nostru din Iași, direct din fișierul
+                proiectului, și montate de probă înainte de livrare.
+                {materials.length > 0 && ` Materiale folosite: ${materials.join(', ')}.`}
+              </p>
+            </>
+          )
+        }
         <ul>
           {p.specs.map((s) => <li><strong>{s.label}:</strong> {s.value}</li>)}
         </ul>
@@ -141,7 +149,7 @@ const category = CATEGORY_LABELS[p.category];
           <li>
             <a href={url(`/proiect/${o.slug}`)} class="rel__link">
               <span class="rel__media">
-                <Image src={resolveImage('projects', o.cover)} alt={o.title} widths={[480, 800]} sizes="(min-width: 1024px) 33vw, 100vw" loading="lazy" />
+                <Image src={resolveImage('projects', o.photos[0])} alt={o.title} widths={[480, 800]} sizes="(min-width: 1024px) 33vw, 100vw" loading="lazy" />
               </span>
               <span class="rel__title">{o.title}</span>
             </a>

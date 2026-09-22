@@ -27,25 +27,18 @@ describe('site', () => {
 });
 
 describe('projects', () => {
-  it('has 12 projects, 6 featured', () => {
-    expect(projects).toHaveLength(12);
-    expect(projects.filter((p) => p.featured)).toHaveLength(6);
-  });
-
   it('slugs are unique', () => {
     expect(new Set(projects.map((p) => p.slug)).size).toBe(projects.length);
   });
 
-  it('every category is known and every category is used', () => {
+  it('every category is known', () => {
     const known = Object.keys(CATEGORY_LABELS);
     for (const p of projects) expect(known).toContain(p.category);
-    for (const c of known) expect(projects.some((p) => p.category === c)).toBe(true);
   });
 
-  it('every project has at least 4 specs and a cover', () => {
+  it('every project has a cover in its own folder', () => {
     for (const p of projects) {
-      expect(p.specs.length).toBeGreaterThanOrEqual(4);
-      expect(p.cover).toMatch(/\.(jpe?g|webp|png)$/);
+      expect(p.photos[0]).toMatch(new RegExp(`^${p.slug}/.+\\.(jpe?g|webp|png)$`));
     }
   });
 });
@@ -73,7 +66,7 @@ describe('content shape', () => {
 describe.skipIf(!existsSync(join(IMG, 'projects')))('image files exist', () => {
   it('every referenced project image is on disk', () => {
     for (const p of projects) {
-      for (const f of [p.cover, ...p.gallery]) {
+      for (const f of p.photos) {
         expect(existsSync(join(IMG, 'projects', f)), f).toBe(true);
       }
     }

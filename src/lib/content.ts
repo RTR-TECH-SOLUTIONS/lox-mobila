@@ -5,9 +5,11 @@ import {
   contactSchema,
   formatIssues,
   pagePhotosSchema,
+  projectsSchema,
   reviewsSchema,
   statsSchema,
 } from '../content/schema';
+import projectsJson from '../content/projects.json';
 import reviewsJson from '../content/reviews.json';
 import categoriesJson from '../content/categories.json';
 import contactJson from '../content/contact.json';
@@ -29,3 +31,4 @@ export const categories = load(CONTENT_FILES.categories, categoriesSchema, categ
 export const contact = load(CONTENT_FILES.contact, contactSchema, contactJson);
 export const stats = load(CONTENT_FILES.stats, statsSchema, statsJson);
 export const pagePhotos = load(CONTENT_FILES.pagePhotos, pagePhotosSchema, pagePhotosJson);
+export const projects = load(CONTENT_FILES.projects, projectsSchema, projectsJson);

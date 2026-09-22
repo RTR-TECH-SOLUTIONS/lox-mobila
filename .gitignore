@@ -6,3 +6,6 @@ dist
 
 # capturi si material de lucru, nu fac parte din site
 refs/
+
+# capturi de verificare
+.shots/

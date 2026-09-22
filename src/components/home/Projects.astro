@@ -4,6 +4,7 @@ import Button from '../ui/Button.astro';
 import { projects } from '../../data/projects';
 import { CATEGORY_LABELS } from '../../data/types';
 import { resolveImage } from '../../lib/images';
+import { homeProjects } from '../../lib/catalog';
 import { url } from '../../lib/url';
 
 // Tab-uri pe categorii, ca la Mobili Design; prima categorie e deschisa din start.
@@ -11,7 +12,7 @@ const tabs = Object.entries(CATEGORY_LABELS).map(([key, label]) => ({ key, label
 const first = tabs[0].key;
 // Cate un rand plin pe categorie; restul sunt pe /proiecte.
 const PER_TAB = 3;
-const picked = tabs.flatMap((t) => projects.filter((p) => p.category === t.key).slice(0, PER_TAB));
+const picked = tabs.flatMap((t) => homeProjects(projects, t.key, PER_TAB));
 const items = picked.map((p) => ({ p, k: picked.filter((o) => o.category === p.category).indexOf(p) }));
 ---
 
@@ -35,7 +36,7 @@ const items = picked.map((p) => ({ p, k: picked.filter((o) => o.category === p.c
           <li class="prj__item" data-project data-category={p.category} hidden={p.category !== first} style={`--k: ${k}`}>
             <a href={url(`/proiect/${p.slug}`)} class="prj__media">
               <Image
-                src={resolveImage('projects', p.cover)}
+                src={resolveImage('projects', p.photos[0])}
                 alt={p.title}
                 widths={[480, 800, 1200]}
                 sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"

@@ -86,7 +86,7 @@ const materials = allMaterials.filter((m) => items.some((p) => projectMaterials(
             <a href={url(`/proiect/${p.slug}`)} class="work__link">
               <span class="work__media">
                 <Image
-                  src={resolveImage('projects', p.cover)}
+                  src={resolveImage('projects', p.photos[0])}
                   alt={p.title}
                   widths={[480, 800, 1200]}
                   sizes="(min-width: 1024px) 38vw, (min-width: 640px) 50vw, 100vw"
