@@ -2,6 +2,8 @@
 import { Image } from 'astro:assets';
 import logo from '../../assets/brand/lox-logo.png';
 import logoFull from '../../assets/brand/lox-logo-full.png';
+import logoDark from '../../assets/brand/lox-logo-dark.png';
+import logoFullDark from '../../assets/brand/lox-logo-full-dark.png';
 
 interface Props {
   /** `full` include si tagline-ul "Idei. Design. Precizie." */
@@ -13,17 +15,47 @@ interface Props {
 
 const { variant = 'header', height = 38, class: cls = '' } = Astro.props;
 
-const src = variant === 'full' ? logoFull : logo;
-const width = Math.round((src.width / src.height) * height);
+// Literele albe merg pe fundal inchis si peste poze; cele inchise pe tema deschisa.
+const [onDark, onLight] = variant === 'full' ? [logoFull, logoFullDark] : [logo, logoDark];
+const width = Math.round((onDark.width / onDark.height) * height);
 ---
 
-<Image
-  src={src}
-  alt="LOX Mobila"
-  width={width}
-  height={height}
-  densities={[1, 2]}
-  loading="eager"
-  class:list={['block w-auto', cls]}
-  style={`height: ${height}px`}
-/>
+<span class:list={['logo', cls]} style={`height: ${height}px`}>
+  <Image
+    src={onDark}
+    alt="LOX Mobila"
+    width={width}
+    height={height}
+    densities={[1, 2]}
+    loading="eager"
+    class="logo__img logo__img--on-dark"
+    style={`height: ${height}px`}
+  />
+  <Image
+    src={onLight}
+    alt="LOX Mobila"
+    width={width}
+    height={height}
+    densities={[1, 2]}
+    loading="eager"
+    class="logo__img logo__img--on-light"
+    style={`height: ${height}px`}
+  />
+</span>
+
+<style>
+  .logo { display: block; }
+  .logo__img { display: block; width: auto; }
+  .logo__img--on-light { display: none; }
+
+  :global(html[data-scheme='light']) .logo__img--on-dark { display: none; }
+  :global(html[data-scheme='light']) .logo__img--on-light { display: block; }
+
+  /* Peste poze (headerul transparent peste hero) ramane logoul cu litere albe. */
+  :global(html[data-scheme='light'] :is(.on-photo, [data-header][data-overlay='true']:not(.is-scrolled))) .logo__img--on-dark {
+    display: block;
+  }
+  :global(html[data-scheme='light'] :is(.on-photo, [data-header][data-overlay='true']:not(.is-scrolled))) .logo__img--on-light {
+    display: none;
+  }
+</style>
