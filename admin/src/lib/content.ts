@@ -23,8 +23,9 @@ export function clearContentCache(): void {
   cache.clear();
 }
 
-export async function readContent<K extends ContentKey>(repo: Repo, key: K): Promise<Content[K]> {
-  const hit = cache.get(key);
+/** `fresh` ocoleste cache-ul: salvarile construiesc mereu pe ce e acum in repo. */
+export async function readContent<K extends ContentKey>(repo: Repo, key: K, opts: { fresh?: boolean } = {}): Promise<Content[K]> {
+  const hit = opts.fresh ? undefined : cache.get(key);
   if (hit && Date.now() - hit.at < TTL) return hit.value as Content[K];
   const value = check(parseContent(CONTENT_SCHEMAS[key], JSON.parse(await repo.readText(CONTENT_FILES[key])))) as Content[K];
   cache.set(key, { at: Date.now(), value });

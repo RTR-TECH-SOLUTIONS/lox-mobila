@@ -109,7 +109,11 @@ export function createGitHub(opts: Options): Repo {
     async readBytes(path) {
       return Buffer.from(await (await raw(path)).arrayBuffer());
     },
-    /** Un singur commit pentru toata salvarea; daca ramura s-a miscat intre timp, il reface o data peste noul varf. */
+    /**
+     * Un singur commit pentru toata salvarea; daca ramura s-a miscat intre timp, il reface o data peste noul varf.
+     * Refacerea trimite aceleasi fisiere, construite pe continutul citit inainte. Merge doar pentru ca
+     * withWriteLock pune salvarile adminului la rand; ramura se poate misca atunci doar din afara (un push).
+     */
     async commit(input) {
       try {
         return await commitOnce(input);

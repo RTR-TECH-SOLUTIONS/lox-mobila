@@ -36,6 +36,17 @@ describe('readContent', () => {
     await readContent(m.repo, 'theme');
     expect(m.reads()).toBe(1);
   });
+
+  it('reads the file again when asked for a fresh copy, and caches that copy', async () => {
+    const files = { 'src/content/theme.json': theme };
+    const m = memoryRepo(files);
+    await readContent(m.repo, 'theme');
+    files['src/content/theme.json'] = theme.replace('#B7966B', '#86643A');
+    expect((await readContent(m.repo, 'theme')).accent).toBe('#B7966B');
+    expect((await readContent(m.repo, 'theme', { fresh: true })).accent).toBe('#86643A');
+    expect((await readContent(m.repo, 'theme')).accent).toBe('#86643A');
+    expect(m.reads()).toBe(2);
+  });
 });
 
 describe('saveContent', () => {
