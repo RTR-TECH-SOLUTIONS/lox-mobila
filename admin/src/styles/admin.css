@@ -69,6 +69,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 /* ---------- Antet de pagina, panouri ---------- */
 .page-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-bottom: 24px; }
 .page-head p { margin-top: 4px; color: var(--text-2); max-width: 60ch; }
+.page-head .crumb { margin: 0 0 4px; font-size: 0.8125rem; }
+.crumb a { color: var(--text-2); text-underline-offset: 3px; }
 .panel { padding: 20px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
 .panel + .panel { margin-top: 16px; }
 .panel__title { margin-bottom: 16px; }
