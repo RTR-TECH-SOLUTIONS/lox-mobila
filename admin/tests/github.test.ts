@@ -79,6 +79,14 @@ describe('createGitHub.commit', () => {
     await expect(createGitHub({ ...repoOpts, fetch: fn }).commit(input)).rejects.toBeInstanceOf(GitHubError);
     expect(calls.filter((c) => c.key === 'GET /git/ref/heads/main')).toHaveLength(1);
   });
+
+  it('does not retry a 422 from tree creation, since the branch has not moved', async () => {
+    const routes = commitRoutes(() => ({ json: {} }));
+    routes['POST /git/trees'] = () => ({ status: 422, json: { message: 'bad tree' } });
+    const { fn, calls } = fakeFetch(routes);
+    await expect(createGitHub({ ...repoOpts, fetch: fn }).commit(input)).rejects.toBeInstanceOf(GitHubError);
+    expect(calls.filter((c) => c.key === 'GET /git/ref/heads/main')).toHaveLength(1);
+  });
 });
 
 describe('createGitHub reads and status', () => {

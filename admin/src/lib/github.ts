@@ -30,6 +30,13 @@ export class GitHubError extends Error {
   }
 }
 
+/** Doar PATCH-ul de ref intoarce 422 pentru ca ramura s-a miscat; restul 422-urilor sunt erori de continut. */
+export class BranchMovedError extends GitHubError {
+  constructor() {
+    super('Ramura s-a mutat intre timp', 422);
+  }
+}
+
 interface Options {
   token: string;
   repo: { owner: string; name: string };
@@ -86,7 +93,12 @@ export function createGitHub(opts: Options): Repo {
       parents: [parent],
       author: { ...input.author, date: new Date().toISOString() },
     });
-    await post(`/git/refs/heads/${opts.branch}`, { sha: commit.sha, force: false }, 'PATCH');
+    try {
+      await post(`/git/refs/heads/${opts.branch}`, { sha: commit.sha, force: false }, 'PATCH');
+    } catch (e) {
+      if (e instanceof GitHubError && e.status === 422) throw new BranchMovedError();
+      throw e;
+    }
     return commit.sha;
   }
 
@@ -102,7 +114,7 @@ export function createGitHub(opts: Options): Repo {
       try {
         return await commitOnce(input);
       } catch (e) {
-        if (e instanceof GitHubError && e.status === 422) return commitOnce(input);
+        if (e instanceof BranchMovedError) return commitOnce(input);
         throw e;
       }
     },
