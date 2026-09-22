@@ -3,9 +3,9 @@ import '../styles/admin.css';
 import logo from '../assets/lox-logo-dark.png';
 import { env } from '../lib/env';
 import { findUser, limiter, SESSION_COOKIE, SESSION_DAYS, signSession } from '../lib/auth';
+import { safeNext } from '../lib/redirect';
 
-const next = Astro.url.searchParams.get('next') ?? '';
-const target = next.startsWith('/') && !next.startsWith('//') ? next : '/proiecte';
+const target = safeNext(Astro.url.searchParams.get('next'));
 let email = '';
 let error = '';
 
