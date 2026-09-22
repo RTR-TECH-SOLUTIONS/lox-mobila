@@ -8,7 +8,6 @@ const p = (slug: string, featured: boolean, category = 'bucatarii'): Project => 
   category: category as Project['category'],
   weeks: 3,
   featured,
-  description: undefined,
   specs: [{ label: 'Fronturi', value: 'MDF' }],
   photos: [`${slug}/01.jpg`],
 });
