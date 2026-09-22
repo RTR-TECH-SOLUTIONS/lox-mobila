@@ -63,4 +63,12 @@ describe('LoginLimiter', () => {
     l.succeed('k');
     expect(l.blocked('k', 1)).toBe(false);
   });
+
+  it('forgets expired keys instead of keeping them forever', () => {
+    const l = new LoginLimiter();
+    for (let i = 0; i < 50; i++) l.fail(`k${i}`, 0);
+    expect(l.size).toBe(50);
+    l.fail('nou', 15 * 60_000 + 1);
+    expect(l.size).toBe(1);
+  });
 });
