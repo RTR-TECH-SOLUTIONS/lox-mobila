@@ -9,3 +9,8 @@ refs/
 
 # capturi de verificare
 .shots/
+
+# variabilele locale ale adminului (parole, token)
+.env
+.env.*
+!.env.example

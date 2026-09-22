@@ -1,0 +1,79 @@
+---
+import '../styles/admin.css';
+import logo from '../assets/lox-logo-dark.png';
+import { env } from '../lib/env';
+
+interface Props {
+  title: string;
+  /** Cheia ecranului, pentru elementul activ din meniu. */
+  section?: string;
+  /** Latime mare, pentru ecranul Aspect (formular si previzualizare alaturate). */
+  wide?: boolean;
+}
+
+const { title, section, wide = false } = Astro.props;
+const { siteUrl } = env();
+const user = Astro.locals.user;
+const logoWidth = (h: number) => Math.round((logo.width / logo.height) * h);
+
+const nav = [
+  { key: 'proiecte', href: '/proiecte', label: 'Proiecte' },
+  { key: 'poze', href: '/poze', label: 'Poze pagini' },
+  { key: 'recenzii', href: '/recenzii', label: 'Recenzii' },
+  { key: 'categorii', href: '/categorii', label: 'Texte categorii' },
+  { key: 'contact', href: '/contact', label: 'Contact și program' },
+  { key: 'cifre', href: '/cifre', label: 'Cifre' },
+  { key: 'aspect', href: '/aspect', label: 'Aspect' },
+];
+---
+
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{`${title} | Admin LOX`}</title>
+  </head>
+  <body data-site-url={siteUrl}>
+    <aside class="side" id="meniu" data-side>
+      <a href="/proiecte" class="side__brand">
+        <img src={logo.src} width={logoWidth(26)} height="26" alt="LOX Mobila" />
+        <span>Admin</span>
+      </a>
+      <nav class="side__nav" aria-label="Secțiuni">
+        {
+          nav.map((n) => (
+            <a href={n.href} class="side__link" aria-current={section === n.key ? 'page' : undefined}>
+              {n.label}
+            </a>
+          ))
+        }
+      </nav>
+      <div class="side__foot">
+        <a href={siteUrl} target="_blank" rel="noopener">Deschide site-ul</a>
+        {user && <span>{user.name}</span>}
+        <form method="post" action="/logout">
+          <button type="submit" class="linklike">Ieși din cont</button>
+        </form>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <img src={logo.src} width={logoWidth(22)} height="22" alt="LOX Mobila" />
+        <button type="button" class="btn btn--ghost btn--small" aria-controls="meniu" aria-expanded="false" data-menu>
+          Meniu
+        </button>
+      </header>
+      <div class="status" data-status role="status" hidden></div>
+      <main class:list={['content', wide && 'content--wide']}>
+        <slot />
+      </main>
+    </div>
+
+    <script>
+      import '../scripts/shell.ts';
+    </script>
+  </body>
+</html>
