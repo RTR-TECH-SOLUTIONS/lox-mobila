@@ -1,4 +1,7 @@
-export type ProjectCategory = 'bucatarii' | 'dressing' | 'dormitor' | 'living';
+import type { ProjectCategory } from '../content/schema';
+
+export type { ProjectCategory };
+export { CATEGORY_LABELS } from '../content/schema';
 
 export interface SiteData {
   name: string;
@@ -67,10 +70,3 @@ export interface Review {
   project: string;
   text: string;
 }
-
-export const CATEGORY_LABELS: Record<ProjectCategory, string> = {
-  bucatarii: 'Bucătării',
-  dressing: 'Dressing',
-  dormitor: 'Dormitor',
-  living: 'Living',
-};
