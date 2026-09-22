@@ -32,21 +32,7 @@ export interface Service {
   size: 'lg' | 'md' | 'sm';
 }
 
-export interface ProjectSpec {
-  label: string;
-  value: string;
-}
-
-export interface Project {
-  slug: string;
-  title: string;
-  category: ProjectCategory;
-  weeks: number;
-  cover: string;
-  gallery: string[];
-  specs: ProjectSpec[];
-  featured: boolean;
-}
+export type { Project } from '../content/schema';
 
 export interface ProcessStep {
   n: string;
