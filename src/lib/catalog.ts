@@ -20,3 +20,12 @@ export function worksLabel(n: number): string {
   if (n === 1) return '1 lucrare';
   return n % 100 >= 20 || n % 100 === 0 ? `${n} de lucrări` : `${n} lucrări`;
 }
+
+/**
+ * Proiectele din tab-ul unei categorii pe prima pagina: intai cele bifate „Pe prima pagina”,
+ * apoi restul, in ordinea din admin.
+ */
+export function homeProjects(all: Project[], category: string, n = 3): Project[] {
+  const inCategory = all.filter((p) => p.category === category);
+  return [...inCategory.filter((p) => p.featured), ...inCategory.filter((p) => !p.featured)].slice(0, n);
+}

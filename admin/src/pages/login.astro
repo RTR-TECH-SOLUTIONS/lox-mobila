@@ -1,0 +1,69 @@
+---
+import '../styles/admin.css';
+import logo from '../assets/lox-logo-dark.png';
+import { env } from '../lib/env';
+import { findUser, limiter, SESSION_COOKIE, SESSION_DAYS, signSession } from '../lib/auth';
+import { safeNext } from '../lib/redirect';
+
+const target = safeNext(Astro.url.searchParams.get('next'));
+let email = '';
+let error = '';
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  email = String(form.get('email') ?? '').trim();
+  const password = String(form.get('password') ?? '');
+  // In spatele proxy-ului din Coolify, ultima adresa din X-Forwarded-For e cea vazuta de proxy.
+  const ip = Astro.request.headers.get('x-forwarded-for')?.split(',').at(-1)?.trim() || Astro.clientAddress;
+  const key = `${email.toLowerCase()}|${ip}`;
+
+  if (limiter.blocked(key)) {
+    error = 'Prea multe încercări greșite. Încearcă din nou peste 15 minute.';
+  } else {
+    const user = findUser(env().users, email, password);
+    if (user) {
+      limiter.succeed(key);
+      Astro.cookies.set(SESSION_COOKIE, signSession(user.email, env().sessionSecret), {
+        httpOnly: true,
+        secure: import.meta.env.PROD,
+        sameSite: 'strict',
+        path: '/',
+        maxAge: SESSION_DAYS * 86400,
+      });
+      return Astro.redirect(target);
+    }
+    limiter.fail(key);
+    error = 'Emailul sau parola nu sunt corecte.';
+  }
+}
+---
+
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Intră în cont | Admin LOX</title>
+  </head>
+  <body>
+    <main class="login">
+      <form class="login__card" method="post">
+        <img src={logo.src} width={Math.round((logo.width / logo.height) * 30)} height="30" alt="LOX Mobila" />
+        <h1>Intră în cont</h1>
+        {error && <p class="login__error" role="alert">{error}</p>}
+        <div class="fields">
+          <label class="field">
+            <span class="field__label">Email</span>
+            <input type="email" name="email" value={email} autocomplete="username" required autofocus />
+          </label>
+          <label class="field">
+            <span class="field__label">Parolă</span>
+            <input type="password" name="password" autocomplete="current-password" required />
+          </label>
+          <button type="submit" class="btn">Intră</button>
+        </div>
+      </form>
+    </main>
+  </body>
+</html>

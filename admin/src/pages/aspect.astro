@@ -1,0 +1,85 @@
+---
+import Admin from '../layouts/Admin.astro';
+import SaveBar from '../components/SaveBar.astro';
+import { LIGHT_THEME, ORIGINAL_THEME, themeWarnings } from '@site/lib/theme';
+import { env } from '../lib/env';
+import { readContent } from '../lib/content';
+import { repo } from '../lib/repo';
+
+const theme = await readContent(repo(), 'theme');
+const { siteUrl } = env();
+const fields = [
+  { name: 'background', label: 'Fundal', hint: 'Culoarea paginilor.' },
+  { name: 'text', label: 'Text', hint: 'Titluri și paragrafe.' },
+  { name: 'accent', label: 'Accent', hint: 'Butoane, linkuri și detalii.' },
+] as const;
+---
+
+<Admin title="Aspect" section="aspect" wide>
+  <div class="page-head">
+    <div>
+      <h1>Aspect</h1>
+      <p>Culorile site-ului. Previzualizarea se schimbă pe loc; pe site ajung după „Salvează și publică”.</p>
+    </div>
+  </div>
+
+  <div class="aspect">
+    <form action="/api/save/culori" class="panel" data-theme-form data-view="/" novalidate>
+      <div class="fields">
+        {
+          fields.map((f) => (
+            <div class="field">
+              <span class="field__label" id={`eticheta-${f.name}`}>{f.label}</span>
+              <div class="swatch">
+                <input type="color" value={theme[f.name].toLowerCase()} data-color={f.name} aria-labelledby={`eticheta-${f.name}`} />
+                <input
+                  type="text"
+                  name={f.name}
+                  value={theme[f.name]}
+                  maxlength="7"
+                  spellcheck="false"
+                  autocomplete="off"
+                  aria-labelledby={`eticheta-${f.name}`}
+                  data-hex={f.name}
+                />
+              </div>
+              <span class="field__hint">{f.hint}</span>
+              <span class="field__error" hidden></span>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="warnings" data-warnings aria-live="polite">
+        {themeWarnings(theme).map((w) => <p class="warning">{w.message}</p>)}
+      </div>
+
+      <div class="presets">
+        <span class="field__label">Pornește de la</span>
+        <div class="presets__row">
+          <button type="button" class="btn btn--ghost btn--small" data-preset={JSON.stringify(ORIGINAL_THEME)}>Original, închis</button>
+          <button type="button" class="btn btn--ghost btn--small" data-preset={JSON.stringify(LIGHT_THEME)}>Deschis</button>
+        </div>
+      </div>
+
+      <SaveBar />
+    </form>
+
+    <div class="preview" data-preview>
+      <div class="preview__bar" role="group" aria-label="Lățimea previzualizării">
+        <button type="button" class="btn btn--ghost btn--small" aria-pressed="true" data-width="desktop">Calculator</button>
+        <button type="button" class="btn btn--ghost btn--small" aria-pressed="false" data-width="phone">Telefon</button>
+      </div>
+      <iframe
+        class="preview__frame"
+        src={`${siteUrl}/?tema`}
+        title="Previzualizarea site-ului"
+        data-frame
+        data-origin={new URL(siteUrl).origin}></iframe>
+    </div>
+  </div>
+</Admin>
+
+<script>
+  import '../scripts/aspect.ts';
+</script>

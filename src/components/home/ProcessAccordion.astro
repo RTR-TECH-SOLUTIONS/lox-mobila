@@ -51,7 +51,7 @@ import { url } from '../../lib/url';
   .pa__card {
     padding: 16px 32px;
     background: var(--color-ink-3);
-    box-shadow: 0 20px 50px rgb(0 0 0 / 0.45);
+    box-shadow: 0 20px 50px rgb(var(--shadow-rgb) / calc(0.45 * var(--shadow-k)));
   }
 
   .step + .step { border-top: 1px solid var(--rule); }
@@ -68,7 +68,7 @@ import { url } from '../../lib/url';
 
   summary::-webkit-details-marker { display: none; }
 
-  .step__n { color: rgb(242 239 234 / 0.35); font-size: 0.95rem; }
+  .step__n { color: color-mix(in srgb, var(--color-bone) 35%, transparent); font-size: 0.95rem; }
   .step__title { font-weight: 600; }
   .step__dur { color: var(--text-2); font-size: var(--fs-label); white-space: nowrap; }
 

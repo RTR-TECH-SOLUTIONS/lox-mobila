@@ -42,7 +42,7 @@
 
   ::selection {
     background: var(--color-brass);
-    color: var(--color-ink);
+    color: var(--color-on-accent);
   }
 }
 
@@ -82,7 +82,7 @@
     min-height: 44px;
     color: var(--text);
     text-decoration: underline;
-    text-decoration-color: rgb(242 239 234 / 0.35);
+    text-decoration-color: color-mix(in srgb, var(--color-bone) 35%, transparent);
     text-decoration-thickness: 1px;
     text-underline-offset: 7px;
     transition: color var(--dur) var(--ease);
@@ -168,6 +168,11 @@
 
 .has-reveal [data-reveal='left'].is-in,
 .has-reveal [data-reveal='right'].is-in { transform: none; }
+
+/* Pana apar, blocurile din dreapta stau cu 40px mai la dreapta. Sub 1024px umplu randul si
+   marginea paginii are doar 20px, deci ieseau din ecran si pagina capata scroll orizontal.
+   main taie ce trece de marginea ecranului; clip (nu hidden) nu strica position: sticky. */
+.has-reveal main { overflow-x: clip; }
 
 /* ---------- Detalii de mișcare ---------- */
 

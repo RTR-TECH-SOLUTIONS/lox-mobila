@@ -1,0 +1,22 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import ProjectForm from '../../components/ProjectForm.astro';
+import { env } from '../../lib/env';
+import { readContent } from '../../lib/content';
+import { repo } from '../../lib/repo';
+
+const projects = await readContent(repo(), 'projects');
+const project = projects.find((p) => p.slug === Astro.params.slug);
+if (!project) return Astro.redirect('/proiecte');
+---
+
+<Admin title={project.title} section="proiecte">
+  <div class="page-head">
+    <div>
+      <p class="crumb"><a href="/proiecte">Proiecte</a></p>
+      <h1>{project.title}</h1>
+    </div>
+    <a class="btn btn--ghost" href={`${env().siteUrl}/proiect/${project.slug}`} target="_blank" rel="noopener">Vezi pe site</a>
+  </div>
+  <ProjectForm project={project} />
+</Admin>

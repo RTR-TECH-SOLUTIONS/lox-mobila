@@ -1,0 +1,13 @@
+---
+interface Props {
+  label?: string;
+}
+
+const { label = 'Salvează și publică' } = Astro.props;
+---
+
+<div class="savebar">
+  <p class="savebar__msg" data-save-msg aria-live="polite"></p>
+  <a href="" class="btn btn--ghost" data-discard>Renunță</a>
+  <button type="submit" class="btn" data-save>{label}</button>
+</div>

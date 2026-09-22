@@ -1,0 +1,33 @@
+---
+import Admin from '../layouts/Admin.astro';
+import Repeater from '../components/Repeater.astro';
+import SaveBar from '../components/SaveBar.astro';
+import ReviewRow from '../components/rows/ReviewRow.astro';
+import { readContent } from '../lib/content';
+import { repo } from '../lib/repo';
+
+const reviews = await readContent(repo(), 'reviews');
+---
+
+<Admin title="Recenzii" section="recenzii">
+  <div class="page-head">
+    <div>
+      <h1>Recenzii</h1>
+      <p>Apar pe prima pagină și pe paginile de proiect, în ordinea de aici.</p>
+    </div>
+  </div>
+
+  <form action="/api/save/recenzii" data-save-form data-view="/" novalidate>
+    <section class="panel">
+      <Repeater name="items" addLabel="Adaugă o recenzie">
+        {reviews.map((r) => <ReviewRow author={r.author} project={r.project} text={r.text} />)}
+        <ReviewRow slot="template" />
+      </Repeater>
+    </section>
+    <SaveBar />
+  </form>
+</Admin>
+
+<script>
+  import '../scripts/form.ts';
+</script>

@@ -1,0 +1,60 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import SaveBar from '../../components/SaveBar.astro';
+import { CATEGORY_LABELS } from '@site/content/schema';
+import { readContent } from '../../lib/content';
+import { photosLabel } from '../../lib/format';
+import { repo } from '../../lib/repo';
+
+const projects = await readContent(repo(), 'projects');
+---
+
+<Admin title="Proiecte" section="proiecte">
+  <div class="page-head">
+    <div>
+      <h1>Proiecte</h1>
+      <p>{projects.length} proiecte. Ordinea de aici e ordinea de pe site; trage de mâner sau folosește Sus și Jos.</p>
+    </div>
+    <a href="/proiecte/nou" class="btn">Proiect nou</a>
+  </div>
+
+  <form action="/api/projects/order" data-order-form data-view="/mobilier" novalidate>
+    <ul class="list" data-sortable>
+      {
+        projects.map((p) => (
+          <li class="item" data-slug={p.slug}>
+            <button type="button" class="item__drag" data-drag aria-label={`Trage ca să muți ${p.title}`}>
+              <svg width="10" height="16" viewBox="0 0 10 16" aria-hidden="true">
+                <g fill="currentColor">
+                  <circle cx="2" cy="2" r="1.5" /><circle cx="8" cy="2" r="1.5" />
+                  <circle cx="2" cy="8" r="1.5" /><circle cx="8" cy="8" r="1.5" />
+                  <circle cx="2" cy="14" r="1.5" /><circle cx="8" cy="14" r="1.5" />
+                </g>
+              </svg>
+            </button>
+            <img class="item__thumb" src={`/media/projects/${p.photos[0]}`} alt="" width="64" height="48" loading="lazy" />
+            <div>
+              <a class="item__title" href={`/proiecte/${p.slug}`}>{p.title}</a>
+              <p class="item__meta">{CATEGORY_LABELS[p.category]}, {photosLabel(p.photos.length)}</p>
+            </div>
+            <div class="item__side">
+              <label class="check">
+                <input type="checkbox" name={`featured.${p.slug}`} checked={p.featured} />
+                Pe prima pagină
+              </label>
+              <span class="item__move">
+                <button type="button" class="btn btn--ghost btn--small" data-up aria-label={`Mută ${p.title} mai sus`}>Sus</button>
+                <button type="button" class="btn btn--ghost btn--small" data-down aria-label={`Mută ${p.title} mai jos`}>Jos</button>
+              </span>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+    <SaveBar label="Salvează ordinea" />
+  </form>
+</Admin>
+
+<script>
+  import '../../scripts/projects-list.ts';
+</script>

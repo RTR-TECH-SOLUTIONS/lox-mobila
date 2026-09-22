@@ -1,0 +1,39 @@
+---
+import Field from '../Field.astro';
+import RowTools from '../RowTools.astro';
+
+interface Props {
+  heading?: string;
+  paragraphs?: string[];
+  list?: string[];
+}
+
+const { heading = '', paragraphs = [], list = [] } = Astro.props;
+---
+
+<div class="row" data-row>
+  <div class="row__fields">
+    <Field label="Titlul blocului" row="heading" value={heading} max={120} wide />
+    <Field
+      label="Text"
+      row="paragraphs"
+      type="textarea"
+      kind="paragraphs"
+      rows={6}
+      value={paragraphs.join('\n\n')}
+      hint="Un rând gol începe un paragraf nou."
+      wide
+    />
+    <Field
+      label="Listă"
+      row="list"
+      type="textarea"
+      kind="lines"
+      rows={4}
+      value={list.join('\n')}
+      hint="Opțională. Câte un element pe rând."
+      wide
+    />
+  </div>
+  <RowTools />
+</div>

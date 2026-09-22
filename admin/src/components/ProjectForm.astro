@@ -1,0 +1,141 @@
+---
+import Field from './Field.astro';
+import Repeater from './Repeater.astro';
+import SaveBar from './SaveBar.astro';
+import SpecRow from './rows/SpecRow.astro';
+import { CATEGORY_KEYS, CATEGORY_LABELS, type Project } from '@site/content/schema';
+
+interface Props {
+  /** Lipseste pentru un proiect nou. */
+  project?: Project;
+}
+
+const { project } = Astro.props;
+const p = project ?? {
+  title: '',
+  category: 'bucatarii' as const,
+  weeks: 4,
+  featured: false,
+  description: '',
+  specs: [
+    { label: 'Fronturi', value: '' },
+    { label: 'Feronerie', value: '' },
+  ],
+  photos: [] as string[],
+};
+const categories = CATEGORY_KEYS.map((k) => ({ value: k, label: CATEGORY_LABELS[k] }));
+---
+
+<form action="/api/projects/save" data-project-form data-slug={project?.slug ?? ''} novalidate>
+  <section class="panel">
+    <h2 class="panel__title">Despre proiect</h2>
+    <div class="fields">
+      <Field
+        label="Titlu"
+        name="title"
+        value={p.title}
+        max={80}
+        hint={project
+          ? 'Adresa paginii rămâne aceeași și dacă schimbi titlul, ca linkurile vechi să meargă.'
+          : 'Din titlu se face adresa paginii, de exemplu /proiect/bucatarie-in-l.'}
+      />
+      <div class="fields fields--2">
+        <Field label="Categorie" name="category" type="select" value={p.category} options={categories} />
+        <Field label="Durată, în săptămâni" name="weeks" type="number" min={1} max={52} value={p.weeks} />
+      </div>
+      <Field
+        label="Descriere"
+        name="description"
+        type="textarea"
+        rows={6}
+        max={1200}
+        value={p.description ?? ''}
+        hint="Opțională. Dacă o lași goală, pe site apare textul standard despre măsurători, CNC și montaj. Un rând gol începe un paragraf nou."
+      />
+      <label class="check">
+        <input type="checkbox" name="featured" checked={p.featured} />
+        Pe prima pagină, în tab-ul categoriei
+      </label>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2 class="panel__title">Poze</h2>
+    <p class="panel__lead">Prima poză e coperta. Trage pozele ca să le schimbi ordinea.</p>
+    <div class="photos__grid" data-photo-grid>
+      {
+        p.photos.map((f) => (
+          <figure class="photo" data-token={`keep:${f}`}>
+            <img src={`/media/projects/${f}`} alt="" loading="lazy" />
+            <span class="photo__cover">Copertă</span>
+            <div class="photo__tools">
+              <button type="button" class="btn btn--ghost btn--small" data-left aria-label="Mută poza la stânga">Stânga</button>
+              <button type="button" class="btn btn--ghost btn--small" data-right aria-label="Mută poza la dreapta">Dreapta</button>
+              <button type="button" class="btn btn--danger btn--small" data-del>Șterge</button>
+            </div>
+          </figure>
+        ))
+      }
+    </div>
+    <template data-photo-template>
+      <figure class="photo">
+        <img alt="" />
+        <span class="photo__cover">Copertă</span>
+        <span class="photo__new">Nouă</span>
+        <div class="photo__tools">
+          <button type="button" class="btn btn--ghost btn--small" data-left aria-label="Mută poza la stânga">Stânga</button>
+          <button type="button" class="btn btn--ghost btn--small" data-right aria-label="Mută poza la dreapta">Dreapta</button>
+          <button type="button" class="btn btn--danger btn--small" data-del>Șterge</button>
+        </div>
+      </figure>
+    </template>
+    <div class="photos__add">
+      <label class="btn btn--ghost">
+        Adaugă poze
+        <input type="file" accept="image/jpeg,image/png,image/webp" multiple class="sr-only" data-photo-input />
+      </label>
+      <span class="field__hint">JPEG, PNG sau WebP, până la 25 MB fiecare. De pe telefon merg direct din galerie.</span>
+    </div>
+    <p class="field__error" data-error-for="photos" hidden></p>
+  </section>
+
+  <section class="panel">
+    <h2 class="panel__title">Specificații</h2>
+    <p class="panel__lead">Apar în fișa proiectului. Materialele din filtrul catalogului se recunosc din ele: MDF vopsit, MDF infoliat, PAL, furnir.</p>
+    <Repeater name="specs" addLabel="Adaugă o specificație">
+      {p.specs.map((s) => <SpecRow label={s.label} value={s.value} />)}
+      <SpecRow slot="template" />
+    </Repeater>
+  </section>
+
+  {
+    project && (
+      <section class="panel panel--danger">
+        <h2 class="panel__title">Șterge proiectul</h2>
+        <p class="field__hint">Proiectul dispare de pe site, împreună cu pozele lui.</p>
+        <button type="button" class="btn btn--danger" style="margin-top: 12px" data-delete-open>
+          Șterge proiectul
+        </button>
+      </section>
+    )
+  }
+
+  <SaveBar />
+</form>
+
+{
+  project && (
+    <dialog class="confirm" data-delete-dialog aria-labelledby="sterge-titlu">
+      <h2 id="sterge-titlu">Ștergi „{project.title}”?</h2>
+      <p>Proiectul și pozele lui dispar de pe site. Din admin nu se mai pot recupera.</p>
+      <div class="confirm__actions">
+        <button type="button" class="btn btn--ghost" data-delete-cancel>Renunță</button>
+        <button type="button" class="btn btn--danger-solid" data-delete-confirm>Șterge proiectul</button>
+      </div>
+    </dialog>
+  )
+}
+
+<script>
+  import '../scripts/project-form.ts';
+</script>

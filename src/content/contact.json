@@ -1,0 +1,28 @@
+{
+  "phoneDisplay": "0740 000 000",
+  "whatsappNumber": "40740000000",
+  "email": "contact@loxmobila.ro",
+  "address": "Șos. Păcurari nr. 00, Iași",
+  "mapsUrl": "https://maps.google.com/?q=Iasi",
+  "hours": [
+    {
+      "days": "Luni - Vineri",
+      "time": "08:00 - 17:00"
+    },
+    {
+      "days": "Sâmbătă",
+      "time": "doar cu programare"
+    }
+  ],
+  "social": [
+    {
+      "label": "Facebook",
+      "href": "#"
+    },
+    {
+      "label": "Instagram",
+      "href": "#"
+    }
+  ],
+  "googleReviewsUrl": "#"
+}

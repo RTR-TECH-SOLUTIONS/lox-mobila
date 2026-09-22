@@ -1,0 +1,16 @@
+---
+interface Props {
+  /** Numele listei in datele trimise: „hours”, „specs”, „items”. */
+  name: string;
+  addLabel: string;
+}
+
+const { name, addLabel } = Astro.props;
+---
+
+<div class="repeater" data-repeater={name}>
+  <div class="repeater__rows" data-rows><slot /></div>
+  <template data-template><slot name="template" /></template>
+  <button type="button" class="btn btn--ghost btn--small" data-add>{addLabel}</button>
+  <p class="field__error" data-error-for={name} hidden></p>
+</div>

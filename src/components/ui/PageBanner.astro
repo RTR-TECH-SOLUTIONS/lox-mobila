@@ -25,7 +25,7 @@ const icons: Record<string, string> = {
 ---
 
 <!-- Bannerul paginilor interioare: poza întunecată, titlul centrat, ca la mobilidesign.ro. -->
-<section class:list={['pb', categories && 'pb--cats']}>
+<section class:list={['pb', 'on-photo', categories && 'pb--cats']}>
   <Image
     src={resolveImage('hero-led', 'amb.jpg')}
     alt=""
@@ -102,7 +102,7 @@ const icons: Record<string, string> = {
   .pb__lead {
     max-width: 60ch;
     margin: 10px auto 0;
-    color: rgb(242 239 234 / 0.82);
+    color: color-mix(in srgb, var(--color-bone) 82%, transparent);
   }
 
   .pb__cats {
@@ -118,7 +118,7 @@ const icons: Record<string, string> = {
     align-items: center;
     gap: 10px;
     min-height: 44px;
-    color: rgb(242 239 234 / 0.7);
+    color: color-mix(in srgb, var(--color-bone) 70%, transparent);
     text-align: left;
     transition: color var(--dur) var(--ease);
   }

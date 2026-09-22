@@ -1,0 +1,78 @@
+---
+import Admin from '../layouts/Admin.astro';
+import Field from '../components/Field.astro';
+import Repeater from '../components/Repeater.astro';
+import SaveBar from '../components/SaveBar.astro';
+import HoursRow from '../components/rows/HoursRow.astro';
+import SocialRow from '../components/rows/SocialRow.astro';
+import { readContent } from '../lib/content';
+import { formatPhone } from '../lib/format';
+import { repo } from '../lib/repo';
+
+const c = await readContent(repo(), 'contact');
+---
+
+<Admin title="Contact și program" section="contact">
+  <div class="page-head">
+    <div>
+      <h1>Contact și program</h1>
+      <p>Apar în antet, în subsol, pe pagina de contact și în butoanele de WhatsApp.</p>
+    </div>
+  </div>
+
+  <form action="/api/save/contact" data-save-form data-view="/contact" novalidate>
+    <section class="panel">
+      <h2 class="panel__title">Telefon și email</h2>
+      <div class="fields fields--2">
+        <Field label="Telefon" name="phoneDisplay" value={c.phoneDisplay} hint="Cum vrei să apară pe site, de exemplu 0740 000 000." />
+        <Field label="WhatsApp" name="whatsappNumber" value={formatPhone(c.whatsappNumber)} hint="Numărul pe care primești mesajele din formulare." />
+        <Field label="Email" name="email" type="email" value={c.email} />
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel__title">Atelier</h2>
+      <div class="fields">
+        <Field label="Adresă" name="address" value={c.address} max={120} />
+        <Field
+          label="Link Google Maps"
+          name="mapsUrl"
+          type="url"
+          value={c.mapsUrl}
+          hint="În Google Maps caută atelierul, apasă Distribuie și copiază linkul."
+        />
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel__title">Program</h2>
+      <Repeater name="hours" addLabel="Adaugă un rând">
+        {c.hours.map((h) => <HoursRow days={h.days} time={h.time} />)}
+        <HoursRow slot="template" />
+      </Repeater>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel__title">Rețele sociale și recenzii Google</h2>
+      <Repeater name="social" addLabel="Adaugă o rețea">
+        {c.social.map((s) => <SocialRow label={s.label} href={s.href} />)}
+        <SocialRow slot="template" />
+      </Repeater>
+      <div class="fields" style="margin-top: 16px">
+        <Field
+          label="Link spre recenziile Google"
+          name="googleReviewsUrl"
+          type="url"
+          value={c.googleReviewsUrl}
+          hint="Lasă # cât timp nu ai profil de firmă pe Google."
+        />
+      </div>
+    </section>
+
+    <SaveBar />
+  </form>
+</Admin>
+
+<script>
+  import '../scripts/form.ts';
+</script>
