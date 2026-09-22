@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import { resolveImage } from '../../lib/images';
 import Partners from '../ui/Partners.astro';
 import { site } from '../../data/site';
+import { pagePhotos } from '../../lib/content';
 
 const features = [
   {
@@ -58,7 +59,7 @@ const features = [
     <Image
       data-parallax="-60"
       data-parallax-scale="1.18"
-      src={resolveImage('workshop', 'atelier.jpg')}
+      src={resolveImage('workshop', pagePhotos.atelier)}
       alt="Atelierul LOX Mobila: masă de debitare CNC cu o placă de MDF pregătită"
       widths={[800, 1400, 2000]}
       sizes="100vw"
