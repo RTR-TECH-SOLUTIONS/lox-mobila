@@ -123,12 +123,16 @@ export function createGitHub(opts: Options): Repo {
       }
     },
     async runState(sha) {
-      const data = await api<{ workflow_runs: { status: string; conclusion: string | null }[] }>(
+      const data = await api<{ workflow_runs: { path?: string; status: string; conclusion: string | null }[] }>(
         `/actions/runs?head_sha=${sha}&per_page=5`,
       );
-      const run = data.workflow_runs[0];
+      const runs = data.workflow_runs;
+      const run = runs.find((r) => r.path?.endsWith('.github/workflows/deploy.yml')) ?? runs[0];
       if (!run || run.status !== 'completed') return 'pending';
-      return run.conclusion === 'success' ? 'success' : 'failure';
+      if (run.conclusion === 'success') return 'success';
+      // O rulare anulata sau sarita e inlocuita de una mai noua, care publica si schimbarea asta.
+      if (run.conclusion === 'cancelled' || run.conclusion === 'skipped') return 'pending';
+      return 'failure';
     },
   };
 }

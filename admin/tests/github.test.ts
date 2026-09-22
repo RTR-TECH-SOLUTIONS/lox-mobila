@@ -97,13 +97,36 @@ describe('createGitHub reads and status', () => {
     expect(calls[0].headers.Accept).toBe('application/vnd.github.raw+json');
   });
 
+  const DEPLOY = '.github/workflows/deploy.yml';
+  const stateOf = async (runs: unknown[]) => {
+    const { fn } = fakeFetch({ 'GET /actions/runs': () => ({ json: { workflow_runs: runs } }) });
+    return createGitHub({ ...repoOpts, fetch: fn }).runState('a'.repeat(40));
+  };
+
   it('maps workflow runs to a publish state', async () => {
-    const states: unknown[][] = [[], [{ status: 'in_progress', conclusion: null }], [{ status: 'completed', conclusion: 'success' }], [{ status: 'completed', conclusion: 'failure' }]];
+    const states: unknown[][] = [
+      [],
+      [{ path: DEPLOY, status: 'in_progress', conclusion: null }],
+      [{ path: DEPLOY, status: 'completed', conclusion: 'success' }],
+      [{ path: DEPLOY, status: 'completed', conclusion: 'failure' }],
+    ];
     const results = [];
-    for (const runs of states) {
-      const { fn } = fakeFetch({ 'GET /actions/runs': () => ({ json: { workflow_runs: runs } }) });
-      results.push(await createGitHub({ ...repoOpts, fetch: fn }).runState('a'.repeat(40)));
-    }
+    for (const runs of states) results.push(await stateOf(runs));
     expect(results).toEqual(['pending', 'pending', 'success', 'failure']);
+  });
+
+  it('follows the deploy workflow, not another run on the same commit', async () => {
+    const other = { path: 'dynamic/pages/pages-build-deployment', status: 'completed', conclusion: 'failure' };
+    expect(await stateOf([other, { path: DEPLOY, status: 'completed', conclusion: 'success' }])).toBe('success');
+    expect(await stateOf([{ ...other, conclusion: 'success' }, { path: DEPLOY, status: 'queued', conclusion: null }])).toBe('pending');
+  });
+
+  it('falls back to the first run when none is the deploy workflow', async () => {
+    expect(await stateOf([{ path: 'x.yml', status: 'completed', conclusion: 'success' }])).toBe('success');
+  });
+
+  it('keeps waiting when the run was cancelled or skipped, since a newer run publishes the change', async () => {
+    expect(await stateOf([{ path: DEPLOY, status: 'completed', conclusion: 'cancelled' }])).toBe('pending');
+    expect(await stateOf([{ path: DEPLOY, status: 'completed', conclusion: 'skipped' }])).toBe('pending');
   });
 });
