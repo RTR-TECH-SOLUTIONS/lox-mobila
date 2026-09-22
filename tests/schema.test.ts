@@ -88,6 +88,20 @@ describe('contactSchema', () => {
     expect(contactSchema.safeParse({ ...contact, email: 'contact' }).success).toBe(false);
     expect(contactSchema.safeParse({ ...contact, mapsUrl: 'maps.google.com' }).success).toBe(false);
   });
+
+  it('accepts only digits, spaces and + . ( ) - in the displayed phone', () => {
+    for (const ok of ['0740 000 000', '+40 740 000 000', '(0740) 000-000', '0740.000.000']) {
+      expect(contactSchema.safeParse({ ...contact, phoneDisplay: ok }).success).toBe(true);
+    }
+    for (const bad of ['0740 000 000 int. 2', 'Tel: 0740000000', '0740/000/000']) {
+      const r = contactSchema.safeParse({ ...contact, phoneDisplay: bad });
+      expect(r.success).toBe(false);
+      expect(r.error?.issues.map((i) => i.message)).toEqual(['Scrie doar cifre, spații și +.']);
+    }
+    expect(contactSchema.safeParse({ ...contact, phoneDisplay: '0740 000 00' }).error?.issues[0].message).toBe(
+      'Numărul trebuie să aibă 10 cifre, de forma 0740 000 000.',
+    );
+  });
 });
 
 describe('categoriesSchema', () => {
