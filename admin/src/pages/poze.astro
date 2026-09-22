@@ -1,0 +1,45 @@
+---
+import Admin from '../layouts/Admin.astro';
+import SaveBar from '../components/SaveBar.astro';
+import { readContent } from '../lib/content';
+import { PAGE_PHOTO_LABELS, PAGE_PHOTO_SLOTS, currentFile, slotFolder } from '../lib/page-photos';
+import { repo } from '../lib/repo';
+
+const photos = await readContent(repo(), 'pagePhotos');
+---
+
+<Admin title="Poze pagini" section="poze">
+  <div class="page-head">
+    <div>
+      <h1>Poze pagini</h1>
+      <p>Plăcile de categorii de pe prima pagină și poza atelierului. Heroul cu LED-uri rămâne fix.</p>
+    </div>
+  </div>
+
+  <form action="/api/poze" data-photos-form data-view="/" novalidate>
+    <ul class="tiles">
+      {
+        PAGE_PHOTO_SLOTS.map((slot) => (
+          <li class="tile" data-slot={slot}>
+            <img src={`/media/${slotFolder(slot)}/${currentFile(photos, slot)}`} alt="" loading="lazy" />
+            <div class="tile__body">
+              <span class="tile__name">{PAGE_PHOTO_LABELS[slot]}</span>
+              <label class="btn btn--ghost btn--small">
+                Schimbă poza
+                <input type="file" accept="image/jpeg,image/png,image/webp" class="sr-only" data-slot-input={slot} />
+              </label>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="field__hint" style="margin-top: 12px">
+      Pe site pozele se taie automat (4:3 pe calculator, 4:5 pe telefon), deci ține subiectul spre mijloc.
+    </p>
+    <SaveBar />
+  </form>
+</Admin>
+
+<script>
+  import '../scripts/page-photos.ts';
+</script>
