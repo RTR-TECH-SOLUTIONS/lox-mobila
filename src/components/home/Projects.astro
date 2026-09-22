@@ -36,13 +36,13 @@ const items = picked.map((p) => ({ p, k: picked.filter((o) => o.category === p.c
             <a href={url(`/proiect/${p.slug}`)} class="prj__media">
               <Image
                 src={resolveImage('projects', p.cover)}
-                alt={`${p.title}, ${p.district}`}
+                alt={p.title}
                 widths={[480, 800, 1200]}
                 sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 loading="lazy"
               />
             </a>
-            <p class="prj__cap"><a href={url(`/proiect/${p.slug}`)}>{p.title} – {p.district}</a></p>
+            <p class="prj__cap"><a href={url(`/proiect/${p.slug}`)}>{p.title}</a></p>
           </li>
         ))
       }

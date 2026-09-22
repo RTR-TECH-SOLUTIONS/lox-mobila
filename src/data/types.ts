@@ -38,7 +38,6 @@ export interface Project {
   slug: string;
   title: string;
   category: ProjectCategory;
-  district: string;
   weeks: number;
   cover: string;
   gallery: string[];
@@ -66,7 +65,6 @@ export interface MaterialRow {
 export interface Review {
   author: string;
   project: string;
-  district: string;
   text: string;
 }
 
