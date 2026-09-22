@@ -14,7 +14,6 @@ interface Props {
 }
 
 const { items, active } = Astro.props;
-const districts = [...new Set(items.map((p) => p.district))].sort((a, b) => a.localeCompare(b, 'ro'));
 const materials = allMaterials.filter((m) => items.some((p) => projectMaterials(p).includes(m)));
 ---
 
@@ -31,18 +30,6 @@ const materials = allMaterials.filter((m) => items.some((p) => projectMaterials(
             <label class="side__opt">
               <input type="checkbox" data-filter-group="material" value={m} />
               <span>{m}</span>
-            </label>
-          ))
-        }
-      </div>
-
-      <div class="side__group">
-        <h2 class="side__h">Cartier</h2>
-        {
-          districts.map((d) => (
-            <label class="side__opt">
-              <input type="checkbox" data-filter-group="district" value={d} />
-              <span>{d}</span>
             </label>
           ))
         }
@@ -94,20 +81,19 @@ const materials = allMaterials.filter((m) => items.some((p) => projectMaterials(
             data-index={i}
             style={`--k: ${i % 4}`}
             data-weeks={p.weeks}
-            data-district={p.district}
             data-material={projectMaterials(p).join('|')}
           >
             <a href={url(`/proiect/${p.slug}`)} class="work__link">
               <span class="work__media">
                 <Image
                   src={resolveImage('projects', p.cover)}
-                  alt={`${p.title}, ${p.district}`}
+                  alt={p.title}
                   widths={[480, 800, 1200]}
                   sizes="(min-width: 1024px) 38vw, (min-width: 640px) 50vw, 100vw"
                   loading={i < 4 ? 'eager' : 'lazy'}
                 />
               </span>
-              <span class="work__title">{p.title} – {p.district}</span>
+              <span class="work__title">{p.title}</span>
             </a>
           </li>
         ))
@@ -268,13 +254,11 @@ const materials = allMaterials.filter((m) => items.some((p) => projectMaterials(
       const picked = (group: string) =>
         boxes.filter((b) => b.dataset.filterGroup === group && b.checked).map((b) => b.value);
       const mats = picked('material');
-      const dists = picked('district');
       let shown = 0;
 
       works.forEach((w) => {
         const okMat = !mats.length || mats.some((m) => w.dataset.material!.split('|').includes(m));
-        const okDist = !dists.length || dists.includes(w.dataset.district!);
-        w.hidden = !(okMat && okDist);
+        w.hidden = !okMat;
         if (!w.hidden) shown += 1;
       });
 

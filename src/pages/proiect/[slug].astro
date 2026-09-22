@@ -26,8 +26,8 @@ const category = CATEGORY_LABELS[p.category];
 ---
 
 <Base
-  title={`${p.title}, ${p.district} | LOX Mobila Iași`}
-  description={`${p.title} în ${p.district}, Iași: ${p.specs.map((s) => `${s.label.toLowerCase()} ${s.value}`).join(', ')}.`}
+  title={`${p.title} | LOX Mobila Iași`}
+  description={`${p.title}, mobilă la comandă în Iași: ${p.specs.map((s) => `${s.label.toLowerCase()} ${s.value}`).join(', ')}.`}
 >
   <section class="wrap pd">
     <nav class="crumbs" aria-label="Pesmet">
@@ -44,7 +44,7 @@ const category = CATEGORY_LABELS[p.category];
           images.map((f, i) => (
             <Image
               src={resolveImage('projects', f)}
-              alt={i === 0 ? `${p.title}, ${p.district}` : `${p.title}, detaliu`}
+              alt={i === 0 ? p.title : `${p.title}, detaliu`}
               widths={[800, 1200, 1800]}
               sizes="(min-width: 1280px) 1184px, 100vw"
               loading={i === 0 ? 'eager' : 'lazy'}
@@ -69,7 +69,7 @@ const category = CATEGORY_LABELS[p.category];
 
     <div class="pd__head">
       <div>
-        <h1>{p.title} – {p.district}</h1>
+        <h1>{p.title}</h1>
         <p class="pd__sub">{category} la comandă, montată în {p.weeks} săptămâni. Materialele și culorile le alegi tu.</p>
       </div>
       <Button href={url('/contact')}>
@@ -98,7 +98,7 @@ const category = CATEGORY_LABELS[p.category];
       <div class="desc">
         <h2>Descriere</h2>
         <p>
-          {`${p.title} pentru o locuință din ${p.district}. De la măsurători până la montaj au trecut ${p.weeks} săptămâni.`}
+          {`Totul a fost desenat pe cotele casei, după măsurători cu laserul. De la măsurători până la montaj au trecut ${p.weeks} săptămâni.`}
         </p>
         <p>
           Toate piesele au fost debitate pe CNC în atelierul nostru din Iași, direct din fișierul
@@ -109,7 +109,7 @@ const category = CATEGORY_LABELS[p.category];
           {p.specs.map((s) => <li><strong>{s.label}:</strong> {s.value}</li>)}
         </ul>
       </div>
-      <ConsultForm project={`${p.title} (${p.district})`} />
+      <ConsultForm project={p.title} />
     </div>
   </section>
 
@@ -141,9 +141,9 @@ const category = CATEGORY_LABELS[p.category];
           <li>
             <a href={url(`/proiect/${o.slug}`)} class="rel__link">
               <span class="rel__media">
-                <Image src={resolveImage('projects', o.cover)} alt={`${o.title}, ${o.district}`} widths={[480, 800]} sizes="(min-width: 1024px) 33vw, 100vw" loading="lazy" />
+                <Image src={resolveImage('projects', o.cover)} alt={o.title} widths={[480, 800]} sizes="(min-width: 1024px) 33vw, 100vw" loading="lazy" />
               </span>
-              <span class="rel__title">{o.title} – {o.district}</span>
+              <span class="rel__title">{o.title}</span>
             </a>
           </li>
         ))
