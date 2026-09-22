@@ -73,7 +73,16 @@ describe('buildProjectSave', () => {
 
   it('needs at least one photo', async () => {
     const err = await buildProjectSave({ list: [], draft: { ...fields, photos: [] }, uploads: new Map(), ...deps() }).catch((e) => e);
-    expect((err as ValidationError).issues).toEqual([{ path: 'photos', message: 'Proiectul are nevoie de cel puțin o poză.' }]);
+    expect((err as ValidationError).issues).toContainEqual({ path: 'photos', message: 'Proiectul are nevoie de cel puțin o poză.' });
+  });
+
+  it('collects field and photo issues together, without preparing any photo', async () => {
+    const d = deps();
+    const err = await buildProjectSave({ list: [], draft: { ...fields, title: '', photos: [] }, uploads: new Map(), ...d }).catch((e) => e);
+    const issues = (err as ValidationError).issues;
+    expect(issues.some((i) => i.path === 'title')).toBe(true);
+    expect(issues).toContainEqual({ path: 'photos', message: 'Proiectul are nevoie de cel puțin o poză.' });
+    expect(d.prepare).not.toHaveBeenCalled();
   });
 });
 

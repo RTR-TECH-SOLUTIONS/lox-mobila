@@ -8,7 +8,12 @@ export function json(data: unknown, status = 200): Response {
 
 /** Erorile cunoscute devin mesaje pentru client; restul se scriu in log. */
 export function errorResponse(e: unknown): Response {
-  if (e instanceof ValidationError) return json({ ok: false, error: 'Verifică câmpurile marcate.', issues: e.issues }, 422);
+  if (e instanceof ValidationError) {
+    const error = e.issues.every((i) => i.path === '')
+      ? e.issues.map((i) => i.message).join(' ')
+      : 'Verifică câmpurile marcate.';
+    return json({ ok: false, error, issues: e.issues }, 422);
+  }
   if (e instanceof ImageError) return json({ ok: false, error: e.message, issues: [{ path: 'photos', message: e.message }] }, 422);
   if (e instanceof SyntaxError) return json({ ok: false, error: 'Datele au ajuns greșit. Reîncarcă pagina.' }, 400);
   console.error(e);
