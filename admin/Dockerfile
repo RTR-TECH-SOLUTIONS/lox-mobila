@@ -12,11 +12,11 @@ RUN ln -s /repo/admin/node_modules /repo/node_modules && npm run build
 FROM node:24-alpine
 WORKDIR /app
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=4321
+RUN chown node:node /app
+USER node
 COPY --chown=node:node admin/package.json admin/package-lock.json ./
 RUN npm ci --omit=dev
 COPY --chown=node:node --from=build /repo/admin/dist ./dist
-RUN chown -R node:node /app
-USER node
 EXPOSE 4321
 HEALTHCHECK --interval=30s --timeout=5s CMD wget -qO- http://127.0.0.1:4321/health || exit 1
 CMD ["node", "dist/server/entry.mjs"]
