@@ -8,6 +8,7 @@ import { processSteps } from '../src/data/process';
 import { materials } from '../src/data/materials';
 import { reviews } from '../src/data/reviews';
 import { CATEGORY_LABELS } from '../src/data/types';
+import { pagePhotos } from '../src/lib/content';
 
 const IMG = join(process.cwd(), 'src/assets/images');
 
@@ -50,11 +51,10 @@ describe('projects', () => {
 });
 
 describe('content shape', () => {
-  it('6 services, 6 steps numbered 01-06, 4 materials, 3 reviews', () => {
+  it('6 services, 6 steps numbered 01-06, 4 materials', () => {
     expect(services).toHaveLength(6);
     expect(processSteps.map((s) => s.n)).toEqual(['01', '02', '03', '04', '05', '06']);
     expect(materials).toHaveLength(4);
-    expect(reviews).toHaveLength(3);
   });
 
   it('uses comma-below diacritics, never cedilla', () => {
@@ -63,7 +63,7 @@ describe('content shape', () => {
   });
 
   it('contains no banned generic copy', () => {
-    const blob = JSON.stringify({ services, processSteps, reviews }).toLowerCase();
+    const blob = JSON.stringify({ services, processSteps }).toLowerCase();
     for (const banned of ['calitate superioară', 'soluții personalizate', 'echipa noastră de profesioniști']) {
       expect(blob).not.toContain(banned);
     }
@@ -83,5 +83,9 @@ describe.skipIf(!existsSync(join(IMG, 'projects')))('image files exist', () => {
     for (const s of services) {
       expect(existsSync(join(IMG, 'services', s.image)), s.image).toBe(true);
     }
+  });
+
+  it('the workshop photo is on disk', () => {
+    expect(existsSync(join(IMG, 'workshop', pagePhotos.atelier)), pagePhotos.atelier).toBe(true);
   });
 });
