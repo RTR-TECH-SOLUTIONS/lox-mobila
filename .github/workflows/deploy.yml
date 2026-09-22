@@ -3,6 +3,8 @@ name: Deploy preview pe GitHub Pages
 on:
   push:
     branches: [main]
+    # Codul adminului si documentatia nu schimba site-ul.
+    paths-ignore: ['admin/**', 'docs/**']
   workflow_dispatch:
 
 permissions:
@@ -41,6 +43,7 @@ jobs:
       - name: Build
         env:
           PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          PUBLIC_ADMIN_ORIGIN: https://lox-admin.rtrsolutions.ro
         run: npm run build
 
       - uses: actions/upload-pages-artifact@v3
