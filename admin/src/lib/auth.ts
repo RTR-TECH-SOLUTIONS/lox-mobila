@@ -68,6 +68,10 @@ export class LoginLimiter {
   }
 
   fail(key: string, now = Date.now()): void {
+    // Uita cheile expirate, ca harta sa nu creasca la nesfarsit.
+    for (const [k, v] of this.fails) {
+      if (v.until <= now) this.fails.delete(k);
+    }
     const f = this.fails.get(key);
     if (!f || f.until <= now) this.fails.set(key, { n: 1, until: now + this.windowMs });
     else this.fails.set(key, { n: f.n + 1, until: now + this.windowMs });
@@ -75,6 +79,10 @@ export class LoginLimiter {
 
   succeed(key: string): void {
     this.fails.delete(key);
+  }
+
+  get size(): number {
+    return this.fails.size;
   }
 }
 
