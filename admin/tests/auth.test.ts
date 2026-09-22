@@ -8,16 +8,29 @@ const users = [{ email: 'atelier@loxmobila.ro', name: 'Atelier', hash: hashPassw
 describe('passwords', () => {
   it('verifies the right password and rejects a wrong one', () => {
     const stored = hashPassword('parola-lunga-1');
-    expect(stored).toMatch(/^scrypt\$[\w-]+\$[\w-]+$/);
+    expect(stored).toMatch(/^scrypt:[\w-]+:[\w-]+$/);
     expect(verifyPassword('parola-lunga-1', stored)).toBe(true);
     expect(verifyPassword('parola-lunga-2', stored)).toBe(false);
     expect(verifyPassword('orice', 'stricat')).toBe(false);
+    expect(verifyPassword('orice', 'scrypt::')).toBe(false);
+  });
+
+  it('still accepts hashes in the old scrypt$ format', () => {
+    const old = hashPassword('parola-lunga-1').split(':').join('$');
+    expect(old).toMatch(/^scrypt\$[\w-]+\$[\w-]+$/);
+    expect(verifyPassword('parola-lunga-1', old)).toBe(true);
+    expect(verifyPassword('parola-lunga-2', old)).toBe(false);
   });
 
   it('accepts hashes made by `npm run user`', () => {
     const line = execFileSync('node', ['scripts/user.mjs', 'a@b.ro', 'Ana', 'parola-de-test'], { encoding: 'utf8' });
     const { hash } = JSON.parse(line) as { hash: string };
+    expect(hash.includes('$')).toBe(false);
     expect(verifyPassword('parola-de-test', hash)).toBe(true);
+  });
+
+  it('refuses to make an account for an email without @', () => {
+    expect(() => execFileSync('node', ['scripts/user.mjs', 'atelier', 'Ana', 'parola-de-test'], { stdio: 'pipe' })).toThrow();
   });
 
   it('finds users by email regardless of case', () => {

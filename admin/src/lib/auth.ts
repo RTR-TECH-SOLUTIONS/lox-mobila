@@ -1,13 +1,14 @@
 import { createHmac, scryptSync, timingSafeEqual } from 'node:crypto';
 import type { AdminUser } from './env';
-import { hashPassword } from './password.mjs';
+import { HASH_FORMAT, hashPassword } from './password.mjs';
 
 export { hashPassword };
 
 export function verifyPassword(password: string, stored: string): boolean {
-  const [kind, salt, hash] = stored.split('$');
-  if (kind !== 'scrypt' || !salt || !hash) return false;
+  const [, salt, hash] = HASH_FORMAT.exec(stored) ?? [];
+  if (!salt || !hash) return false;
   const expected = Buffer.from(hash, 'base64url');
+  if (!expected.length) return false;
   const actual = scryptSync(password, Buffer.from(salt, 'base64url'), expected.length);
   return timingSafeEqual(actual, expected);
 }
