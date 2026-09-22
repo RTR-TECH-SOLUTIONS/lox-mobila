@@ -148,6 +148,8 @@ export const contactSchema = z.object({
   phoneDisplay: z
     .string({ error: 'Câmpul e obligatoriu.' })
     .trim()
+    // Numarul se afiseaza asa cum e scris: doar cifre si semnele obisnuite, fara text in plus.
+    .regex(/^[0-9 +.()-]*$/, { error: 'Scrie doar cifre, spații și +.', abort: true })
     .refine((v) => /^40\d{9}$/.test(toWhatsapp(v)), PHONE_MESSAGE),
   whatsappNumber: z
     .string({ error: 'Câmpul e obligatoriu.' })
