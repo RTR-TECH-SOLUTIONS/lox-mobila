@@ -50,7 +50,7 @@ const fields = [
         }
       </div>
 
-      <div class="warnings" data-warnings>
+      <div class="warnings" data-warnings aria-live="polite">
         {themeWarnings(theme).map((w) => <p class="warning">{w.message}</p>)}
       </div>
 
