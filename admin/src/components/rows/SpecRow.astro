@@ -1,0 +1,19 @@
+---
+import Field from '../Field.astro';
+import RowTools from '../RowTools.astro';
+
+interface Props {
+  label?: string;
+  value?: string;
+}
+
+const { label = '', value = '' } = Astro.props;
+---
+
+<div class="row" data-row>
+  <div class="row__fields">
+    <Field label="Etichetă" row="label" value={label} max={40} hint="Fronturi, Feronerie, Blat, Lățime." />
+    <Field label="Valoare" row="value" value={value} max={120} hint="MDF vopsit mat, Blum Legrabox, 3,42 m." />
+  </div>
+  <RowTools />
+</div>

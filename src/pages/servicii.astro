@@ -69,7 +69,7 @@ const icons = [
   }
 
   .card { transition: background-color var(--dur) var(--ease), transform 300ms var(--ease), box-shadow 300ms var(--ease); }
-  .card:hover { background: var(--color-ink-3); transform: translateY(-6px); box-shadow: 0 24px 50px rgb(0 0 0 / 0.45); }
+  .card:hover { background: var(--color-ink-3); transform: translateY(-6px); box-shadow: 0 24px 50px rgb(var(--shadow-rgb) / calc(0.45 * var(--shadow-k))); }
   .card > svg { transition: transform 400ms var(--ease); }
   .card:hover > svg { transform: translateY(-3px) scale(1.08); }
   .card > svg { color: var(--color-brass); margin-bottom: 6px; }

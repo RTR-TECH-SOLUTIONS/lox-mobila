@@ -1,0 +1,341 @@
+[
+  {
+    "slug": "bucatarie-in-l",
+    "title": "Bucătărie în L",
+    "category": "bucatarii",
+    "weeks": 5,
+    "featured": true,
+    "specs": [
+      {
+        "label": "Fronturi",
+        "value": "MDF vopsit mat, RAL 7016"
+      },
+      {
+        "label": "Feronerie",
+        "value": "Blum Legrabox, amortizare"
+      },
+      {
+        "label": "Corpuri",
+        "value": "14"
+      },
+      {
+        "label": "Blat",
+        "value": "Quartz 20 mm"
+      }
+    ],
+    "photos": [
+      "bucatarie-in-l/01.jpg",
+      "bucatarie-in-l/02.jpg"
+    ]
+  },
+  {
+    "slug": "dressing-perete-in-perete",
+    "title": "Dressing din perete în perete",
+    "category": "dressing",
+    "weeks": 3,
+    "featured": true,
+    "specs": [
+      {
+        "label": "Fronturi",
+        "value": "PAL Egger, uși glisante"
+      },
+      {
+        "label": "Feronerie",
+        "value": "Sistem glisare Hettich TopLine"
+      },
+      {
+        "label": "Deschidere",
+        "value": "3,42 m x 2,68 m"
+      },
+      {
+        "label": "Interior",
+        "value": "Iluminare LED pe senzor"
+      }
+    ],
+    "photos": [
+      "dressing-perete-in-perete/01.jpg",
+      "dressing-perete-in-perete/02.jpg"
+    ]
+  },
+  {
+    "slug": "perete-tv-biblioteca",
+    "title": "Perete TV cu bibliotecă",
+    "category": "living",
+    "weeks": 4,
+    "featured": true,
+    "specs": [
+      {
+        "label": "Fronturi",
+        "value": "Furnir de stejar, lac mat"
+      },
+      {
+        "label": "Feronerie",
+        "value": "Blum Tip-On, fără mânere"
+      },
+      {
+        "label": "Lățime",
+        "value": "4,10 m"
+      },
+      {
+        "label": "Detaliu",
+        "value": "Canal de cabluri în spatele panoului"
+      }
+    ],
+    "photos": [
+      "perete-tv-biblioteca/01.jpg"
+    ]
+  },
+  {
+    "slug": "bucatarie-cu-insula",
+    "title": "Bucătărie cu insulă",
+    "category": "bucatarii",
+    "weeks": 6,
+    "featured": true,
+    "specs": [
+      {
+        "label": "Fronturi",
+        "value": "MDF vopsit mat, negru grafit"
+      },
+      {
+        "label": "Feronerie",
+        "value": "Blum Aventos la corpurile suspendate"
+      },
+      {
+        "label": "Corpuri",
+        "value": "19 + insulă 2,4 m"
+      },
+      {
+        "label": "Blat",
+        "value": "Compozit Dekton 12 mm"
+      }
+    ],
+    "photos": [
+      "bucatarie-cu-insula/01.jpg",
+      "bucatarie-cu-insula/02.jpg"
+    ]
+  },
+  {
+    "slug": "dormitor-matrimonial",
+    "title": "Dormitor matrimonial",
+    "category": "dormitor",
+    "weeks": 4,
+    "featured": true,
+    "specs": [
+      {
+        "label": "Pat",
+        "value": "Ladă cu ridicare pe amortizoare, 160 x 200"
+      },
+      {
+        "label": "Tăblie",
+        "value": "Tapițată, stofă bucle"
+      },
+      {
+        "label": "Noptiere",
+        "value": "Suspendate, sertar Tip-On"
+      },
+      {
+        "label": "Material",
+        "value": "PAL Egger stejar Halifax"
+      }
+    ],
+    "photos": [
+      "dormitor-matrimonial/01.jpg"
+    ]
+  },
+  {
+    "slug": "dressing-walk-in",
+    "title": "Dressing walk-in",
+    "category": "dressing",
+    "weeks": 4,
+    "featured": true,
+    "specs": [
+      {
+        "label": "Structură",
+        "value": "Deschisă, fără uși"
+      },
+      {
+        "label": "Material",
+        "value": "PAL Egger gri piatră"
+      },
+      {
+        "label": "Feronerie",
+        "value": "Sertare Hettich InnoTech"
+      },
+      {
+        "label": "Suprafață",
+        "value": "6,5 mp"
+      }
+    ],
+    "photos": [
+      "dressing-walk-in/01.jpg"
+    ]
+  },
+  {
+    "slug": "bucatarie-liniara",
+    "title": "Bucătărie liniară, garsonieră",
+    "category": "bucatarii",
+    "weeks": 3,
+    "featured": false,
+    "specs": [
+      {
+        "label": "Fronturi",
+        "value": "MDF infoliat, alb mat"
+      },
+      {
+        "label": "Feronerie",
+        "value": "Blum Tandembox"
+      },
+      {
+        "label": "Lungime",
+        "value": "2,75 m"
+      },
+      {
+        "label": "Blat",
+        "value": "Postforming 38 mm"
+      }
+    ],
+    "photos": [
+      "bucatarie-liniara/01.jpg"
+    ]
+  },
+  {
+    "slug": "biblioteca-pana-in-tavan",
+    "title": "Bibliotecă până în tavan",
+    "category": "living",
+    "weeks": 3,
+    "featured": false,
+    "specs": [
+      {
+        "label": "Material",
+        "value": "MDF vopsit, verde închis"
+      },
+      {
+        "label": "Înălțime",
+        "value": "2,74 m"
+      },
+      {
+        "label": "Rafturi",
+        "value": "25 mm, fără săgeată la 90 cm"
+      },
+      {
+        "label": "Detaliu",
+        "value": "Scară pe șină"
+      }
+    ],
+    "photos": [
+      "biblioteca-pana-in-tavan/01.jpg"
+    ]
+  },
+  {
+    "slug": "camera-de-copil",
+    "title": "Cameră de copil",
+    "category": "dormitor",
+    "weeks": 3,
+    "featured": false,
+    "specs": [
+      {
+        "label": "Pat",
+        "value": "Etajat, cu birou dedesubt"
+      },
+      {
+        "label": "Material",
+        "value": "PAL Egger + MDF vopsit"
+      },
+      {
+        "label": "Muchii",
+        "value": "Rotunjite R3 la toate canturile"
+      },
+      {
+        "label": "Feronerie",
+        "value": "Balamale Blum cu amortizare"
+      }
+    ],
+    "photos": [
+      "camera-de-copil/01.jpg"
+    ]
+  },
+  {
+    "slug": "bucatarie-in-u",
+    "title": "Bucătărie în U",
+    "category": "bucatarii",
+    "weeks": 5,
+    "featured": false,
+    "specs": [
+      {
+        "label": "Fronturi",
+        "value": "Furnir de nuc + MDF vopsit"
+      },
+      {
+        "label": "Feronerie",
+        "value": "Blum Legrabox, colțar LeMans"
+      },
+      {
+        "label": "Corpuri",
+        "value": "17"
+      },
+      {
+        "label": "Blat",
+        "value": "Granit Nero Assoluto, periat"
+      }
+    ],
+    "photos": [
+      "bucatarie-in-u/01.jpg"
+    ]
+  },
+  {
+    "slug": "dulap-de-hol",
+    "title": "Dulap de hol cu cuier",
+    "category": "dressing",
+    "weeks": 2,
+    "featured": false,
+    "specs": [
+      {
+        "label": "Material",
+        "value": "PAL Egger + oglindă fumurie"
+      },
+      {
+        "label": "Adâncime",
+        "value": "38 cm, pe nișă"
+      },
+      {
+        "label": "Feronerie",
+        "value": "Balamale Hettich Sensys"
+      },
+      {
+        "label": "Detaliu",
+        "value": "Banchetă tapițată integrată"
+      }
+    ],
+    "photos": [
+      "dulap-de-hol/01.jpg"
+    ]
+  },
+  {
+    "slug": "comoda-tv-suspendata",
+    "title": "Comodă TV suspendată",
+    "category": "living",
+    "weeks": 2,
+    "featured": false,
+    "specs": [
+      {
+        "label": "Fronturi",
+        "value": "MDF vopsit mat, frezat riflaj"
+      },
+      {
+        "label": "Lungime",
+        "value": "2,80 m, o singură piesă"
+      },
+      {
+        "label": "Prindere",
+        "value": "Șină ascunsă, 120 kg"
+      },
+      {
+        "label": "Feronerie",
+        "value": "Blum Tip-On"
+      }
+    ],
+    "photos": [
+      "comoda-tv-suspendata/01.jpg"
+    ]
+  }
+]

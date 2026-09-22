@@ -1,0 +1,28 @@
+---
+import '../styles/admin.css';
+
+interface Props {
+  error: unknown;
+}
+
+console.error(Astro.props.error);
+---
+
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Eroare | Admin LOX</title>
+  </head>
+  <body>
+    <main class="login">
+      <div class="login__card">
+        <h1>Nu am putut încărca pagina</h1>
+        <p class="field__hint">Datele nu au putut fi citite. Reîncarcă pagina peste un minut; dacă nu merge, scrie-ne.</p>
+        <a href="" class="btn">Reîncarcă</a>
+      </div>
+    </main>
+  </body>
+</html>

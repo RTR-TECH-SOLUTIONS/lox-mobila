@@ -1,0 +1,31 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import { CATEGORY_LABELS } from '@site/content/schema';
+import { readContent } from '../../lib/content';
+import { repo } from '../../lib/repo';
+
+const pages = await readContent(repo(), 'categories');
+---
+
+<Admin title="Texte categorii" section="categorii">
+  <div class="page-head">
+    <div>
+      <h1>Texte categorii</h1>
+      <p>Titlul, introducerea și textul de sub catalog, pe fiecare pagină de categorie.</p>
+    </div>
+  </div>
+
+  <ul class="list">
+    {
+      pages.map((p) => (
+        <li class="item" style="grid-template-columns: minmax(0, 1fr) auto">
+          <div>
+            <a class="item__title" href={`/categorii/${p.key}`}>{CATEGORY_LABELS[p.key]}</a>
+            <p class="item__meta">{p.title}. {p.lead}</p>
+          </div>
+          <a class="btn btn--ghost btn--small" href={`/categorii/${p.key}`}>Editează</a>
+        </li>
+      ))
+    }
+  </ul>
+</Admin>

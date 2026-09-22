@@ -1,0 +1,52 @@
+---
+interface Props {
+  label: string;
+  /** Numele complet, pentru campurile fixe. */
+  name?: string;
+  /** Numele relativ la randul repetabil; numele complet il pune scriptul. */
+  row?: string;
+  value?: string | number;
+  type?: 'text' | 'email' | 'url' | 'number' | 'textarea' | 'select';
+  /** Cum se citeste valoarea: numar, cate o linie pe element, paragrafe despartite de un rand gol. */
+  kind?: 'number' | 'lines' | 'paragraphs';
+  options?: { value: string; label: string }[];
+  hint?: string;
+  rows?: number;
+  max?: number;
+  min?: number;
+  /** Pe toata latimea randului, in randurile repetabile. */
+  wide?: boolean;
+}
+
+const { label, name, row, value = '', type = 'text', kind, options = [], hint, rows = 4, max, min, wide = false } = Astro.props;
+const attrs = { name, 'data-name': row, 'data-kind': kind ?? (type === 'number' ? 'number' : undefined) };
+---
+
+<label class:list={['field', wide && 'field--wide']}>
+  <span class="field__label">{label}</span>
+  {
+    type === 'textarea' ? (
+      <textarea {...attrs} rows={rows} maxlength={max}>{value}</textarea>
+    ) : type === 'select' ? (
+      <select {...attrs}>
+        {options.map((o) => (
+          <option value={o.value} selected={o.value === value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+    ) : (
+      <input
+        {...attrs}
+        type={type}
+        value={value}
+        maxlength={type === 'number' ? undefined : max}
+        min={type === 'number' ? min : undefined}
+        max={type === 'number' ? max : undefined}
+        inputmode={type === 'number' ? 'numeric' : undefined}
+      />
+    )
+  }
+  {hint && <span class="field__hint">{hint}</span>}
+  <span class="field__error" hidden></span>
+</label>

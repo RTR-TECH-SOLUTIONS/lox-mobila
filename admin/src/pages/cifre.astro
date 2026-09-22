@@ -1,0 +1,48 @@
+---
+import Admin from '../layouts/Admin.astro';
+import Field from '../components/Field.astro';
+import SaveBar from '../components/SaveBar.astro';
+import { readContent } from '../lib/content';
+import { repo } from '../lib/repo';
+
+const s = await readContent(repo(), 'stats');
+---
+
+<Admin title="Cifre" section="cifre">
+  <div class="page-head">
+    <div>
+      <h1>Cifre</h1>
+      <p>Cele trei cifre de pe prima pagină și din Despre noi, plus nota de pe Google de lângă recenzii.</p>
+    </div>
+  </div>
+
+  <form action="/api/save/cifre" data-save-form data-view="/" novalidate>
+    <section class="panel">
+      <h2 class="panel__title">Cifrele atelierului</h2>
+      <div class="fields">
+        {
+          s.stats.map((stat, i) => (
+            <div class="fields fields--2">
+              <Field label={`Cifra ${i + 1}`} name={`stats.${i}.value`} value={stat.value} max={12} hint="Scurt: 12, 340+, 2 mm." />
+              <Field label="Ce înseamnă" name={`stats.${i}.label`} value={stat.label} max={60} />
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel__title">Nota de pe Google</h2>
+      <div class="fields fields--2">
+        <Field label="Nota" name="googleRating.score" value={s.googleRating.score} hint="De exemplu 4,9." />
+        <Field label="Număr de recenzii" name="googleRating.count" type="number" min={0} value={s.googleRating.count} />
+      </div>
+    </section>
+
+    <SaveBar />
+  </form>
+</Admin>
+
+<script>
+  import '../scripts/form.ts';
+</script>
