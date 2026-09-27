@@ -10,7 +10,7 @@ export function repo(): Repo {
     const e = env();
     instance = e.localRepoDir
       ? createLocalRepo(e.localRepoDir)
-      : createGitHub({ token: e.githubToken, repo: e.repo, branch: e.branch });
+      : createGitHub({ token: e.githubToken, repo: e.repo, branch: e.branch, siteUrl: e.siteUrl });
   }
   return instance;
 }

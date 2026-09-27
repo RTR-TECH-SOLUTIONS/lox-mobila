@@ -22,7 +22,7 @@ function fakeFetch(routes: Record<string, Route>) {
   return { fn, calls };
 }
 
-const repoOpts = { token: 'tok', repo: { owner: 'o', name: 'r' }, branch: 'main' };
+const repoOpts = { token: 'tok', repo: { owner: 'o', name: 'r' }, branch: 'main', siteUrl: 'https://site.test' };
 
 const commitRoutes = (patch: Route): Record<string, Route> => ({
   'GET /git/ref/heads/main': (_b, n) => ({ json: { object: { sha: `base${n}` } } }),
@@ -98,35 +98,49 @@ describe('createGitHub reads and status', () => {
   });
 
   const DEPLOY = '.github/workflows/deploy.yml';
-  const stateOf = async (runs: unknown[]) => {
-    const { fn } = fakeFetch({ 'GET /actions/runs': () => ({ json: { workflow_runs: runs } }) });
-    return createGitHub({ ...repoOpts, fetch: fn }).runState('a'.repeat(40));
+  const SHA = 'a'.repeat(40);
+
+  /** version.json de pe site plus rularile din Actions pentru acelasi commit. */
+  const stateOf = async (live: Reply, runs: unknown[] = [], sha = SHA) => {
+    const { fn } = fakeFetch({
+      'GET https://site.test/version.json': () => live,
+      'GET /actions/runs': () => ({ json: { workflow_runs: runs } }),
+    });
+    return createGitHub({ ...repoOpts, fetch: fn }).runState(sha);
   };
 
-  it('maps workflow runs to a publish state', async () => {
-    const states: unknown[][] = [
-      [],
-      [{ path: DEPLOY, status: 'in_progress', conclusion: null }],
-      [{ path: DEPLOY, status: 'completed', conclusion: 'success' }],
-      [{ path: DEPLOY, status: 'completed', conclusion: 'failure' }],
-    ];
-    const results = [];
-    for (const runs of states) results.push(await stateOf(runs));
-    expect(results).toEqual(['pending', 'pending', 'success', 'failure']);
+  it('publishes when the live site is built from that commit', async () => {
+    expect(await stateOf({ json: { sha: SHA, builtAt: '2026-09-28T09:00:00.000Z' } })).toBe('success');
   });
 
-  it('follows the deploy workflow, not another run on the same commit', async () => {
-    const other = { path: 'dynamic/pages/pages-build-deployment', status: 'completed', conclusion: 'failure' };
-    expect(await stateOf([other, { path: DEPLOY, status: 'completed', conclusion: 'success' }])).toBe('success');
-    expect(await stateOf([{ ...other, conclusion: 'success' }, { path: DEPLOY, status: 'queued', conclusion: null }])).toBe('pending');
+  it('keeps waiting while the site still shows the previous commit', async () => {
+    expect(await stateOf({ json: { sha: 'b'.repeat(40), builtAt: '2026-09-28T09:00:00.000Z' } })).toBe('pending');
   });
 
-  it('falls back to the first run when none is the deploy workflow', async () => {
-    expect(await stateOf([{ path: 'x.yml', status: 'completed', conclusion: 'success' }])).toBe('success');
+  it('keeps waiting when the site cannot be reached', async () => {
+    expect(await stateOf({ status: 502, text: 'gateway' })).toBe('pending');
+  });
+
+  it('reports a failure when the checks broke on that commit', async () => {
+    const runs = [{ path: DEPLOY, status: 'completed', conclusion: 'failure' }];
+    expect(await stateOf({ json: { sha: 'b'.repeat(40), builtAt: '2026-09-28T09:00:00.000Z' } }, runs)).toBe('failure');
   });
 
   it('keeps waiting when the run was cancelled or skipped, since a newer run publishes the change', async () => {
-    expect(await stateOf([{ path: DEPLOY, status: 'completed', conclusion: 'cancelled' }])).toBe('pending');
-    expect(await stateOf([{ path: DEPLOY, status: 'completed', conclusion: 'skipped' }])).toBe('pending');
+    const old = { json: { sha: 'b'.repeat(40), builtAt: '2026-09-28T09:00:00.000Z' } };
+    for (const conclusion of ['cancelled', 'skipped']) {
+      expect(await stateOf(old, [{ path: DEPLOY, status: 'completed', conclusion }])).toBe('pending');
+    }
+  });
+
+  it('accepts a build made after the save even when it carries no commit marker', async () => {
+    const { fn } = fakeFetch({
+      ...commitRoutes(() => ({ json: {} })),
+      'GET https://site.test/version.json': () => ({ json: { sha: '', builtAt: new Date(Date.now() + 1000).toISOString() } }),
+      'GET /actions/runs': () => ({ json: { workflow_runs: [] } }),
+    });
+    const gh = createGitHub({ ...repoOpts, fetch: fn });
+    const sha = await gh.commit(input);
+    expect(await gh.runState(sha)).toBe('success');
   });
 });

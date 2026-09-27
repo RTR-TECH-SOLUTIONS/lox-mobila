@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Schema from '../components/Schema.astro';
 import { url } from '../lib/url';
 import { theme } from '../lib/content';
 import { deriveTheme, themeCss } from '../lib/theme';
@@ -20,6 +21,11 @@ const {
   description = 'Mobilă la comandă în Iași: bucătării, dressinguri, living și dormitor, proiectate 3D și executate în atelier propriu.',
   headerOverlay = false,
 } = Astro.props;
+
+// Adresa canonica, fara slash la final, ca sa nu existe doua adrese pentru aceeasi pagina.
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const canonical = new URL(path, Astro.site).href;
+const ogImage = new URL(url('/og.jpg'), Astro.site).href;
 ---
 
 <!doctype html>
@@ -32,6 +38,18 @@ const {
     <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="LOX Mobila" />
+    <meta property="og:locale" content="ro_RO" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <Schema />
     <style is:inline set:html={themeCss(theme)}></style>
   </head>
   <body>

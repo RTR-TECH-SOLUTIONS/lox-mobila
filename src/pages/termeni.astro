@@ -1,0 +1,81 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { site } from '../data/site';
+import { url } from '../lib/url';
+---
+
+<Legal
+  title="Termeni și condiții"
+  description="Termenii de folosire a site-ului LOX Mobila și regulile după care facem ofertele și lucrările de mobilă la comandă în Iași."
+  lead="Regulile după care folosești site-ul și după care lucrăm."
+  updated="28 septembrie 2026"
+>
+  <h2>Cine administrează site-ul</h2>
+  <dl>
+    {site.legalName && <><dt>Denumire</dt><dd>{site.legalName}</dd></>}
+    {site.cui && <><dt>CUI</dt><dd>{site.cui}</dd></>}
+    {site.regCom && <><dt>Nr. Registrul Comerțului</dt><dd>{site.regCom}</dd></>}
+    <dt>Atelier</dt>
+    <dd>{site.address}, {site.city}</dd>
+    <dt>Telefon</dt>
+    <dd><a href={site.phoneHref}>{site.phoneDisplay}</a></dd>
+    <dt>Email</dt>
+    <dd><a href={`mailto:${site.email}`}>{site.email}</a></dd>
+  </dl>
+
+  <h2>Ce face site-ul</h2>
+  <p>
+    Site-ul prezintă lucrările și serviciile atelierului. Nu se vinde nimic online: nu există coș,
+    plată sau comandă pe site. Orice discuție despre o lucrare începe printr-un telefon, un mesaj pe
+    WhatsApp sau un email.
+  </p>
+
+  <h2>Cereri de ofertă</h2>
+  <p>
+    Formularul de pe pagina de <a href={url('/contact')}>Contact</a> nu trimite date către site: el
+    scrie mesajul și îl deschide în WhatsApp, de pe telefonul tău. O cerere trimisă așa nu e comandă
+    și nu ne obligă pe niciunul dintre noi.
+  </p>
+  <p>
+    Prețul și termenul devin ferme doar în oferta scrisă, după măsurători, și se confirmă prin
+    contract. Până atunci, orice sumă discutată e estimare.
+  </p>
+
+  <h2>Prețurile afișate</h2>
+  <p>
+    Prețurile de la serviciile de atelier (debitare, cantuire, găurire, feronerie) sunt orientative,
+    pentru lucrări obișnuite. Se confirmă după ce vedem lista de piese sau proiectul. Ne rezervăm
+    dreptul de a le modifica; pe o lucrare acceptată rămâne prețul din ofertă.
+  </p>
+
+  <h2>Fotografiile și textele</h2>
+  <p>
+    Fotografiile, textele și semnele grafice de pe site ne aparțin sau le folosim cu acordul
+    autorilor. Nu pot fi copiate sau refolosite comercial fără acordul nostru scris. Fotografiile de
+    proiect arată lucrări executate sau imagini de prezentare; finisajele, mânerele și culorile
+    diferă de la o lucrare la alta.
+  </p>
+
+  <h2>Linkuri către alte site-uri</h2>
+  <p>
+    Site-ul are linkuri către WhatsApp, Google Maps și rețelele noastre sociale. Ce se întâmplă
+    acolo ține de regulile serviciilor respective, nu de ale noastre.
+  </p>
+
+  <h2>Disponibilitatea site-ului</h2>
+  <p>
+    Încercăm să ținem site-ul corect și accesibil, dar nu garantăm funcționarea fără întrerupere.
+    Informațiile pot fi actualizate oricând, fără anunț.
+  </p>
+
+  <h2>Reclamații și legea aplicabilă</h2>
+  <p>
+    Dacă ai o nemulțumire, scrie-ne întâi nouă la <a href={`mailto:${site.email}`}>{site.email}</a>.
+    Te poți adresa și Autorității Naționale pentru Protecția Consumatorilor,
+    <a href="https://anpc.ro" rel="noopener" target="_blank">anpc.ro</a>.
+  </p>
+  <p>
+    Termenilor li se aplică legea română. Neînțelegerile pe care nu le rezolvăm direct se judecă de
+    instanțele competente din {site.city}.
+  </p>
+</Legal>

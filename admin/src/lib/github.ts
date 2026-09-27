@@ -41,10 +41,28 @@ interface Options {
   token: string;
   repo: { owner: string; name: string };
   branch: string;
+  /** Site-ul publicat, de unde se citeste version.json ca sa stim daca schimbarea a ajuns acolo. */
+  siteUrl: string;
   fetch?: typeof fetch;
 }
 
 const encodePath = (path: string) => path.split('/').map(encodeURIComponent).join('/');
+
+/** Ce scrie in version.json pe site-ul publicat. Orice eroare inseamna „inca nu stim”. */
+async function published(f: typeof fetch, siteUrl: string): Promise<{ sha: string; builtAt: number } | undefined> {
+  try {
+    const r = await f(`${siteUrl}/version.json?t=${Date.now()}`, { cache: 'no-store' });
+    if (!r.ok) return undefined;
+    const data = (await r.json()) as { sha?: unknown; builtAt?: unknown };
+    const builtAt = Date.parse(String(data.builtAt ?? ''));
+    return { sha: typeof data.sha === 'string' ? data.sha : '', builtAt: Number.isNaN(builtAt) ? 0 : builtAt };
+  } catch {
+    return undefined;
+  }
+}
+
+/** Cand a facut adminul fiecare commit; ne spune daca o constructie de pe server e de dupa el. */
+const committedAt = new Map<string, number>();
 
 export function createGitHub(opts: Options): Repo {
   const f = opts.fetch ?? fetch;
@@ -115,24 +133,39 @@ export function createGitHub(opts: Options): Repo {
      * withWriteLock pune salvarile adminului la rand; ramura se poate misca atunci doar din afara (un push).
      */
     async commit(input) {
-      try {
-        return await commitOnce(input);
-      } catch (e) {
-        if (e instanceof BranchMovedError) return commitOnce(input);
-        throw e;
-      }
+      const sha = await (async () => {
+        try {
+          return await commitOnce(input);
+        } catch (e) {
+          if (e instanceof BranchMovedError) return commitOnce(input);
+          throw e;
+        }
+      })();
+      committedAt.set(sha, Date.now());
+      return sha;
     },
+    /**
+     * Adevarul e ce se vede pe site, nu ce zice GitHub: `version.json` de pe server spune din ce
+     * commit e construit site-ul de acolo. Verificarile din Actions raman doar ca sa putem spune
+     * „a esuat” cand continutul nou strica build-ul, in loc sa asteptam degeaba.
+     */
     async runState(sha) {
+      const live = await published(f, opts.siteUrl);
+      if (live) {
+        if (live.sha === sha) return 'success';
+        // Fara marcaj de commit (sau cu altul), o constructie de dupa salvarea noastra o contine oricum.
+        const at = committedAt.get(sha);
+        if (at !== undefined && live.builtAt > at) return 'success';
+      }
       const data = await api<{ workflow_runs: { path?: string; status: string; conclusion: string | null }[] }>(
         `/actions/runs?head_sha=${sha}&per_page=5`,
       );
-      const runs = data.workflow_runs;
-      const run = runs.find((r) => r.path?.endsWith('.github/workflows/deploy.yml')) ?? runs[0];
-      if (!run || run.status !== 'completed') return 'pending';
-      if (run.conclusion === 'success') return 'success';
+      const run = data.workflow_runs.find((r) => r.path?.endsWith('.github/workflows/deploy.yml'));
       // O rulare anulata sau sarita e inlocuita de una mai noua, care publica si schimbarea asta.
-      if (run.conclusion === 'cancelled' || run.conclusion === 'skipped') return 'pending';
-      return 'failure';
+      if (run?.status === 'completed' && run.conclusion !== null && !['success', 'cancelled', 'skipped'].includes(run.conclusion)) {
+        return 'failure';
+      }
+      return 'pending';
     },
   };
 }

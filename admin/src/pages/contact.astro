@@ -45,6 +45,16 @@ const c = await readContent(repo(), 'contact');
     </section>
 
     <section class="panel">
+      <h2 class="panel__title">Date de firmă</h2>
+      <p class="panel__note">Apar pe paginile Termeni și Confidențialitate. Lasă gol ce nu ai încă.</p>
+      <div class="fields fields--2">
+        <Field label="Denumirea firmei" name="legalName" value={c.legalName} max={120} hint="De exemplu LOX MOBILA S.R.L." />
+        <Field label="CUI" name="cui" value={c.cui} max={40} hint="Codul unic de înregistrare, de exemplu RO12345678." />
+        <Field label="Nr. Registrul Comerțului" name="regCom" value={c.regCom} max={40} hint="De exemplu J22/1234/2020." />
+      </div>
+    </section>
+
+    <section class="panel">
       <h2 class="panel__title">Program</h2>
       <Repeater name="hours" addLabel="Adaugă un rând">
         {c.hours.map((h) => <HoursRow days={h.days} time={h.time} />)}

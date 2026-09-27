@@ -1,0 +1,91 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { site } from '../data/site';
+import { url } from '../lib/url';
+---
+
+<Legal
+  title="Politica de confidențialitate"
+  description="Ce date personale primim prin site-ul LOX Mobila, de ce le păstrăm și ce drepturi ai asupra lor."
+  lead="Ce date ajung la noi, de ce le ținem și ce poți cere."
+  updated="28 septembrie 2026"
+>
+  <h2>Cine răspunde de date</h2>
+  <dl>
+    {site.legalName && <><dt>Operator</dt><dd>{site.legalName}</dd></>}
+    {site.cui && <><dt>CUI</dt><dd>{site.cui}</dd></>}
+    <dt>Adresă</dt>
+    <dd>{site.address}, {site.city}</dd>
+    <dt>Contact pentru date personale</dt>
+    <dd><a href={`mailto:${site.email}`}>{site.email}</a></dd>
+  </dl>
+
+  <h2>Site-ul nu îți cere date</h2>
+  <p>
+    Nu ai cont, nu te abonezi la nimic și nu există formular care să trimită date către site.
+    Formularul de pe pagina de <a href={url('/contact')}>Contact</a> compune un mesaj și îl deschide
+    în WhatsApp, pe dispozitivul tău. Datele ajung la noi doar dacă trimiți tu mesajul.
+  </p>
+
+  <h2>Ce primim când ne scrii</h2>
+  <ul>
+    <li>Pe WhatsApp sau la telefon: numărul tău, numele sub care ești salvat și ce ne scrii.</li>
+    <li>Pe email: adresa de email, numele și conținutul mesajului.</li>
+    <li>Pentru o ofertă: încăperea, dimensiunile și detaliile lucrării, uneori poze trimise de tine.</li>
+    <li>Pentru o lucrare contractată: datele necesare contractului și facturii.</li>
+  </ul>
+  <p>
+    Nu cerem și nu avem nevoie de date sensibile (sănătate, convingeri, apartenență). Te rugăm să nu
+    ne trimiți așa ceva.
+  </p>
+
+  <h2>De ce le folosim</h2>
+  <ul>
+    <li>Ca să răspundem cererii tale și să facem oferta: interesul nostru legitim de a răspunde unei solicitări.</li>
+    <li>Ca să executăm lucrarea, să emitem factura și să ținem garanția: contractul dintre noi.</li>
+    <li>Ca să păstrăm documentele contabile: obligația legală.</li>
+  </ul>
+
+  <h2>Cât le ținem</h2>
+  <p>
+    Mesajele rămase fără urmare le ștergem în cel mult doi ani. Documentele unei lucrări
+    (contract, ofertă, factură) se păstrează cât cere legea contabilă, zece ani.
+  </p>
+
+  <h2>Cui ajung</h2>
+  <p>
+    Nu vindem și nu dăm date mai departe pentru reclamă. Le văd doar oamenii din atelier care au
+    nevoie de ele, contabilitatea și, dacă e cazul, autoritățile care le cer legal. Conversațiile pe
+    WhatsApp trec prin serviciul Meta, după regulile lui.
+  </p>
+
+  <h2>Serverul site-ului</h2>
+  <p>
+    Site-ul e găzduit pe un server din Uniunea Europeană. Ca orice server, păstrează pentru scurt
+    timp jurnale tehnice cu adresa IP și pagina cerută, necesare funcționării și securității. Nu le
+    folosim ca să urmărim persoane și nu le legăm de altceva.
+  </p>
+
+  <h2>Drepturile tale</h2>
+  <ul>
+    <li>Să afli ce date avem despre tine și să primești o copie.</li>
+    <li>Să le corectezi sau să le completezi.</li>
+    <li>Să ceri ștergerea lor, când nu avem obligația legală să le păstrăm.</li>
+    <li>Să ceri restricționarea prelucrării sau să te opui ei.</li>
+    <li>Să primești datele într-un format pe care îl poți duce altundeva.</li>
+  </ul>
+  <p>
+    Scrie-ne la <a href={`mailto:${site.email}`}>{site.email}</a> și îți răspundem în cel mult o
+    lună. Dacă nu ești mulțumit, te poți adresa Autorității Naționale de Supraveghere a Prelucrării
+    Datelor cu Caracter Personal,
+    <a href="https://www.dataprotection.ro" rel="noopener" target="_blank">dataprotection.ro</a>.
+  </p>
+
+  <h2>Copii</h2>
+  <p>Site-ul se adresează adulților. Nu colectăm cu bună știință date de la copii sub 16 ani.</p>
+
+  <h2>Modificări</h2>
+  <p>
+    Dacă schimbăm ceva în felul în care lucrăm cu datele, actualizăm pagina asta și data de mai jos.
+  </p>
+</Legal>

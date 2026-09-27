@@ -6,6 +6,8 @@
 .git
 .astro
 .shots
+.playwright-mcp
 docs
-public
-src/assets
+# Originalele pozelor, dinaintea procesarii: nu intra in build.
+src/assets/images/_raw
+src/assets/images/placeholder

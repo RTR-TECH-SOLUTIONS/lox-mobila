@@ -145,6 +145,11 @@ export const categoriesSchema = z.array(categoryPageSchema).superRefine((list, c
   }
 });
 
+/** Se pot lasa goale, iar un fisier vechi fara ele ramane valid: apar pe paginile
+ * legale doar dupa ce clientul le completeaza. */
+const optionalText = (max: number) =>
+  z.string().trim().max(max, `Cel mult ${max} de caractere.`).transform(fixDiacritics).default('');
+
 export const contactSchema = z.object({
   phoneDisplay: z
     .string({ error: 'Câmpul e obligatoriu.' })
@@ -165,6 +170,10 @@ export const contactSchema = z.object({
     .max(7, 'Cel mult 7 rânduri de program.'),
   social: z.array(z.object({ label: required(30), href: link })).max(6, 'Cel mult 6 rețele.'),
   googleReviewsUrl: link,
+  // Datele de firma de pe Termeni si Confidentialitate.
+  legalName: optionalText(120),
+  cui: optionalText(40),
+  regCom: optionalText(40),
 });
 
 export const statsSchema = z.object({

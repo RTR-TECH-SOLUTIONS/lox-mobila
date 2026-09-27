@@ -78,7 +78,17 @@ const contact = [
       </div>
     </div>
 
-    <p class="footer__legal">&copy; {year} {site.name}. Toate drepturile rezervate.</p>
+    <div class="footer__bottom">
+      <p class="footer__legal">&copy; {year} {site.name}. Toate drepturile rezervate.</p>
+      <ul class="footer__legal-links">
+        <li><a href={url('/termeni')} class="footer__link">Termeni și condiții</a></li>
+        <li><a href={url('/confidentialitate')} class="footer__link">Confidențialitate</a></li>
+        <li><a href={url('/cookies')} class="footer__link">Cookies</a></li>
+      </ul>
+      <p class="footer__made">
+        Site de <a href="https://rtrsolutions.ro" class="footer__link" rel="noopener" target="_blank">RTR Tech Solutions</a>
+      </p>
+    </div>
   </div>
 </footer>
 
@@ -86,6 +96,33 @@ const contact = [
   .footer { background: var(--color-deep); }
 
   .footer__inner { padding-block: 56px 28px; }
+
+  .footer__bottom {
+    display: grid;
+    gap: 6px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .footer__legal-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+  }
+
+  .footer__made { color: var(--text-2); font-size: 0.85rem; }
+  .footer__made .footer__link { display: inline; min-height: 0; font-size: inherit; }
+
+  @media (min-width: 768px) {
+    .footer__bottom {
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .footer__legal-links { justify-content: center; }
+  }
 
   .footer__grid {
     display: grid;
@@ -126,9 +163,6 @@ const contact = [
   .footer__hours dt { color: var(--text-2); }
 
   .footer__legal {
-    margin-top: 48px;
-    padding-top: 22px;
-    border-top: 1px solid var(--rule);
     color: var(--text-2);
     font-size: 0.8rem;
   }

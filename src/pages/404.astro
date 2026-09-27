@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import Button from '../components/ui/Button.astro';
+import { url } from '../lib/url';
+import { site } from '../data/site';
+---
+
+<Base title="Pagina nu există | LOX Mobila" description="Pagina căutată nu există pe site-ul LOX Mobila.">
+  <section class="section wrap nf">
+    <p class="nf__code">404</p>
+    <h1>Pagina asta nu există</h1>
+    <p class="nf__lead">
+      Poate a fost mutată sau ai ajuns aici dintr-un link vechi. Ia-o de la capăt sau sună-ne, e mai
+      rapid.
+    </p>
+    <div class="nf__cta">
+      <Button href={url('/')}>Înapoi pe prima pagină</Button>
+      <Button href={site.phoneHref} variant="outline">{site.phoneDisplay}</Button>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    display: grid;
+    justify-items: start;
+    gap: 14px;
+    min-height: 52vh;
+    align-content: center;
+  }
+
+  .nf__code {
+    color: var(--color-brass);
+    font-size: 0.95rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .nf__lead { max-width: 46ch; color: var(--text-2); }
+  .nf__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+</style>

@@ -22,6 +22,9 @@ export interface SiteData {
   nav: { label: string; href: string; children?: { label: string; href: string }[] }[];
   googleReviewsUrl: string;
   googleRating: { score: string; count: number };
+  legalName: string;
+  cui: string;
+  regCom: string;
 }
 
 export interface Service {
