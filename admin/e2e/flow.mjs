@@ -176,6 +176,11 @@ const frame = page.frameLocator('iframe[data-frame]');
 await page.click('[data-preset*="14120F"]');
 await frame.locator('html[data-scheme="dark"]').waitFor({ timeout: 5000 }).catch(() => {});
 expect((await frame.locator('html').getAttribute('data-scheme')) === 'dark', 'previzualizarea trece pe tema inchisa');
+// Salvam paleta inchisa, ca revenirea pe cea deschisa sa fie o schimbare reala: in modul local
+// `git commit` fara nicio modificare esueaza, deci o salvare identica nu se poate confirma.
+await save();
+expect(read('theme').background === '#14120F', 'tema inchisa e salvata');
+
 await page.click('[data-preset*="EFEBE4"]');
 await frame.locator('html[data-scheme="light"]').waitFor({ timeout: 5000 }).catch(() => {});
 expect((await frame.locator('html').getAttribute('data-scheme')) === 'light', 'previzualizarea trece pe tema deschisa');

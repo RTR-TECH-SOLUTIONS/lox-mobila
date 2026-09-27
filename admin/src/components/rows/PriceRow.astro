@@ -12,13 +12,17 @@ interface Props {
 }
 
 const { service = '', unit = '', price = '', first = 'Serviciu', hint = '' } = Astro.props;
+
+// Exemplele apar doar pe randul gol: repetate pe fiecare rand scris ar umple ecranul.
+const empty = !service && !unit && !price;
+const example = (text: string) => (empty ? text : undefined);
 ---
 
 <div class="row" data-row>
   <div class="row__fields row__fields--price">
-    <Field label={first} row="service" value={service} max={90} hint={hint} />
-    <Field label="Unitate" row="unit" value={unit} max={40} hint="metru liniar, gaură, bucată, set." />
-    <Field label="Preț" row="price" value={price} max={40} hint="12 lei, de la 8 lei, la cerere." />
+    <Field label={first} row="service" value={service} max={90} hint={example(hint)} />
+    <Field label="Unitate" row="unit" value={unit} max={40} hint={example('metru liniar, gaură, bucată, set.')} />
+    <Field label="Preț" row="price" value={price} max={40} hint={example('12 lei, de la 8 lei, la cerere.')} />
   </div>
   <RowTools />
 </div>
