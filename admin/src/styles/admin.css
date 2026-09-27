@@ -114,6 +114,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .row { display: grid; gap: 12px; padding: 14px; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); }
 .row__fields { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 .row__fields > .field--wide { grid-column: 1 / -1; }
+/* Randurile de pret: denumirea are nevoie de mai mult loc decat unitatea si pretul. */
+@media (min-width: 900px) {
+  .row__fields--price { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr); }
+}
 .row__tools { display: flex; justify-content: flex-end; gap: 6px; }
 
 /* ---------- Bara de salvare, fixata jos ---------- */

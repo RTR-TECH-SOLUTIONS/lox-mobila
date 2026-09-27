@@ -7,6 +7,7 @@ import { projects } from '../src/data/projects';
 import { processSteps } from '../src/data/process';
 import { materials } from '../src/data/materials';
 import { reviews } from '../src/data/reviews';
+import { workshopServices } from '../src/data/workshop';
 import { CATEGORY_LABELS } from '../src/data/types';
 import { pagePhotos } from '../src/lib/content';
 
@@ -50,8 +51,16 @@ describe('content shape', () => {
     expect(materials).toHaveLength(4);
   });
 
+  it('the two workshop services keep their anchors and price columns', () => {
+    expect(workshopServices.map((s) => s.id)).toEqual(['debitare', 'feronerie']);
+    for (const s of workshopServices) {
+      expect(s.columns).toHaveLength(3);
+      expect(s.rows.length).toBeGreaterThan(0);
+    }
+  });
+
   it('uses comma-below diacritics, never cedilla', () => {
-    const blob = JSON.stringify({ site, services, projects, processSteps, materials, reviews });
+    const blob = JSON.stringify({ site, services, projects, processSteps, materials, reviews, workshopServices });
     expect(blob).not.toMatch(/[ŞşŢţ]/);
   });
 
@@ -78,7 +87,9 @@ describe.skipIf(!existsSync(join(IMG, 'projects')))('image files exist', () => {
     }
   });
 
-  it('the workshop photo is on disk', () => {
-    expect(existsSync(join(IMG, 'workshop', pagePhotos.atelier)), pagePhotos.atelier).toBe(true);
+  it('every workshop photo is on disk', () => {
+    for (const file of [pagePhotos.atelier, ...workshopServices.map((s) => s.image)]) {
+      expect(existsSync(join(IMG, 'workshop', file)), file).toBe(true);
+    }
   });
 });

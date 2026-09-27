@@ -1,0 +1,25 @@
+{
+  "cutting": {
+    "lead": "Debităm, cantuim și găurim și pentru cine își face singur mobila sau lucrează pe cont propriu. Vii cu lista de piese sau cu proiectul, noi îl tăiem pe CNC, aplicăm cantul la cald și dăm găurile pentru balamale la mașina profesională.",
+    "rows": [
+      { "service": "Debitare PAL și MDF, până în 25 mm", "unit": "metru liniar", "price": "la cerere" },
+      { "service": "Debitare peste 25 mm", "unit": "metru liniar", "price": "la cerere" },
+      { "service": "Cant ABS 0,4 mm", "unit": "metru liniar", "price": "la cerere" },
+      { "service": "Cant ABS 1 mm", "unit": "metru liniar", "price": "la cerere" },
+      { "service": "Cant ABS 2 mm", "unit": "metru liniar", "price": "la cerere" },
+      { "service": "Găurire pentru balamale", "unit": "gaură", "price": "la cerere" }
+    ],
+    "note": "Trimite lista de piese sau proiectul pe WhatsApp și îți spunem prețul și în cât e gata."
+  },
+  "hardware": {
+    "lead": "Ținem feronerie pentru mobilier și o vindem și separat, nu doar în lucrările noastre: balamale, glisiere, sisteme de ridicare, mânere și accesorii de interior.",
+    "rows": [
+      { "service": "Balamale cu amortizare", "unit": "bucată", "price": "la cerere" },
+      { "service": "Glisiere cu extragere totală", "unit": "set", "price": "la cerere" },
+      { "service": "Sisteme de ridicare pentru corpuri suspendate", "unit": "set", "price": "la cerere" },
+      { "service": "Mânere și butoni", "unit": "bucată", "price": "la cerere" },
+      { "service": "Tacâmiere, cărucioare și coșuri", "unit": "bucată", "price": "la cerere" }
+    ],
+    "note": "Spune-ne ce model îți trebuie și îți spunem prețul și în cât îl avem."
+  }
+}

@@ -17,8 +17,9 @@ export interface ThemeWarning {
   message: string;
 }
 
-export const ORIGINAL_THEME: ThemeColors = { background: '#0C0C0C', text: '#F2EFEA', accent: '#B7966B' };
-export const LIGHT_THEME: ThemeColors = { background: '#F5F2ED', text: '#151412', accent: '#86643A' };
+/** Culorile de brand, scoase din logo: hartia de pe litere, grafitul virgulei, peretele din spate. */
+export const LIGHT_THEME: ThemeColors = { background: '#EFEBE4', text: '#2C251E', accent: '#5C5145' };
+export const DARK_THEME: ThemeColors = { background: '#14120F', text: '#EDE9E4', accent: '#9A8B7B' };
 
 type Rgb = [number, number, number];
 

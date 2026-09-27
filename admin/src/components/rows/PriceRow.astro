@@ -1,0 +1,24 @@
+---
+import Field from '../Field.astro';
+import RowTools from '../RowTools.astro';
+
+interface Props {
+  service?: string;
+  unit?: string;
+  price?: string;
+  /** Eticheta primei coloane: „Serviciu” la atelier, „Produs” la feronerie. */
+  first?: string;
+  hint?: string;
+}
+
+const { service = '', unit = '', price = '', first = 'Serviciu', hint = '' } = Astro.props;
+---
+
+<div class="row" data-row>
+  <div class="row__fields row__fields--price">
+    <Field label={first} row="service" value={service} max={90} hint={hint} />
+    <Field label="Unitate" row="unit" value={unit} max={40} hint="metru liniar, gaură, bucată, set." />
+    <Field label="Preț" row="price" value={price} max={40} hint="12 lei, de la 8 lei, la cerere." />
+  </div>
+  <RowTools />
+</div>
