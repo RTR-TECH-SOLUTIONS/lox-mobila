@@ -1,14 +1,18 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
-// Pe GitHub Pages site-ul sta in subfolderul repo-ului. Local `base` ramane gol,
-// ca dev si preview sa mearga la radacina.
+// Domeniul clientului. Se poate suprascrie la build (preview, teste) cu PUBLIC_SITE_URL.
+const site = process.env.PUBLIC_SITE_URL || 'https://loxmobila.ro';
+
+// Gol pe domeniul propriu. A ramas pentru gazduirea in subfolder (GitHub Pages).
 const base = process.env.PUBLIC_BASE_PATH ?? '';
 
 export default defineConfig({
-  site: 'https://rtr-tech-solutions.github.io',
+  site,
   base,
   trailingSlash: 'ignore',
+  integrations: [sitemap()],
   vite: { plugins: [tailwindcss()] },
 });

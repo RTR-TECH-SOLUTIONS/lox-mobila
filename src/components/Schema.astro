@@ -1,0 +1,84 @@
+---
+import { site } from '../data/site';
+import { url } from '../lib/url';
+
+// Datele de firma pentru Google: nume, adresa, telefon, program. Se iau din admin
+// (src/content/contact.json), ca sa nu ramana in urma cand clientul le schimba.
+const DAYS: Record<string, string> = {
+  luni: 'Monday',
+  marti: 'Tuesday',
+  miercuri: 'Wednesday',
+  joi: 'Thursday',
+  vineri: 'Friday',
+  sambata: 'Saturday',
+  duminica: 'Sunday',
+};
+
+const plain = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-̧̦ͯ]/g, '')
+    .trim();
+
+/** „Luni - Vineri” devine [Monday…Friday]; „Sâmbătă” devine [Saturday]. */
+function days(label: string): string[] {
+  const names = Object.keys(DAYS);
+  const parts = plain(label)
+    .split(/\s*[-–]\s*/)
+    .map((p) => DAYS[p]);
+  if (parts.length === 2 && parts[0] && parts[1]) {
+    const order = names.map((n) => DAYS[n]);
+    const from = order.indexOf(parts[0]);
+    const to = order.indexOf(parts[1]);
+    if (from <= to) return order.slice(from, to + 1);
+  }
+  return parts.filter(Boolean) as string[];
+}
+
+// Randurile fara ore („doar cu programare”) nu intra in schema.
+const TIME = /^(\d{1,2}:\d{2})\s*[-–]\s*(\d{1,2}:\d{2})$/;
+
+const openingHoursSpecification = site.hours.flatMap((h) => {
+  const m = TIME.exec(h.time.trim());
+  const dayOfWeek = days(h.days);
+  if (!m || !dayOfWeek.length) return [];
+  return [{ '@type': 'OpeningHoursSpecification', dayOfWeek, opens: m[1], closes: m[2] }];
+});
+
+const origin = Astro.site!;
+const abs = (path: string) => new URL(url(path), origin).href;
+
+const business = {
+  '@context': 'https://schema.org',
+  '@type': 'FurnitureStore',
+  '@id': `${abs('/')}#atelier`,
+  name: site.name,
+  description: `Atelier de mobilă la comandă în ${site.city}: bucătării, dressinguri, living și dormitor, măsurate, executate și montate de noi.`,
+  url: abs('/'),
+  telephone: site.phoneHref.replace(/^tel:/, ''),
+  email: site.email,
+  image: abs('/og.jpg'),
+  logo: abs('/apple-touch-icon.png'),
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address,
+    addressLocality: site.city,
+    addressRegion: site.county,
+    addressCountry: 'RO',
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: 47.111029, longitude: 27.613167 },
+  hasMap: site.mapsUrl,
+  areaServed: { '@type': 'City', name: site.city },
+  currenciesAccepted: 'RON',
+  priceRange: '$$',
+  ...(openingHoursSpecification.length ? { openingHoursSpecification } : {}),
+  // Linkurile de social apar doar dupa ce clientul le completeaza in admin.
+  ...(() => {
+    const sameAs = site.social.map((s) => s.href).filter((h) => h.startsWith('http'));
+    return sameAs.length ? { sameAs } : {};
+  })(),
+};
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(business)} />

@@ -1,0 +1,44 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { site } from '../data/site';
+---
+
+<Legal
+  title="Politica de cookies"
+  description="Site-ul LOX Mobila nu folosește cookie-uri de analiză, publicitate sau urmărire. Ce înseamnă asta, pe scurt."
+  lead="Pe scurt: site-ul nu te urmărește."
+  updated="28 septembrie 2026"
+>
+  <h2>Ce cookie-uri folosim</h2>
+  <p>
+    Niciunul de analiză, publicitate sau urmărire. Site-ul e alcătuit din pagini statice: nu are
+    Google Analytics, nu are pixel de Facebook sau TikTok, nu are reclame și nu construiește niciun
+    profil despre tine. De aceea nu-ți apare bannerul acela de consimțământ pe care îl vezi
+    în altă parte: nu avem ce să-ți cerem.
+  </p>
+
+  <h2>Ce se încarcă de la alții</h2>
+  <p>
+    Fonturile și imaginile vin de pe serverul nostru, nu de la Google sau alt furnizor. Singurele
+    legături în afară sunt linkurile pe care le apeși tu: WhatsApp, Google Maps, Facebook,
+    Instagram. Ce se întâmplă după ce le deschizi ține de regulile serviciilor respective.
+  </p>
+
+  <h2>Ce ține browserul tău</h2>
+  <p>
+    Browserul păstrează local, pe dispozitivul tău, fișierele site-ului, ca să se deschidă mai
+    repede a doua oară. Nu sunt trimise nicăieri și le poți șterge oricând din setările browserului,
+    de la „Golește datele de navigare”.
+  </p>
+
+  <h2>Dacă se schimbă</h2>
+  <p>
+    Dacă vom adăuga vreodată statistici de trafic sau alt instrument care pune cookie-uri, îți vom
+    cere acordul printr-un banner înainte să se încarce, iar pagina asta se actualizează odată cu el.
+  </p>
+
+  <h2>Întrebări</h2>
+  <p>
+    Scrie-ne la <a href={`mailto:${site.email}`}>{site.email}</a>.
+  </p>
+</Legal>

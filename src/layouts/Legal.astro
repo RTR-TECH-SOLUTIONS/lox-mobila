@@ -1,0 +1,81 @@
+---
+import Base from './Base.astro';
+import PageBanner from '../components/ui/PageBanner.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  lead: string;
+  /** Data de la care se aplică textul, scrisă ca pe factură: 28 septembrie 2026. */
+  updated: string;
+}
+
+const { title, description, lead, updated } = Astro.props;
+---
+
+<Base title={`${title} | LOX Mobila`} description={description} headerOverlay>
+  <PageBanner title={title} lead={lead} />
+
+  <section class="section wrap">
+    <div class="prose">
+      <slot />
+      <p class="prose__updated">Ultima actualizare: {updated}.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .prose {
+    max-width: 68ch;
+    display: grid;
+    gap: 18px;
+  }
+
+  .prose :global(h2) {
+    margin-top: 22px;
+    font-size: 1.3rem;
+  }
+
+  .prose :global(h2:first-child) { margin-top: 0; }
+
+  .prose :global(p),
+  .prose :global(li) {
+    color: var(--text-2);
+    font-size: 0.975rem;
+    line-height: 1.65;
+  }
+
+  .prose :global(ul) {
+    display: grid;
+    gap: 8px;
+    padding-left: 20px;
+    list-style: disc;
+  }
+
+  .prose :global(dl) {
+    display: grid;
+    gap: 6px;
+    padding: 18px 20px;
+    background: var(--color-ink-2);
+  }
+
+  .prose :global(dt) {
+    color: var(--text-2);
+    font-size: var(--fs-label);
+  }
+
+  .prose :global(dd) { font-size: 0.975rem; }
+
+  .prose :global(a) {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--color-brass);
+    text-underline-offset: 4px;
+  }
+
+  .prose__updated {
+    margin-top: 10px;
+    color: var(--text-2);
+    font-size: var(--fs-label);
+  }
+</style>

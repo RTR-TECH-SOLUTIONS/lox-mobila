@@ -74,6 +74,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .panel { padding: 20px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
 .panel + .panel { margin-top: 16px; }
 .panel__title { margin-bottom: 16px; }
+.panel__title + .panel__note { margin-top: -10px; }
+.panel__note { margin-bottom: 16px; color: var(--text-2); font-size: 0.875rem; }
 .panel__lead { margin: -8px 0 16px; color: var(--text-2); font-size: 0.875rem; }
 .panel--danger { border-color: #EBC9C5; }
 

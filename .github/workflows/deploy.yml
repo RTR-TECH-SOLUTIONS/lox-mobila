@@ -1,5 +1,8 @@
-name: Deploy preview pe GitHub Pages
+name: Verificări
 
+# Site-ul se construieste si se publica de Coolify, pe serverul propriu. Aici raman verificarile:
+# daca o salvare din admin strica testele sau build-ul, rularea asta cade, iar bara de publicare
+# din admin spune „a esuat" in loc sa astepte degeaba.
 on:
   push:
     branches: [main]
@@ -9,12 +12,10 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
-# O singura publicare odata; rulari noi nu intrerup una in curs.
+# O singura verificare odata; rulari noi nu intrerup una in curs.
 concurrency:
-  group: pages
+  group: verificari
   cancel-in-progress: false
 
 jobs:
@@ -30,32 +31,10 @@ jobs:
 
       - run: npm ci
 
-      # expune `base_path`, folosit mai jos ca Astro sa stie in ce subfolder publica
-      - name: Configurare Pages
-        id: pages
-        uses: actions/configure-pages@v5
-
-      - name: Verificari
+      - name: Verificări
         run: |
           npm test
           npx astro check
 
       - name: Build
-        env:
-          PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
-          PUBLIC_ADMIN_ORIGIN: https://lox-admin.rtrsolutions.ro
         run: npm run build
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4

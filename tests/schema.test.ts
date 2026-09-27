@@ -90,6 +90,11 @@ describe('contactSchema', () => {
     expect(contactSchema.safeParse({ ...contact, mapsUrl: 'maps.google.com' }).success).toBe(false);
   });
 
+  it('leaves the company fields empty when they are missing from the file', () => {
+    const c = contactSchema.parse(contact);
+    expect([c.legalName, c.cui, c.regCom]).toEqual(['', '', '']);
+  });
+
   it('accepts only digits, spaces and + . ( ) - in the displayed phone', () => {
     for (const ok of ['0740 000 000', '+40 740 000 000', '(0740) 000-000', '0740.000.000']) {
       expect(contactSchema.safeParse({ ...contact, phoneDisplay: ok }).success).toBe(true);
