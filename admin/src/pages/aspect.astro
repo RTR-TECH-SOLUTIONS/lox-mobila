@@ -1,7 +1,7 @@
 ---
 import Admin from '../layouts/Admin.astro';
 import SaveBar from '../components/SaveBar.astro';
-import { LIGHT_THEME, ORIGINAL_THEME, themeWarnings } from '@site/lib/theme';
+import { DARK_THEME, LIGHT_THEME, themeWarnings } from '@site/lib/theme';
 import { env } from '../lib/env';
 import { readContent } from '../lib/content';
 import { repo } from '../lib/repo';
@@ -57,8 +57,8 @@ const fields = [
       <div class="presets">
         <span class="field__label">Pornește de la</span>
         <div class="presets__row">
-          <button type="button" class="btn btn--ghost btn--small" data-preset={JSON.stringify(ORIGINAL_THEME)}>Original, închis</button>
-          <button type="button" class="btn btn--ghost btn--small" data-preset={JSON.stringify(LIGHT_THEME)}>Deschis</button>
+          <button type="button" class="btn btn--ghost btn--small" data-preset={JSON.stringify(LIGHT_THEME)}>Deschis, ca logoul</button>
+          <button type="button" class="btn btn--ghost btn--small" data-preset={JSON.stringify(DARK_THEME)}>Închis</button>
         </div>
       </div>
 

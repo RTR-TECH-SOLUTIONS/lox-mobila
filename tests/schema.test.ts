@@ -10,6 +10,7 @@ import {
   statsSchema,
   themeSchema,
   toWhatsapp,
+  workshopSchema,
 } from '../src/content/schema';
 
 const project = {
@@ -139,5 +140,26 @@ describe('parseContent', () => {
     });
     const bad = parseContent(themeSchema, { background: 'negru', text: '#FFFFFF', accent: '#B7966B' });
     expect(bad).toEqual({ ok: false, issues: [{ path: 'background', message: 'Culoarea se scrie ca #RRGGBB.' }] });
+  });
+});
+
+describe('workshopSchema', () => {
+  const section = {
+    lead: 'Debităm, cantuim și găurim.',
+    rows: [{ service: 'Debitare PAL', unit: 'metru liniar', price: '2 lei' }],
+    note: '',
+  };
+
+  it('accepts a section with an empty note and fixes cedilla diacritics', () => {
+    const w = workshopSchema.parse({ cutting: { ...section, lead: 'Cantuim şi găurim.' }, hardware: section });
+    expect(w.cutting.lead).toBe('Cantuim și găurim.');
+    expect(w.cutting.note).toBe('');
+  });
+
+  it('rejects a price row with an empty field', () => {
+    const bad = { cutting: { ...section, rows: [{ service: 'Debitare', unit: '', price: '2 lei' }] }, hardware: section };
+    const r = workshopSchema.safeParse(bad);
+    expect(r.success).toBe(false);
+    expect(formatIssues(r.error!)[0].path).toBe('cutting.rows.0.unit');
   });
 });

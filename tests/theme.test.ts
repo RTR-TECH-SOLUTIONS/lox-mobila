@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
+  DARK_THEME,
   LIGHT_THEME,
-  ORIGINAL_THEME,
   contrast,
   deriveTheme,
   parseHex,
@@ -9,6 +9,9 @@ import {
   themeCss,
   themeWarnings,
 } from '../src/lib/theme';
+
+// Paleta intunecata de la lansare: ramane aici ca reper pentru calculul nuantelor.
+const ORIGINAL = { background: '#0C0C0C', text: '#F2EFEA', accent: '#B7966B' };
 
 const close = (a: string, b: string, tol = 5) => {
   const x = parseHex(a);
@@ -18,7 +21,7 @@ const close = (a: string, b: string, tol = 5) => {
 
 describe('deriveTheme', () => {
   it('reproduces the current palette from the three original colors', () => {
-    const { scheme, vars } = deriveTheme(ORIGINAL_THEME);
+    const { scheme, vars } = deriveTheme(ORIGINAL);
     expect(scheme).toBe('dark');
     const current: Record<string, string> = {
       '--color-ink': '#0C0C0C',
@@ -55,10 +58,12 @@ describe('contrast and warnings', () => {
     expect(contrast('#FFFFFF', '#000000')).toBeCloseTo(21, 1);
   });
 
-  it('the light preset passes AA for text and accent', () => {
-    expect(themeWarnings(LIGHT_THEME)).toEqual([]);
-    expect(contrast(LIGHT_THEME.text, LIGHT_THEME.background)).toBeGreaterThanOrEqual(7);
-    expect(contrast(LIGHT_THEME.accent, LIGHT_THEME.background)).toBeGreaterThanOrEqual(4.5);
+  it('both presets pass AA for text and accent', () => {
+    for (const preset of [LIGHT_THEME, DARK_THEME]) {
+      expect(themeWarnings(preset)).toEqual([]);
+      expect(contrast(preset.text, preset.background)).toBeGreaterThanOrEqual(7);
+      expect(contrast(preset.accent, preset.background)).toBeGreaterThanOrEqual(4.5);
+    }
   });
 
   it('warns about text and accent that are hard to see', () => {
@@ -69,7 +74,7 @@ describe('contrast and warnings', () => {
 
 describe('themeCss', () => {
   it('writes color-scheme and every variable on :root', () => {
-    const css = themeCss(ORIGINAL_THEME);
+    const css = themeCss(ORIGINAL);
     expect(css.startsWith(':root{color-scheme:dark;')).toBe(true);
     expect(css).toContain('--color-ink:#0C0C0C');
     expect(css).toContain('--shadow-rgb:0 0 0');

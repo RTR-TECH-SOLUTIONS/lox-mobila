@@ -1,0 +1,101 @@
+---
+interface Props {
+  columns: [string, string, string];
+  rows: { service: string; unit: string; price: string }[];
+  note?: string;
+}
+
+const { columns, rows, note } = Astro.props;
+---
+
+<!-- Tabelul de preturi al unui serviciu de atelier. Randurile se editeaza din admin. -->
+<table class="prices">
+  <thead>
+    <tr>
+      <th scope="col">{columns[0]}</th>
+      <th scope="col">{columns[1]}</th>
+      <th scope="col" class="prices__price">{columns[2]}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      rows.map((r) => (
+        <tr>
+          <th scope="row">{r.service}</th>
+          <td class="prices__unit">{r.unit}</td>
+          <td class="prices__price tabular-nums">{r.price}</td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
+
+{note && <p class="prices__note">{note}</p>}
+
+<style>
+  .prices {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  thead th {
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--text-2);
+    font-size: var(--fs-label);
+    font-weight: 400;
+  }
+
+  tbody th,
+  tbody td {
+    padding-block: 14px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: baseline;
+  }
+
+  tbody th {
+    padding-right: 16px;
+    font-size: 0.975rem;
+    font-weight: 500;
+  }
+
+  .prices__unit {
+    padding-right: 16px;
+    color: var(--text-2);
+    font-size: 0.9rem;
+  }
+
+  .prices__price {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  tbody .prices__price { font-size: 0.975rem; }
+
+  .prices__note {
+    max-width: 52ch;
+    margin-top: 16px;
+    color: var(--text-2);
+    font-size: var(--fs-label);
+  }
+
+  /* Pe telefon unitatea coboara sub denumire, ca pretul sa ramana lizibil in dreapta. */
+  @media (max-width: 559px) {
+    thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+
+    tbody tr {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      column-gap: 16px;
+      padding-block: 12px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    tbody th,
+    tbody td { padding-block: 0; border: 0; }
+    tbody th { grid-column: 1; }
+    .prices__unit { grid-column: 1; margin-top: 2px; }
+    .prices__price { grid-column: 2; grid-row: 1 / span 2; }
+  }
+</style>

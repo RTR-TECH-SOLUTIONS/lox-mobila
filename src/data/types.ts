@@ -1,4 +1,4 @@
-import type { ProjectCategory } from '../content/schema';
+import type { ProjectCategory, WorkshopSection } from '../content/schema';
 
 export type { ProjectCategory };
 export { CATEGORY_LABELS } from '../content/schema';
@@ -33,6 +33,15 @@ export interface Service {
 }
 
 export type { Project } from '../content/schema';
+
+/** Un serviciu de atelier de pe pagina Servicii, cu tabelul lui de preturi. */
+export interface WorkshopService extends WorkshopSection {
+  /** Ancora din adresa: /servicii#debitare. */
+  id: string;
+  title: string;
+  columns: [string, string, string];
+  image: string;
+}
 
 export interface ProcessStep {
   n: string;

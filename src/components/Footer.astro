@@ -2,7 +2,7 @@
 import Logo from './ui/Logo.astro';
 import { site } from '../data/site';
 import { categoryPages } from '../data/categories';
-import { processSteps } from '../data/process';
+import { workshopServices } from '../data/workshop';
 import { url } from '../lib/url';
 
 const year = new Date().getFullYear();
@@ -42,7 +42,9 @@ const contact = [
       <nav aria-labelledby="f-srv">
         <h2 id="f-srv" class="footer__h">Servicii</h2>
         <ul class="footer__list">
-          {processSteps.map((s) => <li><a href={url('/servicii')} class="footer__link">{s.title}</a></li>)}
+          <li><a href={url('/servicii#mobila-la-comanda')} class="footer__link">Mobilă la comandă</a></li>
+          {workshopServices.map((s) => <li><a href={url(`/servicii#${s.id}`)} class="footer__link">{s.title}</a></li>)}
+          <li><a href={url('/etape')} class="footer__link">Etapele lucrării</a></li>
           <li><a href={url('/materiale')} class="footer__link">Materiale</a></li>
         </ul>
       </nav>

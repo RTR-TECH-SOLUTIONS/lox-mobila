@@ -1,0 +1,86 @@
+---
+import Admin from '../layouts/Admin.astro';
+import Field from '../components/Field.astro';
+import Repeater from '../components/Repeater.astro';
+import SaveBar from '../components/SaveBar.astro';
+import PriceRow from '../components/rows/PriceRow.astro';
+import { readContent } from '../lib/content';
+import { repo } from '../lib/repo';
+
+const w = await readContent(repo(), 'workshop');
+
+// Aceleasi doua sectiuni ca pe pagina Servicii, in aceeasi ordine.
+const sections = [
+  {
+    key: 'cutting' as const,
+    title: 'Debitare, cantuire și găurire',
+    first: 'Serviciu',
+    hint: 'Debitare PAL și MDF, până în 25 mm.',
+    add: 'Adaugă un serviciu',
+  },
+  {
+    key: 'hardware' as const,
+    title: 'Distribuție feronerie',
+    first: 'Produs',
+    hint: 'Balamale cu amortizare, glisiere cu extragere totală.',
+    add: 'Adaugă un produs',
+  },
+];
+---
+
+<Admin title="Servicii și prețuri" section="servicii">
+  <div class="page-head">
+    <div>
+      <h1>Servicii și prețuri</h1>
+      <p>
+        Cele două secțiuni de pe pagina Servicii, sub „Mobilă la comandă”. Titlurile rămân fixe;
+        aici schimbi textul, rândurile din tabel și nota de dedesubt.
+      </p>
+    </div>
+  </div>
+
+  <form action="/api/save/servicii" data-save-form data-view="/servicii" novalidate>
+    {
+      sections.map((s) => (
+        <section class="panel">
+          <h2 class="panel__title">{s.title}</h2>
+          <div class="fields">
+            <Field
+              label="Textul de sub titlu"
+              name={`${s.key}.lead`}
+              type="textarea"
+              rows={3}
+              max={600}
+              value={w[s.key].lead}
+            />
+          </div>
+
+          <Repeater name={`${s.key}.rows`} addLabel={s.add}>
+            {w[s.key].rows.map((r) => (
+              <PriceRow service={r.service} unit={r.unit} price={r.price} first={s.first} hint={s.hint} />
+            ))}
+            <PriceRow slot="template" first={s.first} hint={s.hint} />
+          </Repeater>
+
+          <div class="fields">
+            <Field
+              label="Nota de sub tabel"
+              name={`${s.key}.note`}
+              type="textarea"
+              rows={2}
+              max={300}
+              value={w[s.key].note}
+              hint="Se poate lăsa gol."
+            />
+          </div>
+        </section>
+      ))
+    }
+
+    <SaveBar />
+  </form>
+</Admin>
+
+<script>
+  import '../scripts/form.ts';
+</script>

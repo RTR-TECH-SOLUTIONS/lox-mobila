@@ -1,0 +1,92 @@
+---
+import { processSteps } from '../../data/process';
+
+interface Props {
+  /** Numele grupului de <details>: doi pasi deschisi in acelasi timp doar daca difera. */
+  name: string;
+  class?: string;
+  [key: string]: any;
+}
+
+const { name, class: cls = '', ...rest } = Astro.props;
+---
+
+<!-- Cele sase etape, cu durata in dreapta. Acelasi tabel si pe prima pagina, si la Servicii. -->
+<div class:list={['steps', cls]} {...rest}>
+  {
+    processSteps.map((s, i) => (
+      <details class="step" name={name} open={i === 0}>
+        <summary>
+          <span class="step__n tabular-nums">{s.n}.</span>
+          <span class="step__title">{s.title}</span>
+          <span class="step__dur">{s.duration}</span>
+          <span class="step__icon" aria-hidden="true" />
+        </summary>
+        <p>{s.text}</p>
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  .steps {
+    padding: 16px 32px;
+    background: var(--color-ink-3);
+    box-shadow: 0 20px 50px rgb(var(--shadow-rgb) / calc(0.45 * var(--shadow-k)));
+  }
+
+  .step + .step { border-top: 1px solid var(--rule); }
+
+  summary {
+    display: grid;
+    grid-template-columns: auto 1fr auto 16px;
+    align-items: baseline;
+    gap: 12px;
+    padding-block: 18px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker { display: none; }
+
+  .step__n { color: color-mix(in srgb, var(--color-bone) 35%, transparent); font-size: 0.95rem; }
+  .step__title { font-weight: 600; }
+  .step__dur { color: var(--text-2); font-size: var(--fs-label); white-space: nowrap; }
+
+  /* Plus care devine x cand pasul e deschis. */
+  .step__icon {
+    position: relative;
+    width: 12px;
+    height: 12px;
+    align-self: center;
+  }
+
+  .step__icon::before,
+  .step__icon::after {
+    content: '';
+    position: absolute;
+    inset: 5.5px 0 auto;
+    height: 1px;
+    background: currentColor;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .step__icon::after { transform: rotate(90deg); }
+  .step[open] .step__icon::before { transform: rotate(45deg); }
+  .step[open] .step__icon::after { transform: rotate(135deg); }
+
+  .step p {
+    max-width: 52ch;
+    padding: 0 0 20px 36px;
+    color: var(--text-2);
+    font-size: 0.95rem;
+  }
+
+  summary:hover .step__title { color: var(--color-brass-hi); }
+
+  @media (max-width: 479px) {
+    .steps { padding-inline: 20px; }
+    .step__dur { display: none; }
+    summary { grid-template-columns: auto 1fr 16px; }
+  }
+</style>

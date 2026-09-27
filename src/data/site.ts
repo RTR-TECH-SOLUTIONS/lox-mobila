@@ -27,7 +27,15 @@ export const site: SiteData = {
         { label: 'Living', href: '/mobilier/living' },
       ],
     },
-    { label: 'Servicii', href: '/servicii' },
+    {
+      label: 'Servicii',
+      href: '/servicii',
+      children: [
+        { label: 'Mobilă la comandă', href: '/servicii#mobila-la-comanda' },
+        { label: 'Debitare și cantuire', href: '/servicii#debitare' },
+        { label: 'Distribuție feronerie', href: '/servicii#feronerie' },
+      ],
+    },
     { label: 'Materiale', href: '/materiale' },
     { label: 'Despre noi', href: '/cine-suntem' },
     { label: 'Contact', href: '/contact' },

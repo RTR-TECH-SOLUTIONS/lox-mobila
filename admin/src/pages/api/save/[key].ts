@@ -1,11 +1,18 @@
 import type { APIRoute } from 'astro';
-import { contactSchema, parseContent, reviewsFormSchema, statsSchema, themeSchema } from '@site/content/schema';
+import {
+  contactSchema,
+  parseContent,
+  reviewsFormSchema,
+  statsSchema,
+  themeSchema,
+  workshopSchema,
+} from '@site/content/schema';
 import { check, saveContent } from '../../../lib/content';
 import { errorResponse, json } from '../../../lib/http';
 import { withWriteLock } from '../../../lib/lock';
 import { author, repo } from '../../../lib/repo';
 
-// Ecranele care salveaza un fisier intreg: contact, cifre, recenzii, culori.
+// Ecranele care salveaza un fisier intreg: contact, cifre, recenzii, servicii, culori.
 export const POST: APIRoute = async ({ params, request, locals }) => {
   try {
     const body: unknown = await request.json();
@@ -22,6 +29,9 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
         break;
       case 'recenzii':
         sha = await commit(repo(), 'reviews', check(parseContent(reviewsFormSchema, body)).items, opts('Recenzii'));
+        break;
+      case 'servicii':
+        sha = await commit(repo(), 'workshop', check(parseContent(workshopSchema, body)), opts('Servicii și prețuri'));
         break;
       case 'culori':
         sha = await commit(repo(), 'theme', check(parseContent(themeSchema, body)), opts('Culori'));

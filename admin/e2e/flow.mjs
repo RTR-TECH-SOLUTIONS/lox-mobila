@@ -158,10 +158,25 @@ await page.fill('textarea[name=lead]', 'Corpuri calculate pe electrocasnicele ta
 await save();
 expect(read('categories').find((c) => c.key === 'bucatarii').lead === 'Corpuri calculate pe electrocasnicele tale.', 'textul categoriei se salveaza');
 
-// Culori, cu previzualizare
+// Servicii si preturi
+await page.goto(`${ADMIN}/servicii`);
+await page.fill('textarea[name="cutting.note"]', 'Trimite lista de piese pe WhatsApp.');
+await page.click('[data-repeater="hardware.rows"] [data-add]');
+const priceRow = page.locator('[data-repeater="hardware.rows"] [data-row]').last();
+await priceRow.locator('[data-name=service]').fill('Picioare reglabile');
+await priceRow.locator('[data-name=unit]').fill('bucată');
+await priceRow.locator('[data-name=price]').fill('4 lei');
+await save();
+expect(read('workshop').cutting.note === 'Trimite lista de piese pe WhatsApp.', 'nota de la debitare se salveaza');
+expect(read('workshop').hardware.rows.at(-1).price === '4 lei', 'randul nou de pret se salveaza');
+
+// Culori, cu previzualizare: paleta inchisa, apoi inapoi pe cea deschisa de brand
 await page.goto(`${ADMIN}/aspect`);
-await page.click('[data-preset*="F5F2ED"]');
 const frame = page.frameLocator('iframe[data-frame]');
+await page.click('[data-preset*="14120F"]');
+await frame.locator('html[data-scheme="dark"]').waitFor({ timeout: 5000 }).catch(() => {});
+expect((await frame.locator('html').getAttribute('data-scheme')) === 'dark', 'previzualizarea trece pe tema inchisa');
+await page.click('[data-preset*="EFEBE4"]');
 await frame.locator('html[data-scheme="light"]').waitFor({ timeout: 5000 }).catch(() => {});
 expect((await frame.locator('html').getAttribute('data-scheme')) === 'light', 'previzualizarea trece pe tema deschisa');
 
@@ -178,7 +193,7 @@ expect(heroLuminance > 0.5, `titlul din hero ramane text deschis pe poza intunec
 await page.setViewportSize({ width: 1280, height: 900 });
 
 await save();
-expect(read('theme').background === '#F5F2ED', 'tema deschisa e salvata');
+expect(read('theme').background === '#EFEBE4', 'tema deschisa e salvata');
 
 // Verificare extra (cerere controller): la 390px, dupa o salvare pe /proiecte, butonul „Inchide”
 // al barei de status ramane in intregime in ecran.
@@ -205,7 +220,7 @@ await page.setViewportSize({ width: 1280, height: 900 });
 // Capturi pe toate ecranele, la trei latimi
 for (const width of [1280, 768, 390]) {
   await page.setViewportSize({ width, height: width < 500 ? 844 : 900 });
-  for (const path of ['/proiecte', '/proiecte/bucatarie-in-l', '/poze', '/recenzii', '/categorii/bucatarii', '/contact', '/cifre', '/aspect']) {
+  for (const path of ['/proiecte', '/proiecte/bucatarie-in-l', '/poze', '/recenzii', '/categorii/bucatarii', '/servicii', '/contact', '/cifre', '/aspect']) {
     await page.goto(ADMIN + path);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow <= 0, `fara scroll orizontal pe ${path} la ${width}`);

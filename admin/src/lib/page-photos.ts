@@ -2,9 +2,12 @@ import { IMAGE_DIRS, PAGE_PHOTO_KEYS, type PagePhotoKey, type PagePhotos } from 
 import { ValidationError } from './content';
 import type { FileChange } from './github';
 
-export type PagePhotoSlot = PagePhotoKey | 'atelier';
+/** Pozele care nu tin de o categorie: stau singure in fisier, nu sub `categories`. */
+export const SINGLE_SLOTS = ['atelier', 'debitare', 'feronerie'] as const;
+export type SingleSlot = (typeof SINGLE_SLOTS)[number];
+export type PagePhotoSlot = PagePhotoKey | SingleSlot;
 
-export const PAGE_PHOTO_SLOTS: PagePhotoSlot[] = [...PAGE_PHOTO_KEYS, 'atelier'];
+export const PAGE_PHOTO_SLOTS: PagePhotoSlot[] = [...PAGE_PHOTO_KEYS, ...SINGLE_SLOTS];
 
 export const PAGE_PHOTO_LABELS: Record<PagePhotoSlot, string> = {
   bucatarii: 'Bucătării',
@@ -14,18 +17,22 @@ export const PAGE_PHOTO_LABELS: Record<PagePhotoSlot, string> = {
   bai: 'Băi',
   comercial: 'Spații comerciale',
   atelier: 'Atelier',
+  debitare: 'Debitare și cantuire',
+  feronerie: 'Distribuție feronerie',
 };
 
 const isSlot = (s: string): s is PagePhotoSlot => (PAGE_PHOTO_SLOTS as string[]).includes(s);
 
-/** Folderul din repo: placile de categorii stau in services/, poza atelierului in workshop/. */
-export const slotDir = (slot: PagePhotoSlot) => (slot === 'atelier' ? IMAGE_DIRS.workshop : IMAGE_DIRS.services);
+const isSingle = (slot: PagePhotoSlot): slot is SingleSlot => (SINGLE_SLOTS as readonly string[]).includes(slot);
+
+/** Folderul din repo: placile de categorii stau in services/, pozele de atelier in workshop/. */
+export const slotDir = (slot: PagePhotoSlot) => (isSingle(slot) ? IMAGE_DIRS.workshop : IMAGE_DIRS.services);
 
 /** Acelasi folder, relativ la src/assets/images, pentru ruta /media. */
-export const slotFolder = (slot: PagePhotoSlot) => (slot === 'atelier' ? 'workshop' : 'services');
+export const slotFolder = (slot: PagePhotoSlot) => (isSingle(slot) ? 'workshop' : 'services');
 
 export const currentFile = (photos: PagePhotos, slot: PagePhotoSlot) =>
-  slot === 'atelier' ? photos.atelier : photos.categories[slot];
+  isSingle(slot) ? photos[slot] : photos.categories[slot];
 
 export async function buildPagePhotosSave(input: {
   current: PagePhotos;
@@ -33,7 +40,7 @@ export async function buildPagePhotosSave(input: {
   prepare: (b: Buffer) => Promise<Buffer>;
   newId: () => string;
 }): Promise<{ value: PagePhotos; files: FileChange[]; deletes: string[]; message: string }> {
-  const value: PagePhotos = { categories: { ...input.current.categories }, atelier: input.current.atelier };
+  const value: PagePhotos = { ...input.current, categories: { ...input.current.categories } };
   const files: FileChange[] = [];
   const deletes: string[] = [];
   const changed: PagePhotoSlot[] = [];
@@ -43,7 +50,7 @@ export async function buildPagePhotosSave(input: {
     const name = `${slot}-${input.newId()}.jpg`;
     files.push({ path: `${slotDir(slot)}/${name}`, content: await input.prepare(buffer) });
     deletes.push(`${slotDir(slot)}/${currentFile(input.current, slot)}`);
-    if (slot === 'atelier') value.atelier = name;
+    if (isSingle(slot)) value[slot] = name;
     else value.categories[slot] = name;
     changed.push(slot);
   }

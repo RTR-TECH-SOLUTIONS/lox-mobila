@@ -28,6 +28,7 @@ export const CONTENT_FILES = {
   contact: 'src/content/contact.json',
   stats: 'src/content/stats.json',
   pagePhotos: 'src/content/page-photos.json',
+  workshop: 'src/content/workshop.json',
   theme: 'src/content/theme.json',
 } as const;
 export type ContentKey = keyof typeof CONTENT_FILES;
@@ -189,7 +190,22 @@ export const pagePhotosSchema = z.object({
     comercial: pagePhoto,
   }),
   atelier: pagePhoto,
+  debitare: pagePhoto,
+  feronerie: pagePhoto,
 });
+
+/** Un rand din tabelul de preturi: ce se face, pe ce unitate si cat costa. */
+export const workshopRowSchema = z.object({ service: required(90), unit: required(40), price: required(40) });
+
+export const workshopSectionSchema = z.object({
+  lead: required(600),
+  rows: z.array(workshopRowSchema).max(20, 'Cel mult 20 de rânduri.'),
+  // Nota de sub tabel e optionala: se salveaza goala cand nu e nevoie de ea.
+  note: z.string().trim().max(300, 'Cel mult 300 de caractere.').transform(fixDiacritics),
+});
+
+/** Cele doua servicii de atelier de pe pagina Servicii: debitare/cantuire/gaurire si feronerie. */
+export const workshopSchema = z.object({ cutting: workshopSectionSchema, hardware: workshopSectionSchema });
 
 const hex = z
   .string({ error: 'Alege o culoare.' })
@@ -206,6 +222,7 @@ export const CONTENT_SCHEMAS = {
   contact: contactSchema,
   stats: statsSchema,
   pagePhotos: pagePhotosSchema,
+  workshop: workshopSchema,
   theme: themeSchema,
 } as const;
 
@@ -215,6 +232,8 @@ export type CategoryPageContent = z.output<typeof categoryPageSchema>;
 export type Contact = z.output<typeof contactSchema>;
 export type Stats = z.output<typeof statsSchema>;
 export type PagePhotos = z.output<typeof pagePhotosSchema>;
+export type WorkshopSection = z.output<typeof workshopSectionSchema>;
+export type Workshop = z.output<typeof workshopSchema>;
 export type Theme = z.output<typeof themeSchema>;
 export type Content = { [K in ContentKey]: z.output<(typeof CONTENT_SCHEMAS)[K]> };
 
