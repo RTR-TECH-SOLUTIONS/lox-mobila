@@ -6,6 +6,7 @@ import ConsultForm from '../../components/ConsultForm.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { projects } from '../../data/projects';
 import { categoryPages, type CategoryPage } from '../../data/categories';
+import { categorySeo } from '../../data/seo';
 
 export function getStaticPaths() {
   return categoryPages.map((c) => ({ params: { categorie: c.key }, props: { page: c } }));
@@ -13,14 +14,15 @@ export function getStaticPaths() {
 
 const { page } = Astro.props as { page: CategoryPage };
 const items = projects.filter((p) => p.category === page.key);
+const meta = categorySeo[page.key];
 ---
 
 <Base
-  title={`${page.title} în Iași | LOX Mobila`}
-  description={`${page.title} în Iași. ${page.lead}`}
+  title={meta.title}
+  description={meta.description}
   headerOverlay
 >
-  <PageBanner title={page.label} categories active={page.key} />
+  <PageBanner title={meta.h1} categories active={page.key} />
 
   <section class="section wrap">
     <Catalog items={items} active={page.key} />
