@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import { seo } from '../data/seo';
 import PageBanner from '../components/ui/PageBanner.astro';
 import PriceList from '../components/ui/PriceList.astro';
 import StepList from '../components/ui/StepList.astro';
@@ -29,13 +30,13 @@ const waUrl = (text: string) => `https://wa.me/${site.whatsappNumber}?text=${enc
 ---
 
 <Base
-  title="Servicii | LOX Mobila Iași"
-  description="Mobilă la comandă în Iași, debitare și cantuire PAL și MDF, găurire pentru balamale și feronerie pentru mobilier, din atelierul nostru."
+  title={seo.servicii.title}
+  description={seo.servicii.description}
   headerOverlay
 >
   <PageBanner
-    title="Serviciile noastre"
-    lead="Mobilă la comandă de la măsurători la montaj, plus serviciile de atelier pentru cine își face singur mobila."
+    title={seo.servicii.h1}
+    lead="De la măsurători la montaj, plus debitare, cant și feronerie pentru cine își face singur mobila."
   />
 
   <section class="section wrap main" id="mobila-la-comanda" aria-labelledby="mlc-title">

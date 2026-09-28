@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { seo } from '../data/seo';
 import Hero from '../components/Hero.astro';
 import Categories from '../components/home/Categories.astro';
 import Experience from '../components/home/Experience.astro';
@@ -11,7 +12,7 @@ import CtaBand from '../components/CtaBand.astro';
 ---
 
 <!-- Aceeasi ordine ca mobilidesign.ro, fara pachetele cu preturi si fara blog. -->
-<Base title="LOX Mobila | Mobilă la comandă în Iași" headerOverlay>
+<Base title={seo.home.title} description={seo.home.description} headerOverlay>
   <Hero />
   <Categories />
   <Experience />
