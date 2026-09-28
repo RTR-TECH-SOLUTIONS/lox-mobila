@@ -181,7 +181,7 @@ expect((await frame.locator('html').getAttribute('data-scheme')) === 'dark', 'pr
 await save();
 expect(read('theme').background === '#14120F', 'tema inchisa e salvata');
 
-await page.click('[data-preset*="EFEBE4"]');
+await page.click('[data-preset*="E5E2DC"]');
 await frame.locator('html[data-scheme="light"]').waitFor({ timeout: 5000 }).catch(() => {});
 expect((await frame.locator('html').getAttribute('data-scheme')) === 'light', 'previzualizarea trece pe tema deschisa');
 
@@ -198,7 +198,7 @@ expect(heroLuminance > 0.5, `titlul din hero ramane text deschis pe poza intunec
 await page.setViewportSize({ width: 1280, height: 900 });
 
 await save();
-expect(read('theme').background === '#EFEBE4', 'tema deschisa e salvata');
+expect(read('theme').background === '#E5E2DC', 'tema deschisa e salvata');
 
 // Verificare extra (cerere controller): la 390px, dupa o salvare pe /proiecte, butonul „Inchide”
 // al barei de status ramane in intregime in ecran.
