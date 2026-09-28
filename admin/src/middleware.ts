@@ -1,12 +1,16 @@
 import { defineMiddleware } from 'astro:middleware';
 import { env } from './lib/env';
 import { readSession, SESSION_COOKIE } from './lib/auth';
+import { movedTo } from './lib/redirect';
 
 const PUBLIC = new Set(['/login', '/health']);
 
 export const onRequest = defineMiddleware(async (ctx, next) => {
   const { adminOrigin, sessionSecret, users } = env();
   const { pathname } = ctx.url;
+
+  const moved = movedTo(ctx.request.headers.get('host'), `${pathname}${ctx.url.search}`, adminOrigin);
+  if (moved) return new Response(null, { status: 301, headers: { location: moved } });
 
   // Cererile care schimba ceva trebuie sa vina din admin (protectie CSRF, pe langa SameSite=Strict).
   if (ctx.request.method !== 'GET' && ctx.request.method !== 'HEAD') {
