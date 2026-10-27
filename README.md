@@ -1,31 +1,35 @@
-# LOX Mobila
+# LOX Mobila 🪑
 
-Preview de prezentare pentru LOX Mobila, firmă de mobilă la comandă din Iași.
+A website for a made-to-measure furniture workshop in Iași, Romania. It also has an admin panel so the workshop can edit its own content.
 
-Astro static, Tailwind CSS, fără framework JS. Tot conținutul stă în `src/data/`.
+🔗 **Live:** [loxmobila.ro](https://loxmobila.ro)
 
-## Comenzi
+![Astro](https://img.shields.io/badge/Astro-BC52EE?style=for-the-badge&logo=astro&logoColor=white) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white) ![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white) ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
+## About
+LOX Mobila makes custom kitchens, wardrobes, and living-room and bedroom furniture. This repo has two apps: the public site and the admin panel. The site text is in Romanian.
+
+## Features
+- Pages for the catalogue, projects, workshop services, contact and legal info
+- Animated hero where the LED lights switch on one by one
+- Project grid with category filters
+- Quote form that opens a ready-made WhatsApp message
+- Local SEO for every page
+- Admin panel to edit projects, photos, texts, contact details and colors
+
+## Tech stack
+- **Frontend:** Astro, TypeScript, Tailwind CSS
+- **Admin:** Astro (server-side) with Node, `sharp` for images
+- **Content:** JSON files checked with Zod
+- **Testing:** Vitest and Playwright
+- **Hosting:** Docker, Coolify, GitHub Actions
+
+## Run it locally
 ```bash
 npm install
-npm run dev       # server local pe :4321
-npm test          # teste Vitest
-npx astro check   # verificare de tipuri
-npm run build     # build static in dist/
+npm run dev
 ```
+For the admin panel, go into `admin/`, copy `.env.example` to `.env` and fill in your own keys. Then run `npm install` and `npm run dev` there too.
 
-## De știut
-
-- **Datele clientului sunt încă placeholder.** Telefon, WhatsApp, adresă, program, cifre
-  și linkul de recenzii Google se află toate în `src/data/site.ts`, marcate `PLACEHOLDER`.
-- **Fotografiile sunt generate**, nu sunt lucrări ale firmei. Vezi `src/assets/images/CREDITS.md`.
-  Se înlocuiesc cu poze reale înainte de lansare.
-- Formularul de contact deschide WhatsApp cu mesajul precompletat; nu există backend.
-- Fiind fază de preview, lipsesc intenționat: SEO fin, schema LocalBusiness, banner de
-  cookie-uri și paginile legale.
-
-## Deploy
-
-Push pe `main` declanșează build și publicare pe GitHub Pages
-(`.github/workflows/deploy.yml`). `PUBLIC_BASE_PATH` este setat automat de workflow,
-pentru ca site-ul să funcționeze din subfolderul repo-ului.
+---
+Made by **Mario Rotaru** · [RTR Tech Solutions](https://rtrsolutions.ro)
