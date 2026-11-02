@@ -8,11 +8,6 @@
         "price": "la cerere"
       },
       {
-        "service": "Debitare peste 25 mm",
-        "unit": "metru liniar",
-        "price": "la cerere"
-      },
-      {
         "service": "Cant ABS 0,4 mm",
         "unit": "metru liniar",
         "price": "la cerere"
@@ -23,7 +18,7 @@
         "price": "la cerere"
       },
       {
-        "service": "Cant ABS  mm",
+        "service": "Cant ABS 4 mm",
         "unit": "metru liniar",
         "price": "la cerere"
       },
